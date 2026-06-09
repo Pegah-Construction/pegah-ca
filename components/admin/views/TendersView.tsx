@@ -23,7 +23,7 @@ export default function TendersView() {
   const toggleTrack = (id: string) =>
     setTenders((prev) => prev.map((t) => (t.id === id ? { ...t, tracked: !t.tracked } : t)));
 
-  const tone = (s: string) => (s === "Open" ? "green" : s === "Closing soon" ? "amber" : "gray") as const;
+  const tone = (s: string): "green" | "amber" | "gray" => (s === "Open" ? "green" : s === "Closing soon" ? "amber" : "gray");
 
   return (
     <>
