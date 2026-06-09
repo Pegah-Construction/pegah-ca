@@ -24,13 +24,13 @@ export const nav: NavItem[] = [
   { label: "Contact", href: "/contact" },
 ];
 
-export type Stat = { value: string; label: string };
+export type Stat = { value: string; label: string; href: string };
 
 export const stats: Stat[] = [
-  { value: "1988", label: "Established" },
-  { value: "35+", label: "Years building" },
-  { value: "500+", label: "Projects delivered" },
-  { value: "7", label: "Sectors served" },
+  { value: "1988", label: "Established", href: "/about" },
+  { value: "35+", label: "Years building", href: "/about" },
+  { value: "500+", label: "Projects delivered", href: "/projects" },
+  { value: "7", label: "Sectors served", href: "/services" },
 ];
 
 export type Project = {
@@ -180,22 +180,26 @@ export const projects: Project[] = [
 // Homepage spotlights the first three.
 export const featuredProjects = projects.slice(0, 3);
 
-export type Service = { title: string; desc: string };
+export type Service = { slug: string; title: string; desc: string };
 
 export const services: Service[] = [
   {
+    slug: "general-contracting",
     title: "General Contracting",
     desc: "Responsible for the site as the Constructor — trades, schedule and delivery.",
   },
   {
+    slug: "project-management",
     title: "Project Management",
     desc: "Procurement, contractor relationships, coordination and commissioning.",
   },
   {
+    slug: "design-build",
     title: "Design–Build",
     desc: "One accountable team from initial concept through detailed design and build.",
   },
   {
+    slug: "care-and-support",
     title: "Care & Support",
     desc: "Long-term maintenance and specialist support once the asset is live.",
   },

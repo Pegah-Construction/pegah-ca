@@ -21,7 +21,7 @@ export default function PageShell({
   return (
     <>
       <Navbar />
-      <main>
+      <main className="flex-1">
         <section className="border-b border-concrete-200 bg-white pt-32">
           <div className="mx-auto max-w-8xl px-6 pb-16 lg:px-10">
             <Eyebrow>{eyebrow}</Eyebrow>

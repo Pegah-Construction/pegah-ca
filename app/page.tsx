@@ -11,7 +11,7 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <main>
+      <main className="flex-1">
         <Hero />
         <StatBand />
         <Intro />

@@ -14,7 +14,7 @@ export default function ServicesList() {
         {services.map((s, i) => (
           <Link
             key={s.title}
-            href="/services"
+            href={`/services#${s.slug}`}
             className="group flex items-start justify-between gap-6 border-t border-concrete-200 py-7 transition-colors hover:border-brand-300"
           >
             <div>

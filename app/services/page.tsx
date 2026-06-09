@@ -15,7 +15,7 @@ export default function ServicesPage() {
     >
       <div className="grid gap-px overflow-hidden rounded-xl border border-concrete-200 bg-concrete-200 sm:grid-cols-2">
         {services.map((s, i) => (
-          <div key={s.title} className="bg-white p-8">
+          <div key={s.title} id={s.slug} className="bg-white p-8">
             <span className="font-mono text-xs text-concrete-400">
               0{i + 1}
             </span>

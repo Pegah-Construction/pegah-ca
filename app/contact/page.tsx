@@ -36,7 +36,7 @@ export default function ContactPage() {
             />
           </div>
           <button
-            type="button"
+            type="submit"
             className="rounded-md bg-brand-700 px-6 py-3 font-display text-sm font-semibold text-white transition-colors hover:bg-brand-800"
           >
             Send enquiry →
