@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    color-scheme: light;
+  }
+  body {
+    @apply bg-paper text-ink font-body antialiased;
+  }
+}
+
+@layer components {
+  /* Tracked uppercase eyebrow label */
+  .eyebrow {
+    @apply font-mono text-xs uppercase tracking-label text-brand-700;
+  }
+
+  /* Striped placeholder used by <ImageSlot /> */
+  .image-slot {
+    background-image: repeating-linear-gradient(
+      135deg,
+      theme("colors.concrete.200") 0 12px,
+      theme("colors.concrete.100") 12px 24px
+    );
+  }
+  .image-slot--dark {
+    background-image: repeating-linear-gradient(
+      135deg,
+      #243049 0 12px,
+      #2c3a57 12px 24px
+    );
+  }
+}
