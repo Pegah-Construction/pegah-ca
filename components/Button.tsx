@@ -3,7 +3,7 @@ import Link from "next/link";
 type ButtonProps = {
   href: string;
   children: React.ReactNode;
-  variant?: "solid" | "outline" | "ghost-light";
+  variant?: "solid" | "outline" | "ghost-light" | "white";
   className?: string;
 };
 
@@ -16,6 +16,7 @@ const variants: Record<NonNullable<ButtonProps["variant"]>, string> = {
     "border border-ink/20 bg-transparent text-ink hover:border-ink/40 hover:bg-ink/5",
   "ghost-light":
     "border border-white/40 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20",
+  white: "bg-white text-brand-800 hover:bg-white/90",
 };
 
 export default function Button({

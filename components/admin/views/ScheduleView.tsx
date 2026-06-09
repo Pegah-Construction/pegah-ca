@@ -1,19 +1,24 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth";
-import { visibleProjects } from "@/lib/admin";
+import { type Project } from "@/lib/admin";
 import { Card, StatusPill } from "../ui";
 
 export default function ScheduleView() {
   const { user } = useAuth();
+  const [projects, setProjects] = useState<Project[]>([]);
+  useEffect(() => {
+    if (!user) return;
+    fetch(`/api/projects?userId=${user.id}`).then((r) => r.json()).then(setProjects);
+  }, [user]);
   if (!user) return null;
-  const projs = visibleProjects(user);
 
   return (
     <Card title="Milestone schedule">
       <div>
-        {projs.map((x) => (
+        {projects.map((x) => (
           <div key={x.id} className="border-b border-concrete-100 px-5 py-4 last:border-0">
             <div className="flex items-center justify-between">
               <Link href={`/admin/projects/${x.id}`} className="font-display text-sm font-semibold text-ink hover:text-brand-700">{x.name}</Link>

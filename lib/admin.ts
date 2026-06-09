@@ -142,7 +142,7 @@ export const INCIDENTS: Incident[] = [
   { id:"s6", project:"p7", date:"2024-12-15", type:"Near miss", severity:"Low",    status:"Closed",       reportedBy:"u3", note:"Falling debris during demolition." },
 ];
 
-export type Doc = { id: string; name: string; type: string; project: string | null; size: string; updated: string; owner: string };
+export type Doc = { id: string; name: string; type: string; project: string | null; size: string; updated: string; owner: string; path?: string };
 
 export const DOCUMENTS: Doc[] = [
   { id:"d1", name:"Harbourside — Tender Drawings Rev C", type:"DWG",  project:"p1", size:"42.1 MB", updated:"2025-01-08", owner:"u2" },

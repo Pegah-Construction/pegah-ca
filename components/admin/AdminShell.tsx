@@ -9,7 +9,7 @@ import { Avatar, RolePill } from "./ui";
 const NAV: { key: NavKey; label: string; href: string }[] = [
   { key: "dashboard", label: "Dashboard", href: "/admin" },
   { key: "projects", label: "Projects", href: "/admin/projects" },
-  { key: "board", label: "Task Board", href: "/admin/board" },
+  // { key: "board", label: "Task Board", href: "/admin/board" },
   { key: "schedule", label: "Schedule", href: "/admin/schedule" },
   { key: "tenders", label: "Tenders", href: "/admin/tenders" },
   { key: "news", label: "News & Blog", href: "/admin/news" },

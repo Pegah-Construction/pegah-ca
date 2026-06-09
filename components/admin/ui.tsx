@@ -110,6 +110,33 @@ export function AccessDenied({ msg }: { msg?: string }) {
   );
 }
 
-export const PrimaryBtn = ({ children }: { children: React.ReactNode }) => (
-  <button className="rounded-md bg-brand-700 px-3 py-1.5 font-display text-xs font-semibold text-white hover:bg-brand-800">{children}</button>
+export const PrimaryBtn = ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => (
+  <button onClick={onClick} className="rounded-md bg-brand-700 px-3 py-1.5 font-display text-xs font-semibold text-white hover:bg-brand-800">{children}</button>
 );
+
+export const inputCls = "w-full rounded-md border border-concrete-200 bg-white px-3 py-2 text-sm text-ink placeholder:text-concrete-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500";
+
+export function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label className="block">
+      <span className="mb-1.5 block font-mono text-[11px] font-semibold uppercase tracking-wide text-concrete-500">{label}</span>
+      {children}
+    </label>
+  );
+}
+
+export function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
+      <div className="w-full max-w-lg rounded-xl bg-white shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between border-b border-concrete-200 px-6 py-4">
+          <h2 className="font-display text-sm font-bold text-ink">{title}</h2>
+          <button onClick={onClose} className="rounded-md p-1 text-concrete-400 hover:bg-concrete-100 hover:text-ink">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div className="max-h-[80vh] overflow-y-auto p-6">{children}</div>
+      </div>
+    </div>
+  );
+}

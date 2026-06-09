@@ -33,4 +33,33 @@
       #2c3a57 12px 24px
     );
   }
+
+  /* Rich-text article body rendered from TipTap HTML */
+  .article-body h2 {
+    @apply mt-8 font-display text-2xl font-bold tracking-tight text-ink;
+  }
+  .article-body h3 {
+    @apply mt-6 font-display text-xl font-semibold tracking-tight text-ink;
+  }
+  .article-body p {
+    @apply my-4;
+  }
+  .article-body ul {
+    @apply my-4 ml-6 list-disc space-y-1;
+  }
+  .article-body ol {
+    @apply my-4 ml-6 list-decimal space-y-1;
+  }
+  .article-body blockquote {
+    @apply my-5 border-l-4 border-brand-300 pl-5 italic text-concrete-500;
+  }
+  .article-body pre {
+    @apply my-4 overflow-x-auto rounded-lg bg-concrete-100 p-4 font-mono text-sm;
+  }
+  .article-body code {
+    @apply rounded bg-concrete-100 px-1.5 py-0.5 font-mono text-sm;
+  }
+  .article-body strong {
+    @apply font-bold text-ink;
+  }
 }

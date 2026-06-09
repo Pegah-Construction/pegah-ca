@@ -1,36 +1,43 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth";
-import {
-  PERMS, PROJECTS, TASKS, INCIDENTS, ACTIVITY,
-  getUser, getProject, visibleProjects, visibleIds, money,
-} from "@/lib/admin";
+import { PERMS, getUser, getProject, money, type Project, type Task, type Incident, type Activity } from "@/lib/admin";
 import { StatCard, Card, THead, Table, StatusPill, Bar, Avatar } from "../ui";
 
 export default function DashboardView() {
   const { user } = useAuth();
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [incidents, setIncidents] = useState<Incident[]>([]);
+  const [feed, setFeed] = useState<Activity[]>([]);
+
+  useEffect(() => {
+    if (!user) return;
+    fetch(`/api/projects?userId=${user.id}`).then((r) => r.json()).then(setProjects);
+    fetch(`/api/tasks?userId=${user.id}`).then((r) => r.json()).then(setTasks);
+    fetch(`/api/incidents?userId=${user.id}`).then((r) => r.json()).then(setIncidents);
+    fetch(`/api/activity?userId=${user.id}`).then((r) => r.json()).then(setFeed);
+  }, [user]);
+
   if (!user) return null;
   const perms = PERMS[user.role];
-  const projs = visibleProjects(user);
-  const ids = visibleIds(user);
-  const active = projs.filter((x) => x.status !== "Complete");
+  const active = projects.filter((x) => x.status !== "Complete");
   const avg = active.length ? Math.round(active.reduce((a, x) => a + x.progress, 0) / active.length) : 0;
-  const spent = projs.reduce((a, x) => a + x.spent, 0);
-  const openInc = INCIDENTS.filter((i) => ids.includes(i.project) && i.status !== "Closed");
-  const myTasks = TASKS.filter((t) => t.assignee === user.id && t.status !== "Done");
+  const spent = projects.reduce((a, x) => a + x.spent, 0);
+  const openInc = incidents.filter((i) => i.status !== "Closed");
+  const myTasks = tasks.filter((t) => t.assignee === user.id && t.status !== "Done");
 
-  const upcoming = projs
+  const upcoming = projects
     .flatMap((x) => x.milestones.filter((m) => !m.done).map((m) => ({ p: x, m })))
     .sort((a, b) => (a.m.d < b.m.d ? -1 : 1))
     .slice(0, 6);
 
-  const feed = ACTIVITY.filter((a) => !a.project || ids.includes(a.project)).slice(0, 6);
-
   return (
     <>
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Active projects" value={active.length} hint={`${projs.length} total in scope`} />
+        <StatCard label="Active projects" value={active.length} hint={`${projects.length} total in scope`} />
         <StatCard label="Avg. completion" value={`${avg}%`} hint="across active projects" />
         {perms.viewBudget
           ? <StatCard label="Spent to date" value={money(spent)} hint="in your project scope" />
@@ -44,7 +51,7 @@ export default function DashboardView() {
             <Table>
               <THead cols={["Project", "Status", "Progress", ...(perms.viewBudget ? ["Spent / Budget"] : []), "PM"]} />
               <tbody>
-                {projs.slice(0, 6).map((x) => {
+                {projects.slice(0, 6).map((x) => {
                   const pm = getUser(x.pm);
                   return (
                     <tr key={x.id} onClick={() => (location.href = `/admin/projects/${x.id}`)} className="cursor-pointer border-b border-concrete-100 transition-colors last:border-0 hover:bg-brand-50/40">
@@ -84,9 +91,9 @@ export default function DashboardView() {
                 const pr = a.project ? getProject(a.project) : null;
                 return (
                   <li key={i} className="flex items-start gap-3 px-5 py-3">
-                    <Avatar name={w.name} id={w.id} size="h-7 w-7 text-[10px]" />
+                    <Avatar name={w?.name ?? "?"} id={w?.id ?? "?"} size="h-7 w-7 text-[10px]" />
                     <div className="text-sm text-concrete-600">
-                      <span className="font-semibold text-ink">{w.name}</span> {a.what}{" "}
+                      <span className="font-semibold text-ink">{w?.name}</span> {a.what}{" "}
                       {pr && <Link className="font-semibold text-brand-700 hover:underline" href={`/admin/projects/${pr.id}`}>{pr.name}</Link>}
                       <div className="font-mono text-[11px] text-concrete-400">{a.when}</div>
                     </div>

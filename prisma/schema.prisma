@@ -1,0 +1,206 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id     String @id
+  name   String
+  role   String
+  title  String
+  email  String @unique
+  phone  String
+  status String
+  since  String
+
+  managedProjects   Project[]     @relation("ProjectPM")
+  foremanProjects   Project[]     @relation("ProjectForeman")
+  teamMemberships   ProjectTeam[]
+  assignedTasks     Task[]
+  reportedIncidents Incident[]
+  ownedDocuments    Doc[]
+  assignedCards     Card[]
+  cardComments      CardComment[]
+  activityLogs      Activity[]
+  authoredArticles  Article[]
+}
+
+model Client {
+  id       String    @id
+  name     String
+  sector   String
+  contact  String
+  email    String
+  phone    String
+  since    String
+  projects Project[]
+}
+
+model Project {
+  id        String @id
+  name      String
+  clientId  String
+  sector    String
+  status    String
+  progress  Int
+  budget    Float
+  spent     Float
+  start     String
+  end       String
+  pmId      String
+  foremanId String
+  location  String
+
+  client     Client        @relation(fields: [clientId], references: [id])
+  pm         User          @relation("ProjectPM", fields: [pmId], references: [id])
+  foreman    User          @relation("ProjectForeman", fields: [foremanId], references: [id])
+  team       ProjectTeam[]
+  milestones Milestone[]
+  tasks      Task[]
+  incidents  Incident[]
+  docs       Doc[]
+  cards      Card[]
+  activities Activity[]
+  articles   Article[]
+}
+
+model ProjectTeam {
+  projectId String
+  userId    String
+  project   Project @relation(fields: [projectId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
+
+  @@id([projectId, userId])
+}
+
+model Milestone {
+  id        Int     @id @default(autoincrement())
+  projectId String
+  n         String
+  d         String
+  done      Boolean @default(false)
+  project   Project @relation(fields: [projectId], references: [id])
+}
+
+model Task {
+  id         String  @id
+  title      String
+  projectId  String
+  assigneeId String
+  due        String
+  status     String
+  priority   String
+  project    Project @relation(fields: [projectId], references: [id])
+  assignee   User    @relation(fields: [assigneeId], references: [id])
+}
+
+model Incident {
+  id           String  @id
+  projectId    String
+  date         String
+  type         String
+  severity     String
+  status       String
+  reportedById String
+  note         String
+  project      Project @relation(fields: [projectId], references: [id])
+  reportedBy   User    @relation(fields: [reportedById], references: [id])
+}
+
+model Doc {
+  id        String  @id
+  name      String
+  type      String
+  projectId String?
+  size      String
+  updated   String
+  ownerId   String
+  path      String  @default("")
+  project   Project? @relation(fields: [projectId], references: [id])
+  owner     User     @relation(fields: [ownerId], references: [id])
+}
+
+model Tender {
+  id           String  @id
+  ref          String
+  title        String
+  org          String
+  platform     String
+  type         String
+  category     String
+  value        Float
+  province     String
+  city         String
+  published    String
+  closing      String
+  status       String
+  tracked      Boolean @default(false)
+  contactName  String
+  contactEmail String
+  contactPhone String
+  note         String?
+  desc         String
+}
+
+model Card {
+  id         String        @id
+  title      String
+  col        String
+  projectId  String
+  assigneeId String
+  priority   String
+  due        String
+  project    Project       @relation(fields: [projectId], references: [id])
+  assignee   User          @relation(fields: [assigneeId], references: [id])
+  subtasks   CardSubtask[]
+  comments   CardComment[]
+}
+
+model CardSubtask {
+  id     Int     @id @default(autoincrement())
+  cardId String
+  t      String
+  done   Boolean @default(false)
+  card   Card    @relation(fields: [cardId], references: [id])
+}
+
+model CardComment {
+  id     Int    @id @default(autoincrement())
+  cardId String
+  who    String
+  when   String
+  text   String
+  card   Card   @relation(fields: [cardId], references: [id])
+  user   User   @relation(fields: [who], references: [id])
+}
+
+model Activity {
+  id        Int      @id @default(autoincrement())
+  who       String
+  what      String
+  when      String
+  projectId String?
+  user      User     @relation(fields: [who], references: [id])
+  project   Project? @relation(fields: [projectId], references: [id])
+}
+
+model Article {
+  id        String   @id
+  title     String
+  slug      String   @unique
+  projectId String?
+  authorId  String
+  status    String
+  date      String
+  tags      String
+  featured  Boolean  @default(false)
+  excerpt   String
+  body      String   @default("")
+  words     Int
+  project   Project? @relation(fields: [projectId], references: [id])
+  author    User     @relation(fields: [authorId], references: [id])
+}

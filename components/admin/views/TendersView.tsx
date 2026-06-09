@@ -1,15 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
-import { TENDERS, TENDER_PLATFORMS, STATS, money, type Tender } from "@/lib/admin";
+import { TENDER_PLATFORMS, STATS, money, type Tender } from "@/lib/admin";
 import { StatCard, Card, THead, Table, Pill } from "../ui";
 
 export default function TendersView() {
   const { user } = useAuth();
+  const [tenders, setTenders] = useState<Tender[]>([]);
   const [platform, setPlatform] = useState("All");
   const [status, setStatus] = useState("All");
-  const [tenders, setTenders] = useState<Tender[]>(TENDERS);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
+  useEffect(() => {
+    fetch("/api/tenders").then((r) => r.json()).then(setTenders);
+  }, []);
   if (!user) return null;
 
   const list = tenders.filter(
@@ -20,8 +24,19 @@ export default function TendersView() {
   const tracked = tenders.filter((t) => t.tracked).length;
   const totVal = tenders.reduce((a, t) => a + (t.value || 0), 0);
 
-  const toggleTrack = (id: string) =>
-    setTenders((prev) => prev.map((t) => (t.id === id ? { ...t, tracked: !t.tracked } : t)));
+  const toggleTrack = async (id: string) => {
+    const tender = tenders.find((t) => t.id === id);
+    if (!tender || togglingId) return;
+    setTogglingId(id);
+    const updated = { ...tender, tracked: !tender.tracked };
+    setTenders((prev) => prev.map((t) => (t.id === id ? updated : t)));
+    await fetch(`/api/tenders/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tracked: updated.tracked }),
+    });
+    setTogglingId(null);
+  };
 
   const tone = (s: string): "green" | "amber" | "gray" => (s === "Open" ? "green" : s === "Closing soon" ? "amber" : "gray");
 
@@ -71,9 +86,9 @@ export default function TendersView() {
                 <td className={`px-5 py-3 font-mono text-xs ${t.status === "Closing soon" ? "text-red-600" : "text-concrete-500"}`}>{t.closing}</td>
                 <td className="px-5 py-3"><Pill text={t.status} tone={tone(t.status)} /></td>
                 <td className="px-5 py-3 text-right" onClick={(e) => e.stopPropagation()}>
-                  <button onClick={() => toggleTrack(t.id)}
-                    className={`rounded-md border px-2.5 py-1 font-display text-xs font-semibold ${t.tracked ? "border-brand-600 bg-brand-50 text-brand-700" : "border-concrete-300 text-concrete-500 hover:border-brand-400"}`}>
-                    {t.tracked ? "★ Tracked" : "☆ Track"}
+                  <button onClick={() => toggleTrack(t.id)} disabled={!!togglingId}
+                    className={`rounded-md border px-2.5 py-1 font-display text-xs font-semibold transition-opacity disabled:opacity-50 ${t.tracked ? "border-brand-600 bg-brand-50 text-brand-700" : "border-concrete-300 text-concrete-500 hover:border-brand-400"}`}>
+                    {togglingId === t.id ? "…" : t.tracked ? "★ Tracked" : "☆ Track"}
                   </button>
                 </td>
               </tr>

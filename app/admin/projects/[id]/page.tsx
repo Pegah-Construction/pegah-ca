@@ -1,10 +1,11 @@
 import Guard from "@/components/admin/Guard";
 import ProjectDetailView from "@/components/admin/views/ProjectDetailView";
 
-export default function AdminProjectDetail({ params }: { params: { id: string } }) {
+export default async function AdminProjectDetail({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   return (
     <Guard module="projects" title="Project">
-      <ProjectDetailView id={params.id} />
+      <ProjectDetailView id={id} />
     </Guard>
   );
 }

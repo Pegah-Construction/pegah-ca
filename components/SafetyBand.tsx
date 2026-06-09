@@ -15,10 +15,7 @@ export default function SafetyBand() {
             every member of our organization accountable to.
           </p>
         </div>
-        <Button
-          href="/safety"
-          className="bg-white text-brand-800 hover:bg-white/90"
-        >
+        <Button href="/safety" variant="white">
           Our safety record →
         </Button>
       </div>

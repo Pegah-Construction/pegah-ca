@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
-import { BOARD, BOARD_COLUMNS, getUser, getProject, visibleIds, type Card as TCard } from "@/lib/admin";
+import { BOARD_COLUMNS, getUser, getProject, type Card as TCard } from "@/lib/admin";
 import { Avatar, PriorityPill, Pill } from "../ui";
 
 const DOT: Record<string, string> = {
@@ -11,33 +11,50 @@ const DOT: Record<string, string> = {
 
 export default function BoardView() {
   const { user } = useAuth();
-  const [cards, setCards] = useState<TCard[]>(BOARD);
+  const [cards, setCards] = useState<TCard[]>([]);
   const [dragId, setDragId] = useState<string | null>(null);
   const [openId, setOpenId] = useState<string | null>(null);
   const [overCol, setOverCol] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    fetch(`/api/board?userId=${user.id}`).then((r) => r.json()).then(setCards);
+  }, [user]);
+
   if (!user) return null;
 
-  const ids = visibleIds(user);
-  const mine = cards.filter((c) => ids.includes(c.project));
-
-  const drop = (col: string) => {
-    if (dragId) setCards((prev) => prev.map((c) => (c.id === dragId ? { ...c, col } : c)));
+  const drop = async (col: string) => {
+    if (!dragId) return;
+    setCards((prev) => prev.map((c) => (c.id === dragId ? { ...c, col } : c)));
     setDragId(null);
     setOverCol(null);
+    await fetch(`/api/board/${dragId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ col }),
+    });
   };
 
   const open = openId ? cards.find((c) => c.id === openId) ?? null : null;
 
-  const toggleSub = (cardId: string, i: number) =>
-    setCards((prev) => prev.map((c) => c.id === cardId
-      ? { ...c, subtasks: c.subtasks.map((s, j) => (j === i ? { ...s, done: !s.done } : s)) } : c));
+  const toggleSub = async (cardId: string, i: number) => {
+    const card = cards.find((c) => c.id === cardId);
+    if (!card) return;
+    const updated = card.subtasks.map((s, j) => (j === i ? { ...s, done: !s.done } : s));
+    setCards((prev) => prev.map((c) => c.id === cardId ? { ...c, subtasks: updated } : c));
+    await fetch(`/api/board/${cardId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ subtasks: updated }),
+    });
+  };
 
   return (
     <>
       <p className="mb-4 text-sm text-concrete-500">Drag cards between columns to update status. Click a card to open subtasks &amp; comments.</p>
       <div className="flex gap-5 overflow-x-auto pb-4">
         {BOARD_COLUMNS.map((col) => {
-          const colCards = mine.filter((c) => c.col === col.key);
+          const colCards = cards.filter((c) => c.col === col.key);
           return (
             <div key={col.key} className="flex w-72 shrink-0 flex-col">
               <div className="mb-3 flex items-center gap-2 px-1">
@@ -75,7 +92,6 @@ export default function BoardView() {
           );
         })}
       </div>
-
       {open && <CardDrawer card={open} onClose={() => setOpenId(null)} onToggleSub={toggleSub} />}
     </>
   );
