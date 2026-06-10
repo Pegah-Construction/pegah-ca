@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth";
-import { PERMS, moneyFull, type Project, type Incident } from "@/lib/admin";
+import { PERMS, moneyFull, type Project, type Incident, type RoleKey } from "@/lib/admin";
 import {
   Card, THead, Table, StatusPill, RolePill, Pill, Bar, Avatar,
   StatCard, AccessDenied, Modal, Field, inputCls,
@@ -19,7 +19,7 @@ const STATUS_SELECT_TONE: Record<Project["status"], string> = {
 };
 
 type MilestoneEdit = { n: string; d: string; done: boolean };
-type UserRow = { id: string; name: string; role: string };
+type UserRow = { id: string; name: string; role: RoleKey; title: string };
 type ClientRow = { id: string; name: string };
 
 function Fact({ k, v }: { k: string; v: string }) {
