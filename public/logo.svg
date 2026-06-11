@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 64" width="360" height="64">
+  <circle cx="32" cy="32" r="30" fill="#172c70" />
+  <rect x="14" y="26" width="36" height="12" rx="2" fill="#ffffff" />
+  <rect x="26" y="14" width="12" height="36" rx="2" fill="#ffffff" />
+
+  <text
+    x="78"
+    y="26"
+    fill="#3a5abf"
+    font-family="Arial, Helvetica, sans-serif"
+    font-weight="700"
+    font-size="13"
+    letter-spacing="2"
+  >35+ YEARS</text>
+
+  <text
+    x="78"
+    y="50"
+    fill="#172c70"
+    font-family="Arial, Helvetica, sans-serif"
+    font-weight="800"
+    font-size="22"
+    letter-spacing="1"
+  >PEGAH CONSTRUCTION LTD.</text>
+</svg>
