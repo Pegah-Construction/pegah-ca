@@ -107,10 +107,6 @@ export default function AdminShell({
             {sub ? <p className="font-mono text-xs text-concrete-500">{sub}</p> : null}
           </div>
           <div className="ml-auto flex items-center gap-4">
-            <div className="hidden items-center gap-2 rounded-lg border border-concrete-200 bg-white px-3 py-2 text-sm text-concrete-400 md:flex">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-4 w-4"><circle cx="11" cy="11" r="8" /><path d="M21 21l-4-4" /></svg>
-              Search…
-            </div>
             <RolePill role={user.role} />
           </div>
         </header>
