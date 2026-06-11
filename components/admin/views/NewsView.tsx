@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useAuth } from "@/lib/auth";
-import { PERMS, STATS, type Article } from "@/lib/admin";
+import { PERMS, type Article } from "@/lib/admin";
 import { StatCard, Card, THead, Table, Pill, PrimaryBtn, Field, inputCls, SearchInput } from "../ui";
 
 const RichEditor = dynamic(() => import("../RichEditor"), { ssr: false });
@@ -102,7 +102,7 @@ export default function NewsView() {
       <div className="mb-6 grid gap-4 sm:grid-cols-3">
         <StatCard label="Published" value={pub} hint="live on the website" />
         <StatCard label="Drafts" value={draft} hint="awaiting review" />
-        <StatCard label="Total articles" value={STATS.articles} hint="SEO case studies" />
+        <StatCard label="Total articles" value={news.length} hint="SEO case studies" />
       </div>
 
       <Card title="Articles" right={

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
-import { TENDER_PLATFORMS, STATS, money, type Tender } from "@/lib/admin";
+import { TENDER_PLATFORMS, money, type Tender } from "@/lib/admin";
 import { StatCard, Card, THead, Table, Pill, SearchInput } from "../ui";
 
 export default function TendersView() {
@@ -55,7 +55,7 @@ export default function TendersView() {
       </div>
 
       <p className="mb-4 text-sm text-concrete-500">
-        Aggregated from {TENDER_PLATFORMS.length} procurement platforms · {STATS.tenders} tenders in database{" "}
+        Aggregated from {TENDER_PLATFORMS.length} procurement platforms · {tenders.length} tenders in database{" "}
         <span className="ml-1 rounded bg-amber-50 px-1.5 py-0.5 font-mono text-[10px] text-amber-700 ring-1 ring-amber-600/20">scraper demo</span>
       </p>
 

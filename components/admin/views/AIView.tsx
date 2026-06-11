@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
 import {
-  AI_PROVIDERS, AI_TOOLS, AI_PROMPTS, TENDERS, INCIDENTS, USERS, ROLES, STATS,
+  AI_PROVIDERS, AI_TOOLS, AI_PROMPTS, TENDERS, INCIDENTS, USERS, ROLES,
   getProject, visibleProjects, visibleIds, money, type User,
 } from "@/lib/admin";
 import { Card, Pill } from "../ui";
@@ -58,9 +58,17 @@ export default function AIView() {
   const [provider, setProvider] = useState("claude");
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
+  const [counts, setCounts] = useState({ projects: 0, tenders: 0 });
   const threadRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { if (threadRef.current) threadRef.current.scrollTop = threadRef.current.scrollHeight; }, [messages]);
+  useEffect(() => {
+    if (!user) return;
+    Promise.all([
+      fetch(`/api/projects?userId=${user.id}`).then((r) => r.json()),
+      fetch("/api/tenders").then((r) => r.json()),
+    ]).then(([projects, tenders]) => setCounts({ projects: projects.length, tenders: tenders.length }));
+  }, [user]);
   if (!user) return null;
 
   const prov = AI_PROVIDERS.find((p) => p.key === provider)!;
@@ -99,7 +107,7 @@ export default function AIView() {
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-7 w-7"><path d="M12 2a3 3 0 0 1 3 3v1a3 3 0 0 1 3 3 3 3 0 0 1 0 6 3 3 0 0 1-3 3v1a3 3 0 0 1-6 0v-1a3 3 0 0 1-3-3 3 3 0 0 1 0-6 3 3 0 0 1 3-3V5a3 3 0 0 1 3-3z" /></svg>
                 </div>
                 <h3 className="mt-4 font-display text-lg font-bold text-ink">Ask anything about your data</h3>
-                <p className="mt-1 max-w-sm text-sm text-concrete-500">Connected to 97 projects, {STATS.tenders} tenders, tasks, news and docs via {AI_TOOLS.length} tools.</p>
+                <p className="mt-1 max-w-sm text-sm text-concrete-500">Connected to {counts.projects} projects, {counts.tenders} tenders, tasks, news and docs via {AI_TOOLS.length} tools.</p>
                 <div className="mt-5 flex max-w-lg flex-wrap justify-center gap-2">
                   {AI_PROMPTS.map((p) => (<button key={p} onClick={() => send(p)} className="rounded-full border border-concrete-300 px-3 py-1.5 text-left font-display text-xs font-medium text-concrete-600 hover:border-brand-400 hover:text-brand-700">{p}</button>))}
                 </div>
