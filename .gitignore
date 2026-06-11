@@ -23,6 +23,10 @@ yarn-error.log*
 .env*.local
 .env
 
+# local sqlite db
+/prisma/*.db
+/prisma/*.db-journal
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

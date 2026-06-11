@@ -9,10 +9,17 @@ Hi-fi marketing site for Pegah Construction Ltd., built from the **Direction A
 
 ```bash
 npm install
+echo 'DATABASE_URL="file:./dev.db"' > .env
+npx prisma db push
+npx prisma db seed
 npm run dev
 ```
 
 Open http://localhost:3000.
+
+The admin console (`/admin`) is backed by a SQLite database via Prisma
+(`prisma/schema.prisma`). `db push` creates `prisma/dev.db` and `db seed`
+populates it with demo data.
 
 ## Scripts
 
