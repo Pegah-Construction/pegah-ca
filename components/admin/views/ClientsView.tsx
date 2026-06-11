@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
 import { PERMS } from "@/lib/admin";
-import { Card, THead, Table, Pill, PrimaryBtn, Modal, Field, inputCls } from "../ui";
+import { Card, THead, Table, Pill, PrimaryBtn, Modal, Field, inputCls, SearchInput } from "../ui";
 
 type ClientRow = { id: string; name: string; sector: string; contact: string; email: string; phone: string; since: string };
 
@@ -17,6 +17,8 @@ export default function ClientsView() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(empty);
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [q, setQ] = useState("");
 
   useEffect(() => {
     fetch("/api/clients").then((r) => r.json()).then(setClients);
@@ -55,13 +57,37 @@ export default function ClientsView() {
     setSaving(false);
   };
 
+  const handleDelete = async (id: string) => {
+    if (deletingId) return;
+    if (!confirm("Delete this client? This cannot be undone.")) return;
+    setDeletingId(id);
+    const res = await fetch(`/api/clients/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      setClients((prev) => prev.filter((c) => c.id !== id));
+    } else {
+      const data = await res.json().catch(() => null);
+      alert(data?.error ?? "Failed to delete client.");
+    }
+    setDeletingId(null);
+  };
+
+  const needle = q.trim().toLowerCase();
+  const filtered = needle
+    ? clients.filter((c) => [c.name, c.sector, c.contact, c.email].some((v) => v.toLowerCase().includes(needle)))
+    : clients;
+
   return (
     <>
-      <Card title="Clients & companies" right={perms.manageClients ? <PrimaryBtn onClick={openCreate}>+ Add client</PrimaryBtn> : undefined}>
+      <Card title="Clients & companies" right={
+        <div className="flex items-center gap-3">
+          <SearchInput value={q} onChange={setQ} placeholder="Search clients…" />
+          {perms.manageClients && <PrimaryBtn onClick={openCreate}>+ Add client</PrimaryBtn>}
+        </div>
+      }>
         <Table>
           <THead cols={["Client", "Sector", "Primary contact", "Email", "Since", ""]} />
           <tbody>
-            {clients.map((c) => (
+            {filtered.map((c) => (
               <tr key={c.id} className="border-b border-concrete-100 last:border-0 hover:bg-brand-50/40">
                 <td className="px-5 py-3"><div className="font-display font-semibold text-ink">{c.name}</div></td>
                 <td className="px-5 py-3"><Pill text={c.sector} /></td>
@@ -70,7 +96,13 @@ export default function ClientsView() {
                 <td className="px-5 py-3 font-mono text-xs text-concrete-500">{c.since}</td>
                 <td className="px-5 py-3 text-right">
                   {perms.manageClients && (
-                    <button onClick={() => openEdit(c)} className="font-display text-xs font-semibold text-brand-700 hover:text-brand-800">Edit</button>
+                    <div className="flex items-center justify-end gap-3">
+                      <button onClick={() => openEdit(c)} className="font-display text-xs font-semibold text-brand-700 hover:text-brand-800">Edit</button>
+                      <button onClick={() => handleDelete(c.id)} disabled={!!deletingId}
+                        className="font-display text-xs font-semibold text-red-600 transition-opacity hover:text-red-700 disabled:opacity-50">
+                        {deletingId === c.id ? "…" : "Delete"}
+                      </button>
+                    </div>
                   )}
                 </td>
               </tr>

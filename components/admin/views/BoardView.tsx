@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
 import { BOARD_COLUMNS, getUser, getProject, type Card as TCard } from "@/lib/admin";
-import { Avatar, PriorityPill, Pill } from "../ui";
+import { Avatar, PriorityPill, Pill, SearchInput } from "../ui";
 
 const DOT: Record<string, string> = {
   gray: "bg-concrete-400", blue: "bg-brand-500", red: "bg-red-500", amber: "bg-amber-500", green: "bg-emerald-500",
@@ -15,6 +15,7 @@ export default function BoardView() {
   const [dragId, setDragId] = useState<string | null>(null);
   const [openId, setOpenId] = useState<string | null>(null);
   const [overCol, setOverCol] = useState<string | null>(null);
+  const [q, setQ] = useState("");
 
   useEffect(() => {
     if (!user) return;
@@ -49,12 +50,17 @@ export default function BoardView() {
     });
   };
 
+  const needle = q.trim().toLowerCase();
+
   return (
     <>
-      <p className="mb-4 text-sm text-concrete-500">Drag cards between columns to update status. Click a card to open subtasks &amp; comments.</p>
+      <div className="mb-4 flex items-center justify-between gap-4">
+        <p className="text-sm text-concrete-500">Drag cards between columns to update status. Click a card to open subtasks &amp; comments.</p>
+        <SearchInput value={q} onChange={setQ} placeholder="Search cards…" />
+      </div>
       <div className="flex gap-5 overflow-x-auto pb-4">
         {BOARD_COLUMNS.map((col) => {
-          const colCards = cards.filter((c) => c.col === col.key);
+          const colCards = cards.filter((c) => c.col === col.key && (!needle || c.title.toLowerCase().includes(needle)));
           return (
             <div key={col.key} className="flex w-72 shrink-0 flex-col">
               <div className="mb-3 flex items-center gap-2 px-1">

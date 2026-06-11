@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
 import { PERMS, money, type Project } from "@/lib/admin";
-import { Card, THead, Table, StatusPill, Bar, Pill, PrimaryBtn, Modal, Field, inputCls } from "../ui";
+import { Card, THead, Table, StatusPill, Bar, Pill, PrimaryBtn, Modal, Field, inputCls, SearchInput } from "../ui";
 
 const SECTORS = ["Commercial","Industrial","Residential","Transportation","Recreational","Retail","Historical"];
 const STATUSES = ["Planning","In Progress","On Hold","Complete"];
@@ -21,6 +21,8 @@ export default function ProjectsView() {
   const [saving, setSaving] = useState(false);
   const [clients, setClients] = useState<ClientRow[]>([]);
   const [users, setUsers] = useState<UserRow[]>([]);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [q, setQ] = useState("");
 
   useEffect(() => {
     if (!user) return;
@@ -74,10 +76,29 @@ export default function ProjectsView() {
     setSaving(false);
   };
 
+  const handleDelete = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    if (deletingId) return;
+    if (!confirm("Delete this project? All its milestones, tasks, incidents and board cards will be deleted too. This cannot be undone.")) return;
+    setDeletingId(id);
+    await fetch(`/api/projects/${id}`, { method: "DELETE" });
+    setProjects((prev) => prev.filter((p) => p.id !== id));
+    setDeletingId(null);
+  };
+
   if (!user) return null;
   const perms = PERMS[user.role];
   const pms = users.filter((u) => u.role === "pm" || u.role === "admin");
   const foremen = users.filter((u) => u.role === "foreman");
+
+  const needle = q.trim().toLowerCase();
+  const filtered = needle
+    ? projects.filter((x) => {
+        const client = clients.find((c) => c.id === x.client)?.name ?? "";
+        const pmName = users.find((u) => u.id === x.pm)?.name ?? "";
+        return [x.name, x.location, x.sector, x.status, client, pmName].some((v) => v.toLowerCase().includes(needle));
+      })
+    : projects;
 
   return (
     <>
@@ -86,11 +107,16 @@ export default function ProjectsView() {
           Showing the {projects.length} project{projects.length === 1 ? "" : "s"} {perms.projectScope === "managed" ? "you manage" : "you're assigned to"}.
         </p>
       )}
-      <Card title="All projects" right={perms.editProjects ? <PrimaryBtn onClick={openCreate}>+ New project</PrimaryBtn> : undefined}>
+      <Card title="All projects" right={
+        <div className="flex items-center gap-3">
+          <SearchInput value={q} onChange={setQ} placeholder="Search projects…" />
+          {perms.editProjects && <PrimaryBtn onClick={openCreate}>+ New project</PrimaryBtn>}
+        </div>
+      }>
         <Table>
           <THead cols={["Project", "Client", "Sector", "Status", "Progress", ...(perms.viewBudget ? ["Spent / Budget"] : []), "PM", ""]} />
           <tbody>
-            {projects.map((x) => {
+            {filtered.map((x) => {
               const pm = users.find((u) => u.id === x.pm);
               return (
                 <tr key={x.id} className="border-b border-concrete-100 transition-colors last:border-0 hover:bg-brand-50/40">
@@ -106,7 +132,13 @@ export default function ProjectsView() {
                   <td className="px-5 py-3 text-concrete-500">{pm?.name ?? "—"}</td>
                   <td className="px-5 py-3 text-right">
                     {perms.editProjects && (
-                      <button onClick={() => openEdit(x)} className="font-display text-xs font-semibold text-brand-700 hover:text-brand-800">Edit</button>
+                      <div className="flex items-center justify-end gap-3">
+                        <button onClick={(e) => { e.stopPropagation(); openEdit(x); }} className="font-display text-xs font-semibold text-brand-700 hover:text-brand-800">Edit</button>
+                        <button onClick={(e) => handleDelete(e, x.id)} disabled={!!deletingId}
+                          className="font-display text-xs font-semibold text-red-600 transition-opacity hover:text-red-700 disabled:opacity-50">
+                          {deletingId === x.id ? "…" : "Delete"}
+                        </button>
+                      </div>
                     )}
                   </td>
                 </tr>

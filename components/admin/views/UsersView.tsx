@@ -1,19 +1,23 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useAuth } from "@/lib/auth";
 import { ROLES, type RoleKey } from "@/lib/admin";
-import { Card, THead, Table, RolePill, Pill, Avatar, PrimaryBtn, Modal, Field, inputCls } from "../ui";
+import { Card, THead, Table, RolePill, Pill, Avatar, PrimaryBtn, Modal, Field, inputCls, SearchInput } from "../ui";
 
 type UserRow = { id: string; name: string; role: string; title: string; email: string; phone: string; status: string; since: string };
 
 const empty = () => ({ name:"", email:"", role:"pm" as RoleKey, title:"", phone:"" });
 
 export default function UsersView() {
+  const { user } = useAuth();
   const [users, setUsers] = useState<UserRow[]>([]);
   const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(empty);
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [q, setQ] = useState("");
 
   useEffect(() => {
     fetch("/api/users").then((r) => r.json()).then(setUsers);
@@ -49,13 +53,38 @@ export default function UsersView() {
     setSaving(false);
   };
 
+  const handleDelete = async (id: string) => {
+    if (deletingId) return;
+    if (id === user?.id) { alert("You cannot delete your own account."); return; }
+    if (!confirm("Delete this user? This cannot be undone.")) return;
+    setDeletingId(id);
+    const res = await fetch(`/api/users/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      setUsers((prev) => prev.filter((u) => u.id !== id));
+    } else {
+      const data = await res.json().catch(() => null);
+      alert(data?.error ?? "Failed to delete user.");
+    }
+    setDeletingId(null);
+  };
+
+  const needle = q.trim().toLowerCase();
+  const filtered = needle
+    ? users.filter((m) => [m.name, m.email, m.title, m.role, m.status].some((v) => v.toLowerCase().includes(needle)))
+    : users;
+
   return (
     <>
-      <Card title="Users & roles" right={<PrimaryBtn onClick={openCreate}>+ Invite user</PrimaryBtn>}>
+      <Card title="Users & roles" right={
+        <div className="flex items-center gap-3">
+          <SearchInput value={q} onChange={setQ} placeholder="Search users…" />
+          <PrimaryBtn onClick={openCreate}>+ Invite user</PrimaryBtn>
+        </div>
+      }>
         <Table>
           <THead cols={["User", "Title", "Role", "Status", "Since", ""]} />
           <tbody>
-            {users.map((m) => (
+            {filtered.map((m) => (
               <tr key={m.id} className="border-b border-concrete-100 last:border-0 hover:bg-brand-50/40">
                 <td className="px-5 py-3">
                   <div className="flex items-center gap-3">
@@ -68,7 +97,13 @@ export default function UsersView() {
                 <td className="px-5 py-3"><Pill text={m.status} tone={m.status === "Active" ? "green" : "amber"} /></td>
                 <td className="px-5 py-3 font-mono text-xs text-concrete-500">{m.since}</td>
                 <td className="px-5 py-3 text-right">
-                  <button onClick={() => openEdit(m)} className="font-display text-xs font-semibold text-brand-700 hover:text-brand-800">Edit</button>
+                  <div className="flex items-center justify-end gap-3">
+                    <button onClick={() => openEdit(m)} className="font-display text-xs font-semibold text-brand-700 hover:text-brand-800">Edit</button>
+                    <button onClick={() => handleDelete(m.id)} disabled={!!deletingId}
+                      className="font-display text-xs font-semibold text-red-600 transition-opacity hover:text-red-700 disabled:opacity-50">
+                      {deletingId === m.id ? "…" : "Delete"}
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

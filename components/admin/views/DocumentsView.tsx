@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
 import { getUser, type Doc } from "@/lib/admin";
-import { Card, THead, Table, PrimaryBtn, Modal, Field, inputCls } from "../ui";
+import { Card, THead, Table, PrimaryBtn, Modal, Field, inputCls, SearchInput } from "../ui";
 
 const KNOWN_TYPES = ["PDF","XLSX","DWG","DOCX","PPT","ZIP"];
 type ProjectRow = { id: string; name: string };
@@ -22,16 +22,18 @@ export default function DocumentsView() {
   const [projectId, setProjectId] = useState("");
   const [saving, setSaving] = useState(false);
   const [projects, setProjects] = useState<ProjectRow[]>([]);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [q, setQ] = useState("");
 
   useEffect(() => {
     if (!user) return;
     fetch(`/api/documents?userId=${user.id}`).then((r) => r.json()).then(setDocs);
+    fetch(`/api/projects?userId=${user.id}`).then((r) => r.json()).then(setProjects);
   }, [user]);
 
   const openModal = () => {
     setFile(null);
     setProjectId("");
-    if (user) fetch(`/api/projects?userId=${user.id}`).then((r) => r.json()).then(setProjects);
     setOpen(true);
   };
 
@@ -56,13 +58,36 @@ export default function DocumentsView() {
     setSaving(false);
   };
 
+  const handleDelete = async (id: string) => {
+    if (deletingId) return;
+    if (!confirm("Delete this document? This cannot be undone.")) return;
+    setDeletingId(id);
+    await fetch(`/api/documents/${id}`, { method: "DELETE" });
+    setDocs((prev) => prev.filter((d) => d.id !== id));
+    setDeletingId(null);
+  };
+
+  const needle = q.trim().toLowerCase();
+  const filtered = needle
+    ? docs.filter((d) => {
+        const project = d.project ? projects.find((p) => p.id === d.project)?.name ?? "" : "";
+        const owner = getUser(d.owner)?.name ?? "";
+        return [d.name, d.type, project, owner].some((v) => v.toLowerCase().includes(needle));
+      })
+    : docs;
+
   return (
     <>
-      <Card title="Documents" right={<PrimaryBtn onClick={openModal}>Upload</PrimaryBtn>}>
+      <Card title="Documents" right={
+        <div className="flex items-center gap-3">
+          <SearchInput value={q} onChange={setQ} placeholder="Search documents…" />
+          <PrimaryBtn onClick={openModal}>Upload</PrimaryBtn>
+        </div>
+      }>
         <Table>
           <THead cols={["Name", "Project", "Size", "Owner", "Updated", ""]} />
           <tbody>
-            {docs.map((d) => {
+            {filtered.map((d) => {
               const pr = d.project ? projects.find((p) => p.id === d.project) : null;
               return (
                 <tr key={d.id} className="border-b border-concrete-100 last:border-0 hover:bg-brand-50/40">
@@ -77,11 +102,17 @@ export default function DocumentsView() {
                   <td className="px-5 py-3 text-concrete-500">{getUser(d.owner)?.name ?? "—"}</td>
                   <td className="px-5 py-3 font-mono text-xs text-concrete-500">{d.updated}</td>
                   <td className="px-5 py-3 text-right">
-                    {d.path ? (
-                      <a href={d.path} download className="font-display text-xs font-semibold text-brand-700 hover:text-brand-800">Download</a>
-                    ) : (
-                      <span className="font-display text-xs text-concrete-300">Download</span>
-                    )}
+                    <div className="flex items-center justify-end gap-3">
+                      {d.path ? (
+                        <a href={d.path} download className="font-display text-xs font-semibold text-brand-700 hover:text-brand-800">Download</a>
+                      ) : (
+                        <span className="font-display text-xs text-concrete-300">Download</span>
+                      )}
+                      <button onClick={() => handleDelete(d.id)} disabled={!!deletingId}
+                        className="font-display text-xs font-semibold text-red-600 transition-opacity hover:text-red-700 disabled:opacity-50">
+                        {deletingId === d.id ? "…" : "Delete"}
+                      </button>
+                    </div>
                   </td>
                 </tr>
               );

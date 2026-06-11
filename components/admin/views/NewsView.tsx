@@ -3,15 +3,15 @@
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useAuth } from "@/lib/auth";
-import { PERMS, STATS, getUser, type Article } from "@/lib/admin";
-import { StatCard, Card, THead, Table, Pill, PrimaryBtn, Field, inputCls } from "../ui";
+import { PERMS, STATS, type Article } from "@/lib/admin";
+import { StatCard, Card, THead, Table, Pill, PrimaryBtn, Field, inputCls, SearchInput } from "../ui";
 
 const RichEditor = dynamic(() => import("../RichEditor"), { ssr: false });
 
 type UserRow = { id: string; name: string };
 type ArticleWithBody = Article & { body?: string };
 
-const empty = () => ({ title:"", tags:"", excerpt:"", authorId:"", body:"" });
+const empty = () => ({ title:"", tags:"", excerpt:"", body:"" });
 
 export default function NewsView() {
   const { user } = useAuth();
@@ -23,27 +23,34 @@ export default function NewsView() {
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [users, setUsers] = useState<UserRow[]>([]);
+  const [q, setQ] = useState("");
 
   useEffect(() => {
     fetch("/api/news").then((r) => r.json()).then(setNews);
+    fetch("/api/users").then((r) => r.json()).then(setUsers);
   }, []);
 
   if (!user) return null;
   const perms = PERMS[user.role];
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
-  const loadUsers = () => fetch("/api/users").then((r) => r.json()).then(setUsers);
-
-  const openCreate = () => { setForm({ ...empty(), authorId: user.id }); setEditingId(null); loadUsers(); setOpen(true); };
+  const openCreate = () => { setForm(empty()); setEditingId(null); setOpen(true); };
   const openEdit = (n: ArticleWithBody) => {
-    setForm({ title: n.title, tags: n.tags.join(", "), excerpt: n.excerpt, authorId: n.author, body: n.body ?? "" });
+    setForm({ title: n.title, tags: n.tags.join(", "), excerpt: n.excerpt, body: n.body ?? "" });
     setEditingId(n.id);
-    loadUsers();
     setOpen(true);
   };
 
   const pub = news.filter((n) => n.status === "Published").length;
   const draft = news.filter((n) => n.status === "Draft").length;
+
+  const needle = q.trim().toLowerCase();
+  const filtered = needle
+    ? news.filter((n) => {
+        const author = users.find((u) => u.id === n.author)?.name ?? "";
+        return [n.title, n.status, author, ...n.tags].some((v) => v.toLowerCase().includes(needle));
+      })
+    : news;
 
   const togglePublish = async (id: string) => {
     const article = news.find((n) => n.id === id);
@@ -74,14 +81,14 @@ export default function NewsView() {
     if (editingId) {
       const res = await fetch(`/api/news/${editingId}`, {
         method: "PATCH", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: form.title, authorId: form.authorId, tags, excerpt: form.excerpt, body: form.body }),
+        body: JSON.stringify({ title: form.title, tags, excerpt: form.excerpt, body: form.body }),
       });
       const updated = await res.json();
       setNews((prev) => prev.map((n) => n.id === editingId ? { ...n, ...updated } : n));
     } else {
       const res = await fetch("/api/news", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, tags }),
+        body: JSON.stringify({ ...form, tags, authorId: user.id }),
       });
       const created = await res.json();
       setNews((prev) => [created, ...prev]);
@@ -98,12 +105,17 @@ export default function NewsView() {
         <StatCard label="Total articles" value={STATS.articles} hint="SEO case studies" />
       </div>
 
-      <Card title="Articles" right={perms.manageNews ? <PrimaryBtn onClick={openCreate}>+ New article</PrimaryBtn> : undefined}>
+      <Card title="Articles" right={
+        <div className="flex items-center gap-3">
+          <SearchInput value={q} onChange={setQ} placeholder="Search articles…" />
+          {perms.manageNews && <PrimaryBtn onClick={openCreate}>+ New article</PrimaryBtn>}
+        </div>
+      }>
         <Table>
           <THead cols={["Title", "Tags", "Author", "Date", "Status", ""]} />
           <tbody>
-            {news.map((n) => {
-              const a = getUser(n.author);
+            {filtered.map((n) => {
+              const a = users.find((u) => u.id === n.author);
               return (
                 <tr key={n.id} className="border-b border-concrete-100 last:border-0 hover:bg-brand-50/40">
                   <td className="px-5 py-3">
@@ -160,12 +172,6 @@ export default function NewsView() {
               <div className="flex-1 space-y-4 overflow-y-auto p-6">
                 <Field label="Title">
                   <input required className={inputCls} value={form.title} onChange={(e) => set("title", e.target.value)} placeholder="e.g. Lessons from the Harbourside Build" />
-                </Field>
-                <Field label="Author">
-                  <select required className={inputCls} value={form.authorId} onChange={(e) => set("authorId", e.target.value)}>
-                    <option value="">Select author…</option>
-                    {users.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
-                  </select>
                 </Field>
                 <div className="grid grid-cols-2 gap-4">
                   <Field label="Tags (comma-separated)">

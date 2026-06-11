@@ -15,6 +15,24 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   return Response.json(mapProject(p));
 }
 
+export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  await db.$transaction([
+    db.cardSubtask.deleteMany({ where: { card: { projectId: id } } }),
+    db.cardComment.deleteMany({ where: { card: { projectId: id } } }),
+    db.card.deleteMany({ where: { projectId: id } }),
+    db.milestone.deleteMany({ where: { projectId: id } }),
+    db.task.deleteMany({ where: { projectId: id } }),
+    db.incident.deleteMany({ where: { projectId: id } }),
+    db.projectTeam.deleteMany({ where: { projectId: id } }),
+    db.activity.deleteMany({ where: { projectId: id } }),
+    db.doc.updateMany({ where: { projectId: id }, data: { projectId: null } }),
+    db.article.updateMany({ where: { projectId: id }, data: { projectId: null } }),
+    db.project.delete({ where: { id } }),
+  ]);
+  return new Response(null, { status: 204 });
+}
+
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const body = await req.json();

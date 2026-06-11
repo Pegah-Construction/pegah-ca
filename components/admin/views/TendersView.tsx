@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
 import { TENDER_PLATFORMS, STATS, money, type Tender } from "@/lib/admin";
-import { StatCard, Card, THead, Table, Pill } from "../ui";
+import { StatCard, Card, THead, Table, Pill, SearchInput } from "../ui";
 
 export default function TendersView() {
   const { user } = useAuth();
@@ -11,13 +11,18 @@ export default function TendersView() {
   const [platform, setPlatform] = useState("All");
   const [status, setStatus] = useState("All");
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [q, setQ] = useState("");
   useEffect(() => {
     fetch("/api/tenders").then((r) => r.json()).then(setTenders);
   }, []);
   if (!user) return null;
 
+  const needle = q.trim().toLowerCase();
   const list = tenders.filter(
-    (t) => (platform === "All" || t.platform === platform) && (status === "All" || t.status === status)
+    (t) =>
+      (platform === "All" || t.platform === platform) &&
+      (status === "All" || t.status === status) &&
+      (!needle || [t.title, t.ref, t.org, t.type, t.category].some((v) => v.toLowerCase().includes(needle)))
   );
   const open = tenders.filter((t) => t.status === "Open").length;
   const soon = tenders.filter((t) => t.status === "Closing soon").length;
@@ -55,6 +60,7 @@ export default function TendersView() {
       </p>
 
       <div className="mb-4 space-y-2">
+        <SearchInput value={q} onChange={setQ} placeholder="Search tenders…" />
         <div className="flex flex-wrap gap-2">
           {["All", ...TENDER_PLATFORMS].map((pl) => (
             <button key={pl} onClick={() => setPlatform(pl)}

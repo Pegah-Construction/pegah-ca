@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
 import { getUser, type Incident } from "@/lib/admin";
-import { Card, THead, Table, StatusPill, Pill, StatCard, PrimaryBtn, Modal, Field, inputCls } from "../ui";
+import { Card, THead, Table, StatusPill, Pill, StatCard, PrimaryBtn, Modal, Field, inputCls, SearchInput } from "../ui";
 
 const TYPES = ["Near miss","Hazard","First aid","Lost time","Property damage"];
 const SEVERITIES = ["Low","Medium","High"];
@@ -19,7 +19,9 @@ export default function SafetyView() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(empty);
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [projects, setProjects] = useState<ProjectRow[]>([]);
+  const [q, setQ] = useState("");
 
   useEffect(() => {
     if (!user) return;
@@ -59,6 +61,24 @@ export default function SafetyView() {
     setSaving(false);
   };
 
+  const handleDelete = async (id: string) => {
+    if (deletingId) return;
+    if (!confirm("Delete this incident report? This cannot be undone.")) return;
+    setDeletingId(id);
+    await fetch(`/api/incidents/${id}`, { method: "DELETE" });
+    setIncidents((prev) => prev.filter((s) => s.id !== id));
+    setDeletingId(null);
+  };
+
+  const needle = q.trim().toLowerCase();
+  const filtered = needle
+    ? incidents.filter((s) => {
+        const project = projects.find((p) => p.id === s.project)?.name ?? "";
+        const reporter = getUser(s.reportedBy)?.name ?? "";
+        return [s.type, s.severity, s.status, s.note, project, reporter].some((v) => v.toLowerCase().includes(needle));
+      })
+    : incidents;
+
   const open_ = incidents.filter((s) => s.status === "Open").length;
   const review = incidents.filter((s) => s.status === "Under review").length;
   const closed = incidents.filter((s) => s.status === "Closed").length;
@@ -70,11 +90,16 @@ export default function SafetyView() {
         <StatCard label="Under review" value={review} />
         <StatCard label="Closed" value={closed} />
       </div>
-      <Card title="Safety incidents" right={<PrimaryBtn onClick={openCreate}>+ Report incident</PrimaryBtn>}>
+      <Card title="Safety incidents" right={
+        <div className="flex items-center gap-3">
+          <SearchInput value={q} onChange={setQ} placeholder="Search incidents…" />
+          <PrimaryBtn onClick={openCreate}>+ Report incident</PrimaryBtn>
+        </div>
+      }>
         <Table>
           <THead cols={["Date", "Project", "Type", "Severity", "Detail", "Reported by", "Status", ""]} />
           <tbody>
-            {incidents.map((s) => (
+            {filtered.map((s) => (
               <tr key={s.id} className="border-b border-concrete-100 transition-colors last:border-0 hover:bg-brand-50/40">
                 <td className="px-5 py-3 font-mono text-xs text-concrete-500">{s.date}</td>
                 <td className="px-5 py-3 text-concrete-600">{projects.find((p) => p.id === s.project)?.name ?? s.project}</td>
@@ -84,7 +109,13 @@ export default function SafetyView() {
                 <td className="px-5 py-3 text-concrete-500">{getUser(s.reportedBy)?.name ?? "—"}</td>
                 <td className="px-5 py-3"><StatusPill status={s.status} /></td>
                 <td className="px-5 py-3 text-right">
-                  <button onClick={() => openEdit(s)} className="font-display text-xs font-semibold text-brand-700 hover:text-brand-800">Edit</button>
+                  <div className="flex items-center justify-end gap-3">
+                    <button onClick={() => openEdit(s)} className="font-display text-xs font-semibold text-brand-700 hover:text-brand-800">Edit</button>
+                    <button onClick={() => handleDelete(s.id)} disabled={!!deletingId}
+                      className="font-display text-xs font-semibold text-red-600 transition-opacity hover:text-red-700 disabled:opacity-50">
+                      {deletingId === s.id ? "…" : "Delete"}
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

@@ -114,6 +114,23 @@ export const PrimaryBtn = ({ children, onClick }: { children: React.ReactNode; o
   <button onClick={onClick} className="rounded-md bg-brand-700 px-3 py-1.5 font-display text-xs font-semibold text-white hover:bg-brand-800">{children}</button>
 );
 
+export function SearchInput({ value, onChange, placeholder = "Search…" }: { value: string; onChange: (v: string) => void; placeholder?: string }) {
+  return (
+    <div className="relative">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-concrete-400">
+        <circle cx="11" cy="11" r="8" /><path d="M21 21l-4-4" />
+      </svg>
+      <input
+        type="search"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="w-full rounded-md border border-concrete-200 bg-white py-1.5 pl-8 pr-3 text-sm text-ink placeholder:text-concrete-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:w-56"
+      />
+    </div>
+  );
+}
+
 export const inputCls = "w-full rounded-md border border-concrete-200 bg-white px-3 py-2 text-sm text-ink placeholder:text-concrete-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500";
 
 export function Field({ label, children }: { label: string; children: React.ReactNode }) {

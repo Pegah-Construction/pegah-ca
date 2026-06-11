@@ -4,21 +4,27 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth";
 import { type Project } from "@/lib/admin";
-import { Card, StatusPill } from "../ui";
+import { Card, StatusPill, SearchInput } from "../ui";
 
 export default function ScheduleView() {
   const { user } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
+  const [q, setQ] = useState("");
   useEffect(() => {
     if (!user) return;
     fetch(`/api/projects?userId=${user.id}`).then((r) => r.json()).then(setProjects);
   }, [user]);
   if (!user) return null;
 
+  const needle = q.trim().toLowerCase();
+  const filtered = needle
+    ? projects.filter((x) => [x.name, x.status, x.location].some((v) => v.toLowerCase().includes(needle)))
+    : projects;
+
   return (
-    <Card title="Milestone schedule">
+    <Card title="Milestone schedule" right={<SearchInput value={q} onChange={setQ} placeholder="Search projects…" />}>
       <div>
-        {projects.map((x) => (
+        {filtered.map((x) => (
           <div key={x.id} className="border-b border-concrete-100 px-5 py-4 last:border-0">
             <div className="flex items-center justify-between">
               <Link href={`/admin/projects/${x.id}`} className="font-display text-sm font-semibold text-ink hover:text-brand-700">{x.name}</Link>

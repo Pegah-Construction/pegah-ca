@@ -1,5 +1,11 @@
 import { db } from "@/lib/db";
 
+export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  await db.incident.delete({ where: { id } });
+  return new Response(null, { status: 204 });
+}
+
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const body = await req.json();
