@@ -172,7 +172,7 @@ export default function NewsView() {
                     <input className={inputCls} value={form.tags} onChange={(e) => set("tags", e.target.value)} placeholder="e.g. Commercial, Design-Build" />
                   </Field>
                   <Field label="Excerpt">
-                    <input required className={inputCls} value={form.excerpt} onChange={(e) => set("excerpt", e.target.value)} placeholder="Short summary for listings…" />
+                    <input className={inputCls} value={form.excerpt} onChange={(e) => set("excerpt", e.target.value)} placeholder="Short summary for listings…" />
                   </Field>
                 </div>
                 <Field label="Article body">
