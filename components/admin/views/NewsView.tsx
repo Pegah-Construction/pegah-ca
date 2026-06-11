@@ -21,6 +21,7 @@ export default function NewsView() {
   const [form, setForm] = useState(empty);
   const [saving, setSaving] = useState(false);
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [users, setUsers] = useState<UserRow[]>([]);
 
   useEffect(() => {
@@ -55,6 +56,15 @@ export default function NewsView() {
       body: JSON.stringify({ status: newStatus }),
     });
     setTogglingId(null);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (deletingId) return;
+    if (!confirm("Delete this article? This cannot be undone.")) return;
+    setDeletingId(id);
+    await fetch(`/api/news/${id}`, { method: "DELETE" });
+    setNews((prev) => prev.filter((n) => n.id !== id));
+    setDeletingId(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -120,6 +130,12 @@ export default function NewsView() {
                         <button onClick={() => togglePublish(n.id)} disabled={!!togglingId}
                           className={`font-display text-xs font-semibold transition-opacity disabled:opacity-50 ${n.status === "Published" ? "text-concrete-500 hover:text-ink" : "text-brand-700 hover:text-brand-800"}`}>
                           {togglingId === n.id ? "…" : n.status === "Published" ? "Unpublish" : "Publish"}
+                        </button>
+                      )}
+                      {perms.manageNews && (
+                        <button onClick={() => handleDelete(n.id)} disabled={!!deletingId}
+                          className="font-display text-xs font-semibold text-red-600 transition-opacity hover:text-red-700 disabled:opacity-50">
+                          {deletingId === n.id ? "…" : "Delete"}
                         </button>
                       )}
                     </div>
