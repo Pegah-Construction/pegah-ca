@@ -34,6 +34,21 @@ export const stats: Stat[] = [
   { value: "7", label: "Sectors served", href: "/services" },
 ];
 
+export type Leader = { name: string; title: string; bio: string };
+
+export const leadership: Leader[] = [
+  {
+    name: "Placeholder Name",
+    title: "President",
+    bio: "Placeholder bio — outline this leader's background, years with the company, and the areas of the business they oversee. Replace with the real profile and headshot.",
+  },
+  {
+    name: "Placeholder Name",
+    title: "Vice President",
+    bio: "Placeholder bio — outline this leader's background, years with the company, and the areas of the business they oversee. Replace with the real profile and headshot.",
+  },
+];
+
 export type Project = {
   slug: string;
   name: string;
