@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { generatePassword, hashPassword } from "../lib/password";
 
 const db = new PrismaClient();
 
@@ -14,7 +15,10 @@ async function main() {
     { id:"u7", name:"James Wright", role:"foreman", title:"Site Foreman",           email:"j.wright@pegah.ca", phone:"416 739 9337", status:"On leave", since:"2016" },
     { id:"u8", name:"Aisha Khan",   role:"admin",   title:"Office Administrator",   email:"a.khan@pegah.ca",   phone:"416 739 9308", status:"Active",   since:"2022" },
   ];
-  for (const u of users) await db.user.upsert({ where: { id: u.id }, update: u, create: u });
+  for (const u of users) {
+    const password = hashPassword(generatePassword(u.name, u.email));
+    await db.user.upsert({ where: { id: u.id }, update: { ...u, password }, create: { ...u, password } });
+  }
 
   // ── Clients ───────────────────────────────────────────────────────────────
   const clients = [

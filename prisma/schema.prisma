@@ -8,14 +8,15 @@ datasource db {
 }
 
 model User {
-  id     String @id
-  name   String
-  role   String
-  title  String
-  email  String @unique
-  phone  String
-  status String
-  since  String
+  id       String @id
+  name     String
+  role     String
+  title    String
+  email    String @unique
+  phone    String
+  status   String
+  since    String
+  password String @default("")
 
   managedProjects   Project[]     @relation("ProjectPM")
   foremanProjects   Project[]     @relation("ProjectForeman")

@@ -28,5 +28,6 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const data: Record<string, unknown> = {};
   for (const key of allowed) if (key in body) data[key] = body[key];
   const updated = await db.user.update({ where: { id }, data });
-  return Response.json(updated);
+  const { password: _hash, ...rest } = updated;
+  return Response.json(rest);
 }

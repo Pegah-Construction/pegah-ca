@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { useAuth } from "@/lib/auth";
-import { USERS, DEMO_ACCOUNTS, ROLES } from "@/lib/admin";
-import { Avatar, RolePill } from "./ui";
 
 export default function LoginScreen() {
   const { signIn } = useAuth();
@@ -41,29 +39,6 @@ export default function LoginScreen() {
             </div>
             <button onClick={() => signIn("u1")} className="w-full rounded-md bg-brand-700 px-4 py-2.5 font-display text-sm font-semibold text-white hover:bg-brand-800">Sign in</button>
           </div>
-
-          <div className="my-6 flex items-center gap-3 text-concrete-400">
-            <span className="h-px flex-1 bg-concrete-200" />
-            <span className="font-mono text-[11px] uppercase tracking-wide">Quick demo access</span>
-            <span className="h-px flex-1 bg-concrete-200" />
-          </div>
-
-          <div className="space-y-2">
-            {DEMO_ACCOUNTS.map((id) => {
-              const m = USERS.find((u) => u.id === id)!;
-              return (
-                <button key={id} onClick={() => signIn(id)} className="flex w-full items-center gap-3 rounded-xl border border-concrete-200 bg-white px-4 py-3 text-left transition-colors hover:border-brand-400 hover:bg-brand-50/40">
-                  <Avatar name={m.name} id={m.id} size="h-10 w-10 text-sm" />
-                  <div className="flex-1">
-                    <div className="font-display text-sm font-bold text-ink">{m.name}</div>
-                    <div className="font-mono text-[11px] text-concrete-500">{m.title}</div>
-                  </div>
-                  <RolePill role={m.role} />
-                </button>
-              );
-            })}
-          </div>
-          <p className="mt-6 text-center font-mono text-[11px] text-concrete-400">Mock environment — choose any role to explore permissions.</p>
         </div>
       </div>
     </div>
