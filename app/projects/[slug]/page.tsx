@@ -7,14 +7,15 @@ import ImageSlot from "@/components/ImageSlot";
 import { Eyebrow } from "@/components/Brand";
 import { projects } from "@/lib/site";
 
-type Params = { params: { slug: string } };
+type Params = { params: Promise<{ slug: string }> };
 
 export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));
 }
 
-export function generateMetadata({ params }: Params): Metadata {
-  const project = projects.find((p) => p.slug === params.slug);
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const { slug } = await params;
+  const project = projects.find((p) => p.slug === slug);
   return {
     title: project
       ? `${project.name} — Pegah Construction Ltd.`
@@ -22,8 +23,9 @@ export function generateMetadata({ params }: Params): Metadata {
   };
 }
 
-export default function ProjectDetail({ params }: Params) {
-  const project = projects.find((p) => p.slug === params.slug);
+export default async function ProjectDetail({ params }: Params) {
+  const { slug } = await params;
+  const project = projects.find((p) => p.slug === slug);
   if (!project) notFound();
 
   const index = projects.findIndex((p) => p.slug === project.slug);
