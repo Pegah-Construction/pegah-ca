@@ -1,5 +1,18 @@
 import Link from "next/link";
 
+export function SiteLogo() {
+  return (
+    <Link href="/" className="inline-flex shrink-0 items-center">
+      {/* eslint-disable-next-line @next/next/no-img-element -- local SVG, no optimization needed */}
+      <img
+        src="/logo.svg"
+        alt="Pegah Construction Ltd. — 35+ years"
+        className="h-10 w-auto sm:h-12"
+      />
+    </Link>
+  );
+}
+
 export function Wordmark({ light = false }: { light?: boolean }) {
   return (
     <Link href="/" className="group inline-flex items-center gap-2">

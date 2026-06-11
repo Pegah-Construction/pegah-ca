@@ -101,6 +101,19 @@ export default function ProjectDetail({ params }: Params) {
                   </div>
                 ))}
               </dl>
+              {project.sector === "Residential" && (
+                <div className="mt-6 border-t border-concrete-200 pt-6">
+                  <p className="font-mono text-[11px] uppercase tracking-label text-concrete-500">
+                    Development partner
+                  </p>
+                  {/* eslint-disable-next-line @next/next/no-img-element -- local SVG, no optimization needed */}
+                  <img
+                    src="/format-logo.svg"
+                    alt="Format"
+                    className="mt-3 h-10 w-auto rounded-md"
+                  />
+                </div>
+              )}
               <Link
                 href="/contact"
                 className="mt-6 inline-flex w-full items-center justify-center rounded-md bg-brand-700 px-5 py-3 font-display text-sm font-semibold text-white hover:bg-brand-800"

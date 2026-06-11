@@ -56,9 +56,20 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-white/10">
-        <div className="mx-auto flex max-w-8xl items-center justify-between gap-4 px-6 py-6 lg:px-10">
+        <div className="mx-auto flex max-w-8xl flex-wrap items-center justify-between gap-4 px-6 py-6 lg:px-10">
           <p className="font-mono text-xs text-concrete-400">
             © {new Date().getFullYear()} {company.name}
+          </p>
+          <p className="font-mono text-xs text-concrete-400">
+            For our development projects visit{" "}
+            <a
+              href="https://www.formatgroup.ca"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-concrete-200 transition-colors hover:text-white"
+            >
+              www.formatgroup.ca
+            </a>
           </p>
           <Link
             href="/admin"

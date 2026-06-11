@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { nav, company } from "@/lib/site";
-import { Wordmark } from "./Brand";
+import { SiteLogo } from "./Brand";
 
 /**
  * Solid, always-legible navbar. Sticks to the top on every page so the
@@ -16,7 +16,7 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-concrete-200 bg-paper/90 backdrop-blur-md">
       <nav className="mx-auto flex max-w-8xl items-center gap-8 px-6 py-4 lg:px-10">
-        <Wordmark />
+        <SiteLogo />
 
         <ul className="ml-4 hidden items-center gap-7 lg:flex">
           {nav.map((item) => {
