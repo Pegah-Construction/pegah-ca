@@ -5,7 +5,7 @@ export function SiteLogo() {
     <Link href="/" className="inline-flex shrink-0 items-center">
       {/* eslint-disable-next-line @next/next/no-img-element -- local SVG, no optimization needed */}
       <img
-        src="/logo.svg"
+        src="/logo.webp"
         alt="Pegah Construction Ltd. — 35+ years"
         className="h-10 w-auto sm:h-12"
       />
