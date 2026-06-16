@@ -82,31 +82,38 @@ export const CLIENTS: Client[] = [
 ];
 
 export type Milestone = { n: string; d: string; done: boolean };
+export type ProjectPhoto = { id: number; path: string; order: number };
 export type Project = {
-  id: string; name: string; client: string; sector: string;
-  status: "Planning" | "In Progress" | "On Hold" | "Complete";
+  id: string; name: string; location: string;
+  category: string; type: string; dateCompleted: string; owner: string; architect: string;
+  contractType: string; value: number; grossFloorArea: string; description: string;
+  photos: ProjectPhoto[];
+  // kept for board/tasks/incidents compatibility
+  client: string; sector: string; status: string;
   progress: number; budget: number; spent: number; start: string; end: string;
-  pm: string; foreman: string; team: string[]; location: string; milestones: Milestone[];
+  pm: string; foreman: string; team: string[]; milestones: Milestone[];
 };
 
-export const PROJECTS: Project[] = [
-  { id:"p1", name:"Harbourside Commercial Centre", client:"c1", sector:"Commercial", status:"In Progress", progress:68, budget:4200000, spent:2730000, start:"2023-03", end:"2025-09", pm:"u2", foreman:"u3", team:["u2","u3","u6"], location:"Toronto, ON",
+const NEW_FIELDS = { category:"", type:"", dateCompleted:"", owner:"", architect:"", contractType:"", value:0, grossFloorArea:"", description:"", photos:[] as ProjectPhoto[] };
+
+export const PROJECTS = ([
+  { ...NEW_FIELDS, id:"p1", name:"Harbourside Commercial Centre", client:"c1", sector:"Commercial", status:"In Progress", progress:68, budget:4200000, spent:2730000, start:"2023-03", end:"2025-09", pm:"u2", foreman:"u3", team:["u2","u3","u6"], location:"Toronto, ON",
     milestones:[{n:"Site mobilization",d:"2023-04",done:true},{n:"Foundation complete",d:"2023-09",done:true},{n:"Structure topped out",d:"2024-06",done:true},{n:"Envelope & glazing",d:"2025-02",done:false},{n:"Interior fit-out",d:"2025-07",done:false},{n:"Handover",d:"2025-09",done:false}] },
-  { id:"p2", name:"Northfield Distribution Facility", client:"c2", sector:"Industrial", status:"In Progress", progress:42, budget:8500000, spent:3120000, start:"2024-01", end:"2025-12", pm:"u4", foreman:"u5", team:["u4","u5"], location:"Mississauga, ON",
+  { ...NEW_FIELDS, id:"p2", name:"Northfield Distribution Facility", client:"c2", sector:"Industrial", status:"In Progress", progress:42, budget:8500000, spent:3120000, start:"2024-01", end:"2025-12", pm:"u4", foreman:"u5", team:["u4","u5"], location:"Mississauga, ON",
     milestones:[{n:"Earthworks",d:"2024-02",done:true},{n:"Slab & foundations",d:"2024-07",done:true},{n:"Steel erection",d:"2025-01",done:false},{n:"Cladding",d:"2025-06",done:false},{n:"M&E fit-out",d:"2025-10",done:false},{n:"Commissioning",d:"2025-12",done:false}] },
-  { id:"p3", name:"Maple Grove Residences", client:"c3", sector:"Residential", status:"Planning", progress:12, budget:12000000, spent:640000, start:"2024-09", end:"2026-08", pm:"u2", foreman:"u3", team:["u2","u3"], location:"Vaughan, ON",
+  { ...NEW_FIELDS, id:"p3", name:"Maple Grove Residences", client:"c3", sector:"Residential", status:"Planning", progress:12, budget:12000000, spent:640000, start:"2024-09", end:"2026-08", pm:"u2", foreman:"u3", team:["u2","u3"], location:"Vaughan, ON",
     milestones:[{n:"Permits & approvals",d:"2024-11",done:true},{n:"Site prep",d:"2025-02",done:false},{n:"Phase 1 framing",d:"2025-08",done:false},{n:"Phase 2 framing",d:"2026-01",done:false},{n:"Occupancy",d:"2026-08",done:false}] },
-  { id:"p4", name:"Lakeshore Transit Hub", client:"c4", sector:"Transportation", status:"On Hold", progress:55, budget:22000000, spent:11440000, start:"2022-06", end:"2025-04", pm:"u4", foreman:"u7", team:["u4","u7"], location:"Hamilton, ON",
+  { ...NEW_FIELDS, id:"p4", name:"Lakeshore Transit Hub", client:"c4", sector:"Transportation", status:"On Hold", progress:55, budget:22000000, spent:11440000, start:"2022-06", end:"2025-04", pm:"u4", foreman:"u7", team:["u4","u7"], location:"Hamilton, ON",
     milestones:[{n:"Demolition",d:"2022-08",done:true},{n:"Substructure",d:"2023-03",done:true},{n:"Platform works",d:"2024-01",done:true},{n:"Concourse",d:"2024-09",done:false},{n:"Systems & testing",d:"2025-02",done:false}] },
-  { id:"p5", name:"Riverbend Recreation Complex", client:"c5", sector:"Recreational", status:"In Progress", progress:80, budget:9800000, spent:7210000, start:"2023-01", end:"2025-02", pm:"u6", foreman:"u5", team:["u6","u5"], location:"Markham, ON",
+  { ...NEW_FIELDS, id:"p5", name:"Riverbend Recreation Complex", client:"c5", sector:"Recreational", status:"In Progress", progress:80, budget:9800000, spent:7210000, start:"2023-01", end:"2025-02", pm:"u6", foreman:"u5", team:["u6","u5"], location:"Markham, ON",
     milestones:[{n:"Foundations",d:"2023-04",done:true},{n:"Pool tank",d:"2023-11",done:true},{n:"Superstructure",d:"2024-06",done:true},{n:"Interior finishes",d:"2024-12",done:false},{n:"Handover",d:"2025-02",done:false}] },
-  { id:"p6", name:"Queen Street Retail Pavilion", client:"c6", sector:"Retail", status:"Complete", progress:100, budget:3400000, spent:3320000, start:"2022-05", end:"2023-08", pm:"u2", foreman:"u7", team:["u2","u7"], location:"Toronto, ON",
+  { ...NEW_FIELDS, id:"p6", name:"Queen Street Retail Pavilion", client:"c6", sector:"Retail", status:"Complete", progress:100, budget:3400000, spent:3320000, start:"2022-05", end:"2023-08", pm:"u2", foreman:"u7", team:["u2","u7"], location:"Toronto, ON",
     milestones:[{n:"Fit-out start",d:"2022-06",done:true},{n:"Storefront",d:"2022-11",done:true},{n:"MEP",d:"2023-03",done:true},{n:"Handover",d:"2023-08",done:true}] },
-  { id:"p7", name:"Heritage Mill Restoration", client:"c7", sector:"Historical", status:"In Progress", progress:35, budget:5100000, spent:1785000, start:"2024-03", end:"2025-11", pm:"u6", foreman:"u3", team:["u6","u3"], location:"Cambridge, ON",
+  { ...NEW_FIELDS, id:"p7", name:"Heritage Mill Restoration", client:"c7", sector:"Historical", status:"In Progress", progress:35, budget:5100000, spent:1785000, start:"2024-03", end:"2025-11", pm:"u6", foreman:"u3", team:["u6","u3"], location:"Cambridge, ON",
     milestones:[{n:"Conservation survey",d:"2024-04",done:true},{n:"Structural stabilization",d:"2024-10",done:false},{n:"Masonry restoration",d:"2025-04",done:false},{n:"Adaptive fit-out",d:"2025-09",done:false},{n:"Handover",d:"2025-11",done:false}] },
-  { id:"p8", name:"Parkview Corporate Campus", client:"c8", sector:"Commercial", status:"In Progress", progress:22, budget:18000000, spent:3960000, start:"2024-06", end:"2026-12", pm:"u4", foreman:"u5", team:["u4","u5"], location:"Oakville, ON",
+  { ...NEW_FIELDS, id:"p8", name:"Parkview Corporate Campus", client:"c8", sector:"Commercial", status:"In Progress", progress:22, budget:18000000, spent:3960000, start:"2024-06", end:"2026-12", pm:"u4", foreman:"u5", team:["u4","u5"], location:"Oakville, ON",
     milestones:[{n:"Enabling works",d:"2024-08",done:true},{n:"Building A core",d:"2025-03",done:false},{n:"Building B core",d:"2025-10",done:false},{n:"Campus landscaping",d:"2026-06",done:false},{n:"Handover",d:"2026-12",done:false}] },
-];
+]) as Project[];
 
 export type Task = {
   id: string; title: string; project: string; assignee: string;

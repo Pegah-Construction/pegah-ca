@@ -2,31 +2,47 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import ImageSlot from "./ImageSlot";
-import { sectors, projects } from "@/lib/site";
+import PhotoCarousel from "./PhotoCarousel";
 
-export default function ProjectFilter() {
-  const [active, setActive] = useState("All");
+export type PublicProject = {
+  id: string;
+  name: string;
+  location: string;
+  category: string;
+  type: string;
+  dateCompleted: string;
+  photos: string[];
+};
+
+const CATEGORIES = ["All", "Commercial", "Residential"] as const;
+type Category = (typeof CATEGORIES)[number];
+
+export default function ProjectFilter({ projects }: { projects: PublicProject[] }) {
+  const [category, setCategory] = useState<Category>("All");
+  const [subType, setSubType] = useState("All");
   const [q, setQ] = useState("");
-  const [sort, setSort] = useState<"latest" | "oldest">("latest");
-  const tabs = ["All", ...sectors];
+
+  const byCategory = category === "All"
+    ? projects
+    : projects.filter((p) => p.category === category);
+
+  const subTypes = Array.from(new Set(byCategory.map((p) => p.type).filter(Boolean))).sort();
+
+  const handleCategoryChange = (c: Category) => {
+    setCategory(c);
+    setSubType("All");
+  };
 
   const needle = q.trim().toLowerCase();
-  const visible = projects
-    .filter((p) => active === "All" || p.sector === active)
-    .filter(
-      (p) =>
-        !needle ||
-        [p.name, p.location, p.sector, p.services].some((v) =>
-          v.toLowerCase().includes(needle)
-        )
-    )
-    .sort((a, b) =>
-      sort === "latest" ? Number(b.year) - Number(a.year) : Number(a.year) - Number(b.year)
+  const visible = byCategory
+    .filter((p) => subType === "All" || p.type === subType)
+    .filter((p) =>
+      !needle || [p.name, p.location, p.type, p.category].some((v) => v.toLowerCase().includes(needle))
     );
 
   return (
     <>
+      {/* Search + top-level category */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative w-full sm:max-w-xs">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-concrete-400">
@@ -40,72 +56,96 @@ export default function ProjectFilter() {
             className="w-full rounded-md border border-concrete-300 bg-white py-2.5 pl-10 pr-4 text-sm outline-none focus:border-brand-500"
           />
         </div>
-        <div className="flex items-center gap-2">
-          <span className="font-mono text-[11px] uppercase tracking-label text-concrete-500">Sort</span>
-          {(["latest", "oldest"] as const).map((s) => {
-            const on = s === sort;
-            return (
-              <button
-                key={s}
-                type="button"
-                aria-pressed={on}
-                onClick={() => setSort(s)}
-                className={`rounded-full px-3 py-1.5 font-mono text-[11px] uppercase tracking-label transition-colors ${
-                  on
-                    ? "bg-brand-700 text-white"
-                    : "border border-concrete-300 text-concrete-500 hover:border-brand-400 hover:text-brand-700"
-                }`}
-              >
-                {s}
-              </button>
-            );
-          })}
+
+        <div className="flex gap-1 rounded-lg border border-concrete-200 bg-concrete-50 p-1">
+          {CATEGORIES.map((c) => (
+            <button
+              key={c}
+              type="button"
+              onClick={() => handleCategoryChange(c)}
+              className={`rounded-md px-4 py-1.5 font-display text-sm font-semibold transition-colors ${
+                category === c
+                  ? "bg-white text-ink shadow-sm"
+                  : "text-concrete-500 hover:text-ink"
+              }`}
+            >
+              {c}
+            </button>
+          ))}
         </div>
       </div>
 
-      <div className="mb-10 flex flex-wrap gap-2">
-        {tabs.map((s) => {
-          const on = s === active;
-          return (
+      {/* Sub-type chips — only shown when a category is selected and has types */}
+      {category !== "All" && subTypes.length > 0 && (
+        <div className="mb-8 flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setSubType("All")}
+            className={`rounded-full px-3 py-1.5 font-mono text-[11px] uppercase tracking-label transition-colors ${
+              subType === "All"
+                ? "bg-brand-700 text-white"
+                : "border border-concrete-300 text-concrete-500 hover:border-brand-400 hover:text-brand-700"
+            }`}
+          >
+            All {category}
+          </button>
+          {subTypes.map((t) => (
             <button
-              key={s}
+              key={t}
               type="button"
-              aria-pressed={on}
-              onClick={() => setActive(s)}
+              onClick={() => setSubType(t)}
               className={`rounded-full px-3 py-1.5 font-mono text-[11px] uppercase tracking-label transition-colors ${
-                on
+                subType === t
                   ? "bg-brand-700 text-white"
                   : "border border-concrete-300 text-concrete-500 hover:border-brand-400 hover:text-brand-700"
               }`}
             >
-              {s}
+              {t}
             </button>
-          );
-        })}
-      </div>
+          ))}
+        </div>
+      )}
 
+      {/* Project grid */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {visible.map((p) => (
-          <Link key={p.slug} href={`/projects/${p.slug}`} className="group">
-            <ImageSlot
-              label="project photo"
-              className="aspect-[4/3] rounded-xl transition-opacity group-hover:opacity-90"
-            />
-            <div className="mt-3 flex items-center justify-between">
+          <div key={p.id} className="group">
+            {p.photos.length > 1 ? (
+              <PhotoCarousel photos={p.photos} imgClassName="aspect-[4/3]" />
+            ) : p.photos.length === 1 ? (
+              <Link href={`/projects/${p.id}`} className="block">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={p.photos[0]}
+                  alt={p.name}
+                  className="aspect-[4/3] w-full rounded-xl object-cover transition-opacity group-hover:opacity-90"
+                />
+              </Link>
+            ) : (
+              <Link href={`/projects/${p.id}`} className="block">
+                <div className="aspect-[4/3] rounded-xl bg-concrete-100 transition-opacity group-hover:opacity-90" />
+              </Link>
+            )}
+            <div className="mt-3 flex items-start justify-between gap-2">
               <h3 className="font-display text-lg font-bold tracking-tight text-ink group-hover:text-brand-700">
-                {p.name}
+                <Link href={`/projects/${p.id}`} className="hover:text-brand-700">{p.name}</Link>
               </h3>
-              <span className="font-mono text-[11px] uppercase tracking-label text-brand-700">
-                {p.sector}
-              </span>
+              {p.type && (
+                <span className="mt-1 shrink-0 font-mono text-[11px] uppercase tracking-label text-brand-700">
+                  {p.type}
+                </span>
+              )}
             </div>
-          </Link>
+            {p.location && (
+              <p className="mt-0.5 font-mono text-[11px] text-concrete-400">{p.location}</p>
+            )}
+          </div>
         ))}
       </div>
 
       {visible.length === 0 && (
         <p className="py-16 text-center font-body text-lg text-concrete-400">
-          {needle ? "No projects match your search." : "No projects in this sector yet."}
+          {needle ? "No projects match your search." : "No projects in this category yet."}
         </p>
       )}
     </>

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { money, type Tender } from "@/lib/admin";
-import { StatCard, Card, Pill, AccessDenied, Modal, Field, inputCls } from "../ui";
+import { StatCard, Card, Pill, Modal, Field, inputCls } from "../ui";
 
 const TYPES = ["ITT", "RFP", "RFQ", "EOI", "RFPQ"];
 const STATUSES = ["Open", "Closing soon", "Closed"] as const;
@@ -35,7 +35,7 @@ export default function TenderDetailView({ id }: { id: string }) {
       .then((data) => { if (data) setTender(data); });
   }, [id]);
 
-  if (notFound) return <AccessDenied msg="Tender not found." />;
+  if (notFound) return null;
   if (!tender) return null;
 
   const t = tender;

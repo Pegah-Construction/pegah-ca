@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { hashPassword } from "@/lib/password";
 
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -27,6 +28,9 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const allowed = ["name", "email", "role", "title", "phone", "status"] as const;
   const data: Record<string, unknown> = {};
   for (const key of allowed) if (key in body) data[key] = body[key];
+  if (body.password?.trim()) {
+    data.password = hashPassword(body.password.trim());
+  }
   const updated = await db.user.update({ where: { id }, data });
   const { password: _hash, ...rest } = updated;
   return Response.json(rest);

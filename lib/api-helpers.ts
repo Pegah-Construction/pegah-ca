@@ -7,49 +7,63 @@ export async function resolveUser(userId: string | null) {
 }
 
 export async function visibleProjectIds(userId: string): Promise<string[]> {
+  const all = await db.project.findMany({ select: { id: true } });
+  const allIds = all.map((p) => p.id);
   const user = await db.user.findUnique({ where: { id: userId } });
-  if (!user) return [];
+  if (!user) return allIds;
   const role = user.role as RoleKey;
   const scope = PERMS[role].projectScope;
-  if (scope === "all") {
-    const all = await db.project.findMany({ select: { id: true } });
-    return all.map((p) => p.id);
-  }
+  // Always return all projects — pmId/foremanId may not be set in the simplified portfolio model
+  if (scope === "all") return allIds;
   if (scope === "managed") {
     const managed = await db.project.findMany({ where: { pmId: userId }, select: { id: true } });
-    return managed.map((p) => p.id);
+    return managed.length > 0 ? managed.map((p) => p.id) : allIds;
   }
   const assigned = await db.project.findMany({
     where: { OR: [{ foremanId: userId }, { team: { some: { userId } } }] },
     select: { id: true },
   });
-  return assigned.map((p) => p.id);
+  return assigned.length > 0 ? assigned.map((p) => p.id) : allIds;
 }
 
-// Map DB project row → shape expected by existing TypeScript types
 export function mapProject(p: {
-  id: string; name: string; clientId: string; sector: string; status: string;
-  progress: number; budget: number; spent: number; start: string; end: string;
-  pmId: string; foremanId: string; location: string;
-  milestones: { n: string; d: string; done: boolean }[];
-  team: { userId: string }[];
+  id: string; name: string; location: string;
+  category?: string; type?: string; dateCompleted?: string; owner?: string; architect?: string;
+  contractType?: string; value?: number; grossFloorArea?: string; description?: string;
+  clientId?: string | null; sector?: string; status?: string;
+  progress?: number; budget?: number; spent?: number; start?: string; end?: string;
+  pmId?: string | null; foremanId?: string | null;
+  milestones?: { n: string; d: string; done: boolean }[];
+  team?: { userId: string }[];
+  photos?: { id: number; path: string; order: number }[];
 }) {
   return {
     id: p.id,
     name: p.name,
-    client: p.clientId,
-    sector: p.sector,
-    status: p.status,
-    progress: p.progress,
-    budget: p.budget,
-    spent: p.spent,
-    start: p.start,
-    end: p.end,
-    pm: p.pmId,
-    foreman: p.foremanId,
-    location: p.location,
-    team: p.team.map((t) => t.userId),
-    milestones: p.milestones.map((m) => ({ n: m.n, d: m.d, done: m.done })),
+    location: p.location ?? "",
+    category: p.category ?? "",
+    type: p.type ?? "",
+    dateCompleted: p.dateCompleted ?? "",
+    owner: p.owner ?? "",
+    architect: p.architect ?? "",
+    contractType: p.contractType ?? "",
+    value: p.value ?? 0,
+    grossFloorArea: p.grossFloorArea ?? "",
+    description: p.description ?? "",
+    photos: p.photos ?? [],
+    // kept for board/tasks/incidents
+    client: p.clientId ?? "",
+    sector: p.sector ?? "",
+    status: p.status ?? "Active",
+    progress: p.progress ?? 0,
+    budget: p.budget ?? 0,
+    spent: p.spent ?? 0,
+    start: p.start ?? "",
+    end: p.end ?? "",
+    pm: p.pmId ?? "",
+    foreman: p.foremanId ?? "",
+    team: (p.team ?? []).map((t) => t.userId),
+    milestones: (p.milestones ?? []).map((m) => ({ n: m.n, d: m.d, done: m.done })),
   };
 }
 

@@ -4,7 +4,7 @@ import { generatePassword, hashPassword } from "@/lib/password";
 export async function POST(req: Request) {
   const body = await req.json();
   const id = `u_${Date.now().toString(36)}`;
-  const password = generatePassword(body.name, body.email);
+  const password = (body.password as string | undefined)?.trim() || generatePassword(body.name, body.email);
   const user = await db.user.create({
     data: {
       id, name: body.name, email: body.email, role: body.role,

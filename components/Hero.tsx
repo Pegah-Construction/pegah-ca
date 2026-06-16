@@ -1,17 +1,27 @@
+import HeroCarousel from "./HeroCarousel";
 import ImageSlot from "./ImageSlot";
 import Button from "./Button";
 import { Eyebrow } from "./Brand";
 import { company } from "@/lib/site";
+import { db } from "@/lib/db";
 
-export default function Hero() {
+export default async function Hero() {
+  const images = await db.heroImage.findMany({ orderBy: { order: "asc" } });
+  const paths = images.map((img) => img.path);
+
   return (
     <section className="relative isolate flex min-h-[88vh] items-end overflow-hidden">
-      {/* Full-bleed background image */}
-      <ImageSlot
-        label="full-bleed hero — flagship project"
-        dark
-        className="absolute inset-0 -z-10 h-full w-full"
-      />
+      {/* Full-bleed background */}
+      {paths.length > 0 ? (
+        <HeroCarousel images={paths} />
+      ) : (
+        <ImageSlot
+          label="full-bleed hero — flagship project"
+          dark
+          className="absolute inset-0 -z-10 h-full w-full"
+        />
+      )}
+
       {/* Legibility gradient */}
       <div className="absolute inset-0 -z-10 bg-gradient-to-t from-brand-900/85 via-brand-900/35 to-brand-900/30" />
 

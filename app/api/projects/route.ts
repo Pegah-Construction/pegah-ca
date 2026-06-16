@@ -6,13 +6,24 @@ export async function POST(req: Request) {
   const id = `p_${Date.now().toString(36)}`;
   const project = await db.project.create({
     data: {
-      id, name: body.name, clientId: body.clientId, sector: body.sector,
-      status: body.status || "Planning", progress: 0,
-      budget: parseFloat(body.budget) || 0, spent: 0,
-      start: body.start, end: body.end,
-      pmId: body.pmId, foremanId: body.foremanId, location: body.location,
+      id,
+      name: body.name,
+      location: body.location || "",
+      category: body.category || "",
+      type: body.type || "",
+      dateCompleted: body.dateCompleted || "",
+      owner: body.owner || "",
+      architect: body.architect || "",
+      contractType: body.contractType || "",
+      value: parseFloat(body.value) || 0,
+      grossFloorArea: body.grossFloorArea || "",
+      description: body.description || "",
     },
-    include: { milestones: { orderBy: { id: "asc" } }, team: true },
+    include: {
+      milestones: { orderBy: { id: "asc" } },
+      team: true,
+      photos: { orderBy: { order: "asc" } },
+    },
   });
   return Response.json(mapProject(project), { status: 201 });
 }
@@ -23,7 +34,11 @@ export async function GET(req: Request) {
   const ids = await visibleProjectIds(userId);
   const projects = await db.project.findMany({
     where: { id: { in: ids } },
-    include: { milestones: { orderBy: { id: "asc" } }, team: true },
+    include: {
+      milestones: { orderBy: { id: "asc" } },
+      team: true,
+      photos: { orderBy: { order: "asc" } },
+    },
     orderBy: { name: "asc" },
   });
   return Response.json(projects.map(mapProject));

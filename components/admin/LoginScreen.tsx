@@ -5,8 +5,21 @@ import { useAuth } from "@/lib/auth";
 
 export default function LoginScreen() {
   const { signIn } = useAuth();
-  const [email, setEmail] = useState("s.chen@pegah.ca");
-  const [pw, setPw] = useState("demo1234");
+  const [email, setEmail] = useState("");
+  const [pw, setPw] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    const result = await signIn(email.trim(), pw);
+    if (!result.ok) {
+      setError(result.error ?? "Sign in failed.");
+    }
+    setLoading(false);
+  };
 
   return (
     <div className="grid min-h-screen bg-paper lg:grid-cols-2">
@@ -28,17 +41,41 @@ export default function LoginScreen() {
         <div className="w-full max-w-sm">
           <h2 className="font-display text-2xl font-bold tracking-tight text-ink">Staff sign in</h2>
           <p className="mt-1 text-sm text-concrete-500">Welcome back. Sign in to your console.</p>
-          <div className="mt-6 space-y-4">
+          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <div>
               <label className="font-mono text-[11px] uppercase tracking-label text-concrete-500">Email</label>
-              <input value={email} onChange={(e) => setEmail(e.target.value)} className="mt-2 w-full rounded-md border border-concrete-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-500" />
+              <input
+                required
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="mt-2 w-full rounded-md border border-concrete-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-500"
+                placeholder="you@pegah.ca"
+              />
             </div>
             <div>
               <label className="font-mono text-[11px] uppercase tracking-label text-concrete-500">Password</label>
-              <input type="password" value={pw} onChange={(e) => setPw(e.target.value)} className="mt-2 w-full rounded-md border border-concrete-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-500" />
+              <input
+                required
+                type="password"
+                autoComplete="current-password"
+                value={pw}
+                onChange={(e) => setPw(e.target.value)}
+                className="mt-2 w-full rounded-md border border-concrete-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-500"
+              />
             </div>
-            <button onClick={() => signIn("u1")} className="w-full rounded-md bg-brand-700 px-4 py-2.5 font-display text-sm font-semibold text-white hover:bg-brand-800">Sign in</button>
-          </div>
+            {error && (
+              <p className="rounded-md bg-red-50 px-4 py-2.5 text-sm text-red-600">{error}</p>
+            )}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-md bg-brand-700 px-4 py-2.5 font-display text-sm font-semibold text-white hover:bg-brand-800 disabled:opacity-60"
+            >
+              {loading ? "Signing in…" : "Sign in"}
+            </button>
+          </form>
         </div>
       </div>
     </div>

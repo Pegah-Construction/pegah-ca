@@ -4,7 +4,6 @@ import { useAuth } from "@/lib/auth";
 import { canSee, type NavKey } from "@/lib/admin";
 import AdminShell from "./AdminShell";
 import LoginScreen from "./LoginScreen";
-import { AccessDenied } from "./ui";
 
 /**
  * Gates an admin page:
@@ -32,7 +31,7 @@ export default function Guard({
 
   return (
     <AdminShell active={module} title={title} sub={sub}>
-      {canSee(user, module) ? children : <AccessDenied />}
+      {canSee(user, module) ? children : null}
     </AdminShell>
   );
 }

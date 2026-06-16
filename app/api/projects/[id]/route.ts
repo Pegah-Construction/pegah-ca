@@ -1,4 +1,6 @@
 import { db } from "@/lib/db";
+import { unlink } from "fs/promises";
+import { join } from "path";
 import { visibleProjectIds, mapProject } from "@/lib/api-helpers";
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -9,7 +11,11 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   if (!ids.includes(id)) return Response.json({ error: "Not found" }, { status: 404 });
   const p = await db.project.findUnique({
     where: { id },
-    include: { milestones: { orderBy: { id: "asc" } }, team: true },
+    include: {
+      milestones: { orderBy: { id: "asc" } },
+      team: true,
+      photos: { orderBy: { order: "asc" } },
+    },
   });
   if (!p) return Response.json({ error: "Not found" }, { status: 404 });
   return Response.json(mapProject(p));
@@ -17,6 +23,10 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const photos = await db.projectPhoto.findMany({ where: { projectId: id } });
+  await Promise.allSettled(
+    photos.map((ph) => unlink(join(process.cwd(), "public", ph.path)).catch(() => {}))
+  );
   await db.$transaction([
     db.cardSubtask.deleteMany({ where: { card: { projectId: id } } }),
     db.cardComment.deleteMany({ where: { card: { projectId: id } } }),
@@ -36,17 +46,23 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const body = await req.json();
-  const allowed = ["name","clientId","sector","status","progress","budget","spent","start","end","pmId","foremanId","location"] as const;
+  const allowed = [
+    "name", "location", "category", "type", "dateCompleted", "owner", "architect",
+    "contractType", "value", "grossFloorArea", "description",
+  ] as const;
   const data: Record<string, unknown> = {};
   for (const key of allowed) {
     if (!(key in body)) continue;
-    data[key] = (key === "budget" || key === "spent") ? parseFloat(body[key]) : body[key];
+    data[key] = key === "value" ? parseFloat(body[key]) || 0 : body[key];
   }
-  const updated = await db.project.update({ where: { id }, data });
-  return Response.json({
-    id: updated.id, name: updated.name, client: updated.clientId,
-    sector: updated.sector, status: updated.status, progress: updated.progress,
-    budget: updated.budget, spent: updated.spent, start: updated.start, end: updated.end,
-    pm: updated.pmId, foreman: updated.foremanId, location: updated.location,
+  const updated = await db.project.update({
+    where: { id },
+    data,
+    include: {
+      milestones: { orderBy: { id: "asc" } },
+      team: true,
+      photos: { orderBy: { order: "asc" } },
+    },
   });
+  return Response.json(mapProject(updated));
 }

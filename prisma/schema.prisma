@@ -42,23 +42,34 @@ model Client {
 }
 
 model Project {
-  id        String @id
-  name      String
-  clientId  String
-  sector    String
-  status    String
-  progress  Int
-  budget    Float
-  spent     Float
-  start     String
-  end       String
-  pmId      String
-  foremanId String
-  location  String
+  id             String @id
+  name           String
+  location       String @default("")
+  category       String @default("")
+  type           String @default("")
+  dateCompleted  String @default("")
+  owner          String @default("")
+  architect      String @default("")
+  contractType   String @default("")
+  value          Float  @default(0)
+  grossFloorArea String @default("")
+  description    String @default("")
 
-  client     Client        @relation(fields: [clientId], references: [id])
-  pm         User          @relation("ProjectPM", fields: [pmId], references: [id])
-  foreman    User          @relation("ProjectForeman", fields: [foremanId], references: [id])
+  // Kept for internal features (board, tasks, incidents) — not shown in form
+  clientId  String?
+  sector    String  @default("")
+  status    String  @default("Active")
+  progress  Int     @default(0)
+  budget    Float   @default(0)
+  spent     Float   @default(0)
+  start     String  @default("")
+  end       String  @default("")
+  pmId      String?
+  foremanId String?
+
+  client     Client?       @relation(fields: [clientId], references: [id])
+  pm         User?         @relation("ProjectPM", fields: [pmId], references: [id])
+  foreman    User?         @relation("ProjectForeman", fields: [foremanId], references: [id])
   team       ProjectTeam[]
   milestones Milestone[]
   tasks      Task[]
@@ -67,6 +78,15 @@ model Project {
   cards      Card[]
   activities Activity[]
   articles   Article[]
+  photos     ProjectPhoto[]
+}
+
+model ProjectPhoto {
+  id        Int     @id @default(autoincrement())
+  projectId String
+  path      String
+  order     Int     @default(0)
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model ProjectTeam {
@@ -113,14 +133,14 @@ model Incident {
 }
 
 model Doc {
-  id        String  @id
+  id        String   @id
   name      String
   type      String
   projectId String?
   size      String
   updated   String
   ownerId   String
-  path      String  @default("")
+  path      String   @default("")
   project   Project? @relation(fields: [projectId], references: [id])
   owner     User     @relation(fields: [ownerId], references: [id])
 }
@@ -187,6 +207,17 @@ model Activity {
   projectId String?
   user      User     @relation(fields: [who], references: [id])
   project   Project? @relation(fields: [projectId], references: [id])
+}
+
+model Setting {
+  key   String @id
+  value String
+}
+
+model HeroImage {
+  id    Int    @id @default(autoincrement())
+  path  String
+  order Int    @default(0)
 }
 
 model Article {
