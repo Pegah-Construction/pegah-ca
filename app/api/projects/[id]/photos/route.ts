@@ -1,6 +1,5 @@
 import { db } from "@/lib/db";
-import { writeFile, mkdir } from "fs/promises";
-import { join } from "path";
+import { put } from "@vercel/blob";
 
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -17,20 +16,17 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const file = formData.get("file") as File | null;
   if (!file) return Response.json({ error: "No file" }, { status: 400 });
 
-  const dir = join(process.cwd(), "public", "uploads", "projects", id);
-  await mkdir(dir, { recursive: true });
-
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-  const filename = `${Date.now()}.${ext}`;
-  const buffer = Buffer.from(await file.arrayBuffer());
-  await writeFile(join(dir, filename), buffer);
+  const filename = `projects/${id}/${Date.now()}.${ext}`;
+  const blob = await put(filename, file, { access: "public" });
 
-  const path = `/uploads/projects/${id}/${filename}`;
   const agg = await db.projectPhoto.aggregate({
     where: { projectId: id },
     _max: { order: true },
   });
   const order = (agg._max.order ?? -1) + 1;
-  const photo = await db.projectPhoto.create({ data: { projectId: id, path, order } });
+  const photo = await db.projectPhoto.create({
+    data: { projectId: id, path: blob.url, order },
+  });
   return Response.json(photo, { status: 201 });
 }
