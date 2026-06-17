@@ -24,9 +24,16 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
 
   const byCategory = category === "All"
     ? projects
+    : category === "Commercial"
+    ? projects.filter((p) => p.category !== "Residential")
     : projects.filter((p) => p.category === category);
 
-  const subTypes = Array.from(new Set(byCategory.map((p) => p.type).filter(Boolean))).sort();
+  // For sub-type chips: when "All" is selected, exclude Residential entries
+  // (Residential has its own top-level tab, so it shouldn't appear as a sub-type chip)
+  const subTypeSource = category === "All"
+    ? projects.filter((p) => p.category !== "Residential")
+    : byCategory;
+  const subTypes = Array.from(new Set(subTypeSource.map((p) => p.type).filter(Boolean))).sort();
 
   const handleCategoryChange = (c: Category) => {
     setCategory(c);
@@ -75,20 +82,22 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
         </div>
       </div>
 
-      {/* Sub-type chips — only shown when a category is selected and has types */}
-      {category !== "All" && subTypes.length > 0 && (
+      {/* Sub-type chips */}
+      {subTypes.length > 0 && (
         <div className="mb-8 flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={() => setSubType("All")}
-            className={`rounded-full px-3 py-1.5 font-mono text-[11px] uppercase tracking-label transition-colors ${
-              subType === "All"
-                ? "bg-brand-700 text-white"
-                : "border border-concrete-300 text-concrete-500 hover:border-brand-400 hover:text-brand-700"
-            }`}
-          >
-            All {category}
-          </button>
+          {category !== "All" && (
+            <button
+              type="button"
+              onClick={() => setSubType("All")}
+              className={`rounded-full px-3 py-1.5 font-mono text-[11px] uppercase tracking-label transition-colors ${
+                subType === "All"
+                  ? "bg-brand-700 text-white"
+                  : "border border-concrete-300 text-concrete-500 hover:border-brand-400 hover:text-brand-700"
+              }`}
+            >
+              All {category}
+            </button>
+          )}
           {subTypes.map((t) => (
             <button
               key={t}
