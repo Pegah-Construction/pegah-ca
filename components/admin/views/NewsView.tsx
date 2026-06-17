@@ -84,7 +84,7 @@ export default function NewsView() {
     setNews((prev) => prev.map((n) => (n.id === id ? { ...n, status: newStatus } : n)));
     await fetch(`/api/news/${id}`, {
       method: "PATCH", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: newStatus }),
+      body: JSON.stringify({ status: newStatus, userId: user?.id }),
     });
     setTogglingId(null);
   };

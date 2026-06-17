@@ -204,7 +204,7 @@ model Activity {
   id        Int      @id @default(autoincrement())
   who       String
   what      String
-  when      String
+  createdAt DateTime @default(now())
   projectId String?
   user      User     @relation(fields: [who], references: [id])
   project   Project? @relation(fields: [projectId], references: [id])

@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { visibleProjectIds } from "@/lib/api-helpers";
+import { logActivity } from "@/lib/activity";
 
 export async function POST(req: Request) {
   const body = await req.json();
@@ -11,6 +12,8 @@ export async function POST(req: Request) {
       reportedById: body.reportedById, note: body.note,
     },
   });
+  const proj = await db.project.findUnique({ where: { id: body.projectId }, select: { name: true } });
+  await logActivity(body.reportedById, `reported a safety incident on "${proj?.name ?? body.projectId}"`, body.projectId);
   return Response.json({
     id: incident.id, project: incident.projectId, date: incident.date,
     type: incident.type, severity: incident.severity, status: incident.status,

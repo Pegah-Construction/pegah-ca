@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { visibleProjectIds, mapProject } from "@/lib/api-helpers";
+import { logActivity } from "@/lib/activity";
 
 export async function POST(req: Request) {
   const body = await req.json();
@@ -25,6 +26,7 @@ export async function POST(req: Request) {
       photos: { orderBy: { order: "asc" } },
     },
   });
+  if (body.userId) await logActivity(body.userId, `created project "${project.name}"`, project.id);
   return Response.json(mapProject(project), { status: 201 });
 }
 

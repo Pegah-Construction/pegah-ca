@@ -79,6 +79,7 @@ export default function ProjectsView() {
     for (const file of files) {
       const fd = new FormData();
       fd.append("file", file);
+      if (user?.id) fd.append("userId", user.id);
       const res = await fetch(`/api/projects/${editingId}/photos`, { method: "POST", body: fd });
       const photo = await res.json();
       setEditPhotos((prev) => [...prev, photo]);
@@ -123,7 +124,7 @@ export default function ProjectsView() {
       const res = await fetch("/api/projects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, userId: user?.id }),
       });
       const created = await res.json();
 

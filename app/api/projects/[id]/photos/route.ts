@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { saveFile } from "@/lib/storage";
 import { revalidatePath } from "next/cache";
+import { logActivity } from "@/lib/activity";
 
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -26,6 +27,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   });
   const order = (agg._max.order ?? -1) + 1;
   const photo = await db.projectPhoto.create({ data: { projectId: id, path: url, order } });
+  const userId = formData.get("userId") as string | null;
+  const project = await db.project.findUnique({ where: { id }, select: { name: true } });
+  if (userId && project) await logActivity(userId, `uploaded a photo to "${project.name}"`, id);
   revalidatePath("/");
   revalidatePath("/projects");
   revalidatePath(`/projects/${id}`);

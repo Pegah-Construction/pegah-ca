@@ -85,6 +85,7 @@ export default function ProjectDetailView({ id }: { id: string }) {
     setUploading(true);
     const fd = new FormData();
     fd.append("file", file);
+    if (user?.id) fd.append("userId", user.id);
     const res = await fetch(`/api/projects/${id}/photos`, { method: "POST", body: fd });
     if (res.ok) {
       const photo = await res.json();

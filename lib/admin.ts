@@ -163,16 +163,8 @@ export const DOCUMENTS: Doc[] = [
   { id:"d9", name:"Company — Health & Safety Policy",    type:"PDF",  project:null, size:"0.8 MB",  updated:"2024-10-01", owner:"u1" },
 ];
 
-export type Activity = { who: string; what: string; project: string | null; when: string };
+export type Activity = { who: string; whoName: string; what: string; project: string | null; projectName: string | null; when: string };
 
-export const ACTIVITY: Activity[] = [
-  { who:"u3", what:"reported a near miss on", project:"p1", when:"2h ago" },
-  { who:"u4", what:"rebaselined the schedule for", project:"p4", when:"5h ago" },
-  { who:"u6", what:"uploaded O&M manual draft to", project:"p5", when:"1d ago" },
-  { who:"u2", what:"closed task “Pool tank sign-off” on", project:"p5", when:"1d ago" },
-  { who:"u5", what:"flagged steel delivery blocked on", project:"p2", when:"2d ago" },
-  { who:"u1", what:"added a new client", project:null, when:"3d ago" },
-];
 
 export const DEMO_ACCOUNTS = ["u1", "u2", "u3"];
 

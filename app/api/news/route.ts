@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { logActivity } from "@/lib/activity";
 
 export async function POST(req: Request) {
   const body = await req.json();
@@ -14,6 +15,7 @@ export async function POST(req: Request) {
       featured: false, excerpt: body.excerpt || "", body: body.body || "", words,
     },
   });
+  await logActivity(body.authorId, `created article "${article.title}"`);
   return Response.json({
     id: article.id, title: article.title, slug: article.slug, project: null,
     author: article.authorId, status: article.status, date: article.date,

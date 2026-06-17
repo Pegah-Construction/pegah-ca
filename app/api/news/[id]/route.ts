@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { logActivity } from "@/lib/activity";
 
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -18,6 +19,10 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   if ("excerpt" in body) data.excerpt = body.excerpt;
   if ("tags" in body) data.tags = JSON.stringify(body.tags);
   const updated = await db.article.update({ where: { id }, data });
+  if ("status" in body && body.userId) {
+    const verb = body.status === "Published" ? "published" : "unpublished";
+    await logActivity(body.userId, `${verb} article "${updated.title}"`);
+  }
   return Response.json({
     id: updated.id, title: updated.title, slug: updated.slug, project: updated.projectId,
     author: updated.authorId, status: updated.status, date: updated.date, tags: JSON.parse(updated.tags),
