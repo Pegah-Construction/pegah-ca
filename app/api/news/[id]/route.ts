@@ -21,6 +21,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   return Response.json({
     id: updated.id, title: updated.title, slug: updated.slug, project: updated.projectId,
     author: updated.authorId, status: updated.status, date: updated.date, tags: JSON.parse(updated.tags),
-    featured: updated.featured, excerpt: updated.excerpt, body: updated.body, words: updated.words,
+    featured: updated.featured, excerpt: updated.excerpt, body: updated.body,
+    coverImage: updated.coverImage ?? "", words: updated.words,
   });
 }

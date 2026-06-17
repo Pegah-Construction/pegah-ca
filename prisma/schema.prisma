@@ -232,8 +232,9 @@ model Article {
   tags      String
   featured  Boolean  @default(false)
   excerpt   String
-  body      String   @default("")
-  words     Int
+  body        String   @default("")
+  coverImage  String   @default("")
+  words       Int
   project   Project? @relation(fields: [projectId], references: [id])
   author    User     @relation(fields: [authorId], references: [id])
 }

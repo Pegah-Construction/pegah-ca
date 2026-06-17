@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Eyebrow } from "@/components/Brand";
+import { getStorageUrl } from "@/lib/storage-url";
 
 export const dynamic = "force-dynamic";
 
@@ -65,6 +66,18 @@ export default async function BlogPost({ params }: Props) {
             </p>
           </div>
         </section>
+
+        {/* Cover image */}
+        {article.coverImage && (
+          <div className="mx-auto max-w-8xl px-6 pt-10 lg:px-10">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={getStorageUrl(article.coverImage)}
+              alt={article.title}
+              className="aspect-[21/9] w-full rounded-2xl object-cover"
+            />
+          </div>
+        )}
 
         {/* Body */}
         <div className="mx-auto max-w-8xl px-6 py-16 lg:px-10">

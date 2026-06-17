@@ -205,6 +205,7 @@ export const TENDERS: Tender[] = [
 export type Article = {
   id: string; title: string; slug: string; project: string | null; author: string;
   status: "Published" | "Draft"; date: string; tags: string[]; featured: boolean; excerpt: string; words: number;
+  coverImage?: string;
 };
 
 export const NEWS: Article[] = [

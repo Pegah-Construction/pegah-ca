@@ -4,12 +4,13 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useAuth } from "@/lib/auth";
 import { PERMS, type Article } from "@/lib/admin";
-import { StatCard, Card, THead, Table, Pill, PrimaryBtn, Field, inputCls, SearchInput } from "../ui";
+import { StatCard, Card, THead, Table, Pill, PrimaryBtn, Field, inputCls, SearchInput, Spinner } from "../ui";
+import { getStorageUrl } from "@/lib/storage-url";
 
 const RichEditor = dynamic(() => import("../RichEditor"), { ssr: false });
 
 type UserRow = { id: string; name: string };
-type ArticleWithBody = Article & { body?: string };
+type ArticleWithBody = Article & { body?: string; coverImage?: string };
 
 const empty = () => ({ title:"", tags:"", excerpt:"", body:"" });
 
@@ -20,6 +21,7 @@ export default function NewsView() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(empty);
   const [saving, setSaving] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [users, setUsers] = useState<UserRow[]>([]);
@@ -39,6 +41,28 @@ export default function NewsView() {
     setForm({ title: n.title, tags: n.tags.join(", "), excerpt: n.excerpt, body: n.body ?? "" });
     setEditingId(n.id);
     setOpen(true);
+  };
+
+  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!editingId) return;
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingCover(true);
+    const fd = new FormData();
+    fd.append("file", file);
+    const res = await fetch(`/api/news/${editingId}/cover`, { method: "POST", body: fd });
+    if (res.ok) {
+      const { coverImage } = await res.json();
+      setNews((prev) => prev.map((n) => n.id === editingId ? { ...n, coverImage } : n));
+    }
+    e.target.value = "";
+    setUploadingCover(false);
+  };
+
+  const handleCoverDelete = async () => {
+    if (!editingId) return;
+    await fetch(`/api/news/${editingId}/cover`, { method: "DELETE" });
+    setNews((prev) => prev.map((n) => n.id === editingId ? { ...n, coverImage: "" } : n));
   };
 
   const pub = news.filter((n) => n.status === "Published").length;
@@ -181,6 +205,43 @@ export default function NewsView() {
                     <input className={inputCls} value={form.excerpt} onChange={(e) => set("excerpt", e.target.value)} placeholder="Short summary for listings…" />
                   </Field>
                 </div>
+                <Field label="Cover image">
+                  {editingId ? (
+                    <div className="flex items-start gap-3">
+                      {news.find((n) => n.id === editingId)?.coverImage ? (
+                        <div className="group relative h-24 w-40 shrink-0 overflow-hidden rounded-lg bg-concrete-100">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={getStorageUrl(news.find((n) => n.id === editingId)!.coverImage!)}
+                            alt=""
+                            className="h-full w-full object-cover"
+                          />
+                          <button
+                            type="button"
+                            onClick={handleCoverDelete}
+                            className="absolute right-1 top-1 hidden rounded-full bg-black/60 p-1 text-white group-hover:block hover:bg-black/80"
+                            title="Remove cover"
+                          >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-3 w-3">
+                              <path d="M18 6 6 18M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex h-24 w-40 shrink-0 items-center justify-center rounded-lg border-2 border-dashed border-concrete-200 bg-concrete-100 text-xs text-concrete-400">
+                          No cover
+                        </div>
+                      )}
+                      <label className={`flex cursor-pointer items-center gap-1.5 self-end rounded-md border border-concrete-200 px-3 py-1.5 font-display text-xs font-semibold text-ink hover:bg-concrete-50 ${uploadingCover ? "pointer-events-none opacity-60" : ""}`}>
+                        {uploadingCover && <Spinner className="h-3 w-3" />}
+                        {uploadingCover ? "Uploading…" : "Upload cover"}
+                        <input type="file" accept="image/*" className="sr-only" onChange={handleCoverUpload} disabled={uploadingCover} />
+                      </label>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-concrete-400">Save the article first, then you can add a cover image.</p>
+                  )}
+                </Field>
                 <Field label="Article body">
                   <RichEditor value={form.body} onChange={(html) => set("body", html)} />
                 </Field>

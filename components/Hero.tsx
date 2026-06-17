@@ -1,5 +1,4 @@
 import HeroCarousel from "./HeroCarousel";
-import ImageSlot from "./ImageSlot";
 import Button from "./Button";
 import { Eyebrow } from "./Brand";
 import { company } from "@/lib/site";
@@ -16,11 +15,7 @@ export default async function Hero() {
       {paths.length > 0 ? (
         <HeroCarousel images={paths} />
       ) : (
-        <ImageSlot
-          label="full-bleed hero — flagship project"
-          dark
-          className="absolute inset-0 -z-10 h-full w-full"
-        />
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_80%_60%_at_60%_40%,theme(colors.brand.700),theme(colors.brand.900))]" />
       )}
 
       {/* Legibility gradient */}
