@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { saveFile } from "@/lib/storage";
+import { revalidatePath } from "next/cache";
 
 export async function GET() {
   const images = await db.heroImage.findMany({ orderBy: { order: "asc" } });
@@ -17,5 +18,6 @@ export async function POST(req: Request) {
   const agg = await db.heroImage.aggregate({ _max: { order: true } });
   const order = (agg._max.order ?? -1) + 1;
   const image = await db.heroImage.create({ data: { path: url, order } });
+  revalidatePath("/");
   return Response.json(image, { status: 201 });
 }

@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { saveFile } from "@/lib/storage";
+import { revalidatePath } from "next/cache";
 
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -25,5 +26,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   });
   const order = (agg._max.order ?? -1) + 1;
   const photo = await db.projectPhoto.create({ data: { projectId: id, path: url, order } });
+  revalidatePath("/");
+  revalidatePath("/projects");
+  revalidatePath(`/projects/${id}`);
   return Response.json(photo, { status: 201 });
 }
