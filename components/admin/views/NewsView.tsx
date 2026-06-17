@@ -243,7 +243,7 @@ export default function NewsView() {
                   )}
                 </Field>
                 <Field label="Article body">
-                  <RichEditor value={form.body} onChange={(html) => set("body", html)} />
+                  <RichEditor value={form.body} onChange={(html) => set("body", html)} articleId={editingId ?? undefined} />
                 </Field>
               </div>
               <div className="flex justify-end gap-2 border-t border-concrete-100 px-6 py-4">

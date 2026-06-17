@@ -62,4 +62,20 @@
   .article-body strong {
     @apply font-bold text-ink;
   }
+  .article-body img {
+    @apply my-6 w-full rounded-xl object-cover;
+  }
+  /* YouTube / Vimeo iframes inserted by TipTap */
+  .article-body iframe,
+  .article-body [data-youtube-video] iframe,
+  .article-body [data-type="videoEmbed"] iframe {
+    @apply my-6 w-full rounded-xl;
+    aspect-ratio: 16 / 9;
+    height: auto;
+  }
+  /* TipTap wraps YouTube in a div — make it full-width */
+  .article-body [data-youtube-video],
+  .article-body [data-type="videoEmbed"] {
+    @apply my-6;
+  }
 }
