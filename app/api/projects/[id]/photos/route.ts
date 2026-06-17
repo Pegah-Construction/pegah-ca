@@ -17,7 +17,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (!file) return Response.json({ error: "No file" }, { status: 400 });
 
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-  const url = await saveFile(file, `uploads/projects/${id}/${Date.now()}.${ext}`);
+  const url = await saveFile(file, `projects/${id}/${Date.now()}.${ext}`);
 
   const agg = await db.projectPhoto.aggregate({
     where: { projectId: id },

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useAuth } from "@/lib/auth";
 import { PERMS, type Project, type Incident, type ProjectPhoto } from "@/lib/admin";
 import { Card, THead, Table, StatusPill, Pill, Modal, Field, inputCls, Spinner } from "../ui";
+import { getStorageUrl } from "@/lib/storage-url";
 
 const PROJECT_TYPES = ["", "New Construction", "Renovation", "Retrofit", "Restoration", "Interior Fit-out", "Addition", "Demolition"];
 const CONTRACT_TYPES = ["", "General Contracting", "Design-Build", "Construction Management", "Project Management"];
@@ -162,7 +163,7 @@ export default function ProjectDetailView({ id }: { id: string }) {
                 {photos.map((ph) => (
                   <div key={ph.id} className="group relative aspect-[4/3] overflow-hidden rounded-lg bg-concrete-100">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={ph.path} alt="" className="h-full w-full object-cover" />
+                    <img src={getStorageUrl(ph.path)} alt="" className="h-full w-full object-cover" />
                     {perms.editProjects && (
                       <button
                         onClick={() => handleDeletePhoto(ph.id)}

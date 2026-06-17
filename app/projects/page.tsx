@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { db } from "@/lib/db";
 import PageShell from "@/components/PageShell";
 import ProjectFilter, { type PublicProject } from "@/components/ProjectFilter";
+import { getStorageUrl } from "@/lib/storage-url";
 
 export const metadata: Metadata = {
   title: "Projects — Pegah Construction Ltd.",
@@ -31,7 +32,7 @@ export default async function ProjectsPage() {
     category: p.category,
     type: p.type,
     dateCompleted: p.dateCompleted,
-    photos: p.photos.map((ph) => ph.path),
+    photos: p.photos.map((ph) => getStorageUrl(ph.path)),
   }));
 
   return (

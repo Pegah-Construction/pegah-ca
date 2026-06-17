@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PhotoCarousel from "@/components/PhotoCarousel";
 import { Eyebrow } from "@/components/Brand";
+import { getStorageUrl } from "@/lib/storage-url";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -37,7 +38,7 @@ export default async function ProjectDetail({ params }: Params) {
     project.dateCompleted ? ["Date completed", project.dateCompleted] : null,
   ].filter((f): f is [string, string] => f !== null);
 
-  const photoPaths = project.photos.map((ph) => ph.path);
+  const photoPaths = project.photos.map((ph) => getStorageUrl(ph.path));
 
   return (
     <>

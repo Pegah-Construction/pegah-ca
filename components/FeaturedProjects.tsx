@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Eyebrow } from "./Brand";
 import { db } from "@/lib/db";
 import PhotoCarousel from "./PhotoCarousel";
+import { getStorageUrl } from "@/lib/storage-url";
 
 export default async function FeaturedProjects() {
   const projects = await db.project.findMany({
@@ -40,7 +41,7 @@ export default async function FeaturedProjects() {
         <div className="mt-14 space-y-16">
           {projects.map((p, i) => {
             const flipped = i % 2 === 1;
-            const photos = p.photos.map((ph) => ph.path);
+            const photos = p.photos.map((ph) => getStorageUrl(ph.path));
             return (
               <article key={p.id} className="grid items-center gap-8 lg:grid-cols-2 lg:gap-14">
                 <div className={flipped ? "lg:order-2" : ""}>

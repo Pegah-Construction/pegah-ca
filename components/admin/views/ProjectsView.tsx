@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
 import { PERMS, money, type Project, type ProjectPhoto } from "@/lib/admin";
 import { Card, THead, Table, Pill, PrimaryBtn, Modal, Field, inputCls, SearchInput, Spinner } from "../ui";
+import { getStorageUrl } from "@/lib/storage-url";
 
 const CATEGORIES = ["", "Commercial", "Residential"];
 const PROJECT_TYPES = ["", "New Construction", "Renovation", "Retrofit", "Restoration", "Interior Fit-out", "Addition", "Demolition"];
@@ -316,7 +317,7 @@ export default function ProjectsView() {
                     {editPhotos.map((ph) => (
                       <div key={ph.id} className="group relative aspect-square overflow-hidden rounded-lg bg-concrete-100">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={ph.path} alt="" className="h-full w-full object-cover" />
+                        <img src={getStorageUrl(ph.path)} alt="" className="h-full w-full object-cover" />
                         <button
                           type="button"
                           onClick={() => handleDeleteEditPhoto(ph.id)}

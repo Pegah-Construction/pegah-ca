@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/lib/auth";
 import { PERMS } from "@/lib/admin";
 import { Card, Spinner } from "../ui";
+import { getStorageUrl } from "@/lib/storage-url";
 
 type OrgSettings = { companyName: string; phone: string; email: string; address: string };
 type HeroImage = { id: number; path: string; order: number };
@@ -138,7 +139,7 @@ export default function SettingsView() {
               {heroImages.map((img) => (
                 <div key={img.id} className="group relative overflow-hidden rounded-lg bg-concrete-100">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={img.path} alt="" className="aspect-video w-full object-cover" />
+                  <img src={getStorageUrl(img.path)} alt="" className="aspect-video w-full object-cover" />
                   {!locked && (
                     <button
                       onClick={() => handleHeroDelete(img.id)}

@@ -4,10 +4,11 @@ import Button from "./Button";
 import { Eyebrow } from "./Brand";
 import { company } from "@/lib/site";
 import { db } from "@/lib/db";
+import { getStorageUrl } from "@/lib/storage-url";
 
 export default async function Hero() {
   const images = await db.heroImage.findMany({ orderBy: { order: "asc" } });
-  const paths = images.map((img) => img.path);
+  const paths = images.map((img) => getStorageUrl(img.path));
 
   return (
     <section className="relative isolate flex min-h-[88vh] items-end overflow-hidden">

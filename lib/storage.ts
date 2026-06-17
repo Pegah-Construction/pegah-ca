@@ -7,45 +7,47 @@ const useSupabase = () =>
 
 async function ensureBucket() {
   const { error } = await supabase.storage.createBucket(BUCKET, { public: true });
-  // "already exists" is fine — any other error is real
   if (error && !error.message.includes("already exists")) throw new Error(error.message);
 }
 
+// storagePath should NOT include the bucket name — e.g. "projects/p_abc/123.jpg"
+// Returns the relative path that was stored (not a full URL)
 export async function saveFile(file: File, storagePath: string): Promise<string> {
   if (useSupabase()) {
-    const { error } = await supabase.storage
+    let { error } = await supabase.storage
       .from(BUCKET)
       .upload(storagePath, file, { contentType: file.type, upsert: true });
     if (error?.message.includes("Bucket not found")) {
       await ensureBucket();
-      const { error: e2 } = await supabase.storage
+      ({ error } = await supabase.storage
         .from(BUCKET)
-        .upload(storagePath, file, { contentType: file.type, upsert: true });
-      if (e2) throw new Error(e2.message);
-    } else if (error) {
-      throw new Error(error.message);
+        .upload(storagePath, file, { contentType: file.type, upsert: true }));
     }
-    const { data } = supabase.storage.from(BUCKET).getPublicUrl(storagePath);
-    return data.publicUrl;
+    if (error) throw new Error(error.message);
+    return storagePath; // store relative path only
   }
-  // local dev fallback — write to public/
-  const abs = join(process.cwd(), "public", storagePath);
+  // local dev — write to public/uploads/
+  const localPath = `uploads/${storagePath}`;
+  const abs = join(process.cwd(), "public", localPath);
   await mkdir(dirname(abs), { recursive: true });
   await writeFile(abs, Buffer.from(await file.arrayBuffer()));
-  return `/${storagePath}`;
+  return localPath;
 }
 
 export async function deleteFile(path: string): Promise<void> {
   if (path.startsWith("http")) {
-    // Extract the storage path from the Supabase public URL
+    // legacy full URL — extract the storage path
     const marker = `/object/public/${BUCKET}/`;
     const idx = path.indexOf(marker);
     if (idx !== -1) {
-      const storagePath = path.slice(idx + marker.length);
-      await supabase.storage.from(BUCKET).remove([storagePath]);
+      await supabase.storage.from(BUCKET).remove([path.slice(idx + marker.length)]);
     }
+  } else if (path.startsWith("/") || path.startsWith("uploads/")) {
+    // local dev path
+    const abs = path.startsWith("/") ? path : `/${path}`;
+    await unlink(join(process.cwd(), "public", abs)).catch(() => {});
   } else {
-    // local dev — remove from public/
-    await unlink(join(process.cwd(), "public", path)).catch(() => {});
+    // Supabase relative path
+    await supabase.storage.from(BUCKET).remove([path]);
   }
 }
