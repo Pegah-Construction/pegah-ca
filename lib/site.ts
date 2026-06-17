@@ -21,6 +21,7 @@ export const nav: NavItem[] = [
   { label: "Services", href: "/services" },
   { label: "Projects", href: "/projects" },
   { label: "Tenders", href: "/tenders" },
+  { label: "Subcontractor Registration", href: "/subcontractors/register" },
   { label: "Blog", href: "/blog" },
   { label: "Safety", href: "/safety" },
   { label: "Contact", href: "/contact" },

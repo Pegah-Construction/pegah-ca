@@ -221,6 +221,37 @@ model HeroImage {
   order Int    @default(0)
 }
 
+model Subcontractor {
+  id           String   @id
+  createdAt    DateTime @default(now())
+  status       String   @default("New")
+
+  companyName  String
+  phone        String
+  fax          String   @default("")
+  website      String   @default("")
+  address      String   @default("")
+  city         String
+  province     String
+  postalCode   String
+
+  firstName    String
+  lastName     String
+  title        String   @default("")
+  email        String
+  contactPhone String   @default("")
+  mobile       String   @default("")
+
+  trades       String   @default("[]")
+
+  isCOR        Boolean  @default(false)
+  isWSIB       Boolean  @default(false)
+  isBonded     Boolean  @default(false)
+  isInsured    Boolean  @default(false)
+
+  notes        String   @default("")
+}
+
 model Article {
   id        String   @id
   title     String
