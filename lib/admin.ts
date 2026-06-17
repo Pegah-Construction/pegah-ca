@@ -10,7 +10,7 @@ export const ROLES: Record<RoleKey, { key: RoleKey; label: string; blurb: string
 
 export type NavKey =
   | "dashboard" | "projects" | "board" | "schedule"
-  | "tenders" | "subcontractors" | "news" | "clients" | "users"
+  | "tenders" | "news" | "clients" | "users"
   | "safety" | "documents" | "ai" | "settings";
 
 export type Perms = {
@@ -30,13 +30,13 @@ export type Perms = {
 
 export const PERMS: Record<RoleKey, Perms> = {
   admin: {
-    nav: ["dashboard","projects","board","schedule","tenders","subcontractors","news","clients","users","safety","documents","ai","settings"],
+    nav: ["dashboard","projects","board","schedule","tenders","news","clients","users","safety","documents","ai","settings"],
     projectScope: "all",
     viewBudget: true, editProjects: true, manageUsers: true, manageClients: true, resolveIncidents: true, editSettings: true,
     manageTenders: true, manageNews: true, useAI: true, configureAI: true,
   },
   pm: {
-    nav: ["dashboard","projects","board","schedule","tenders","subcontractors","news","clients","safety","documents","ai"],
+    nav: ["dashboard","projects","board","schedule","tenders","news","clients","safety","documents","ai"],
     projectScope: "managed",
     viewBudget: true, editProjects: true, manageUsers: false, manageClients: true, resolveIncidents: true, editSettings: false,
     manageTenders: true, manageNews: true, useAI: true, configureAI: false,

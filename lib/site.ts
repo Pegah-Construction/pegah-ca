@@ -14,14 +14,24 @@ export const company = {
   region: "Southern Ontario",
 };
 
-export type NavItem = { label: string; href: string };
+export type NavItem = {
+  label: string;
+  href: string;
+  children?: { label: string; href: string }[];
+};
 
 export const nav: NavItem[] = [
   { label: "About", href: "/about" },
   { label: "Services", href: "/services" },
   { label: "Projects", href: "/projects" },
-  { label: "Tenders", href: "/tenders" },
-  { label: "Subcontractor Registration", href: "/subcontractors/register" },
+  {
+    label: "Tenders",
+    href: "/tenders",
+    children: [
+      { label: "Active Tenders", href: "/tenders" },
+      { label: "Subcontractor Registration", href: "/subcontractors/register" },
+    ],
+  },
   { label: "Blog", href: "/blog" },
   { label: "Safety", href: "/safety" },
   { label: "Contact", href: "/contact" },

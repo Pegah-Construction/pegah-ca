@@ -5,11 +5,6 @@ import { usePathname } from "next/navigation";
 import { nav, company } from "@/lib/site";
 import { SiteLogo } from "./Brand";
 
-/**
- * Solid, always-legible navbar. Sticks to the top on every page so the
- * wordmark and links are readable regardless of the section behind them
- * or the visitor's light/dark browser preference.
- */
 export default function Navbar() {
   const pathname = usePathname();
 
@@ -20,15 +15,64 @@ export default function Navbar() {
 
         <ul className="ml-4 hidden items-center gap-7 lg:flex">
           {nav.map((item) => {
-            const active = pathname === item.href;
+            const isActive =
+              pathname === item.href ||
+              item.children?.some((c) => pathname === c.href);
+
+            if (item.children) {
+              return (
+                <li key={item.href} className="group relative">
+                  <Link
+                    href={item.href}
+                    className={`flex items-center gap-1 font-display text-sm font-medium transition-colors ${
+                      isActive ? "text-brand-700" : "text-ink/70 hover:text-brand-700"
+                    }`}
+                  >
+                    {item.label}
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="h-3.5 w-3.5 transition-transform duration-150 group-hover:rotate-180"
+                    >
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
+                  </Link>
+
+                  {/* Dropdown panel — pt-3 bridges the gap so hover doesn't break */}
+                  <div className="invisible absolute left-0 top-full z-50 pt-3 opacity-0 transition-all duration-150 group-hover:visible group-hover:opacity-100">
+                    <div className="min-w-[220px] overflow-hidden rounded-xl border border-concrete-200 bg-white shadow-xl shadow-ink/5">
+                      {item.children.map((child) => {
+                        const childActive = pathname === child.href;
+                        return (
+                          <Link
+                            key={child.href}
+                            href={child.href}
+                            className={`flex items-center gap-3 px-5 py-3.5 text-sm transition-colors first:pt-4 last:pb-4 ${
+                              childActive
+                                ? "bg-brand-50 font-semibold text-brand-700"
+                                : "text-ink/70 hover:bg-brand-50/60 hover:text-brand-700"
+                            }`}
+                          >
+                            {child.label}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </li>
+              );
+            }
+
             return (
               <li key={item.href}>
                 <Link
                   href={item.href}
                   className={`font-display text-sm font-medium transition-colors ${
-                    active
-                      ? "text-brand-700"
-                      : "text-ink/70 hover:text-brand-700"
+                    isActive ? "text-brand-700" : "text-ink/70 hover:text-brand-700"
                   }`}
                 >
                   {item.label}

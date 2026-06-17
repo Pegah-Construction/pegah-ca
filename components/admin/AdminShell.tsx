@@ -12,7 +12,6 @@ const NAV: { key: NavKey; label: string; href: string }[] = [
   // { key: "board", label: "Task Board", href: "/admin/board" },
   // { key: "schedule", label: "Schedule", href: "/admin/schedule" },
   { key: "tenders", label: "Tenders", href: "/admin/tenders" },
-  { key: "subcontractors", label: "Subcontractors", href: "/admin/subcontractors" },
   { key: "news", label: "News & Blog", href: "/admin/news" },
   // { key: "clients", label: "Clients", href: "/admin/clients" },
   { key: "users", label: "Users & Roles", href: "/admin/users" },

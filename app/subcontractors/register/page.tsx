@@ -12,6 +12,13 @@ const PROVINCES = [
   "Northwest Territories", "Nunavut", "Yukon",
 ];
 
+const CERTS: { key: "isCOR" | "isWSIB" | "isBonded" | "isInsured"; label: string; desc: string }[] = [
+  { key: "isCOR", label: "COR Certified", desc: "Certificate of Recognition — health & safety" },
+  { key: "isWSIB", label: "WSIB in Good Standing", desc: "Workplace Safety and Insurance Board" },
+  { key: "isBonded", label: "Bonded", desc: "Performance and labour & material payment bonds" },
+  { key: "isInsured", label: "Liability Insurance ≥ $2M", desc: "General commercial liability coverage" },
+];
+
 const TRADES = [
   { div: "02", label: "Demolition & Site Remediation" },
   { div: "03", label: "Concrete & Formwork" },
@@ -270,12 +277,7 @@ export default function SubcontractorRegisterPage() {
             {/* Certifications */}
             <Section title="Certifications & Compliance">
               <div className="grid gap-3 sm:grid-cols-2">
-                {[
-                  { key: "isCOR", label: "COR Certified", desc: "Certificate of Recognition — health & safety" },
-                  { key: "isWSIB", label: "WSIB in Good Standing", desc: "Workplace Safety and Insurance Board" },
-                  { key: "isBonded", label: "Bonded", desc: "Performance and labour & material payment bonds" },
-                  { key: "isInsured", label: "Liability Insurance ≥ $2M", desc: "General commercial liability coverage" },
-                ] as const).map((cert) => (
+                {CERTS.map((cert) => (
                   <label key={cert.key} className="flex cursor-pointer items-start gap-3 rounded-lg border border-concrete-200 px-4 py-3 transition-colors hover:border-brand-300 hover:bg-brand-50/50 has-[:checked]:border-brand-400 has-[:checked]:bg-brand-50">
                     <input
                       type="checkbox"

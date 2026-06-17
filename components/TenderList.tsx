@@ -138,21 +138,30 @@ export default function TenderList({ tenders }: { tenders: PublicTender[] }) {
 
       {/* Results */}
       {visible.length === 0 ? (
-        <div className="py-16 text-center">
-          <p className="font-body text-lg text-concrete-400">
-            No tenders match your filters.
+        <div className="rounded-xl border border-concrete-200 bg-white px-8 py-20 text-center">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className="mx-auto h-10 w-10 text-concrete-300">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <path d="M14 2v6h6M9 13h6M9 17h6" />
+          </svg>
+          <p className="mt-5 font-display text-lg font-semibold text-ink">
+            {tenders.length === 0
+              ? "No active tenders at this time"
+              : "No tenders match your filters"}
           </p>
-          <button
-            type="button"
-            onClick={() => {
-              setQ("");
-              setStatus("Active");
-              setCategory("All");
-            }}
-            className="mt-4 font-mono text-xs uppercase tracking-label text-brand-700 hover:underline"
-          >
-            Clear filters
-          </button>
+          <p className="mt-2 text-sm text-concrete-400">
+            {tenders.length === 0
+              ? "Check back soon — new bid opportunities are posted as they arise."
+              : "Try adjusting the status or category filters."}
+          </p>
+          {tenders.length > 0 && (
+            <button
+              type="button"
+              onClick={() => { setQ(""); setStatus("Active"); setCategory("All"); }}
+              className="mt-5 rounded-md border border-concrete-300 px-4 py-2 font-mono text-xs uppercase tracking-label text-concrete-500 transition-colors hover:border-brand-400 hover:text-brand-700"
+            >
+              Clear filters
+            </button>
+          )}
         </div>
       ) : (
         <div className="divide-y divide-concrete-200 overflow-hidden rounded-xl border border-concrete-200 bg-white">
