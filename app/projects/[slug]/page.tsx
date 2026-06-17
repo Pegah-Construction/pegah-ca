@@ -35,7 +35,7 @@ export default async function ProjectDetail({ params }: Params) {
     project.owner ? ["Owner", project.owner] : null,
     project.architect ? ["Architect", project.architect] : null,
     project.grossFloorArea ? ["Gross floor area", project.grossFloorArea] : null,
-    project.dateCompleted ? ["Date completed", project.dateCompleted] : null,
+    project.dateCompleted ? ["Year completed", project.dateCompleted.slice(0, 4)] : null,
   ].filter((f): f is [string, string] => f !== null);
 
   const photoPaths = project.photos.map((ph) => getStorageUrl(ph.path));
@@ -56,7 +56,7 @@ export default async function ProjectDetail({ params }: Params) {
             </h1>
             {project.location && (
               <p className="mt-4 font-mono text-sm text-concrete-500">
-                {project.location}{project.dateCompleted ? ` · Completed ${project.dateCompleted}` : ""}
+                {project.location}{project.dateCompleted ? ` · Completed ${project.dateCompleted.slice(0, 4)}` : ""}
               </p>
             )}
           </div>

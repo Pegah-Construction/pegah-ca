@@ -122,7 +122,7 @@ export default function ProjectDetailView({ id }: { id: string }) {
           )}
         </div>
         <p className="mt-1 font-mono text-xs text-concrete-500">
-          {x.location}{x.dateCompleted ? ` · Completed ${x.dateCompleted}` : ""}
+          {x.location}{x.dateCompleted ? ` · Completed ${x.dateCompleted.slice(0, 4)}` : ""}
         </p>
       </div>
 
@@ -213,7 +213,7 @@ export default function ProjectDetailView({ id }: { id: string }) {
               {x.owner && <Fact k="Owner" v={x.owner} />}
               {x.architect && <Fact k="Architect" v={x.architect} />}
               {x.grossFloorArea && <Fact k="Gross floor area" v={x.grossFloorArea} />}
-              {x.dateCompleted && <Fact k="Date completed" v={x.dateCompleted} />}
+              {x.dateCompleted && <Fact k="Year completed" v={x.dateCompleted.slice(0, 4)} />}
             </dl>
           </Card>
         </div>
@@ -258,8 +258,8 @@ export default function ProjectDetailView({ id }: { id: string }) {
               <Field label="Gross floor area">
                 <input className={inputCls} value={form.grossFloorArea} onChange={(e) => set("grossFloorArea", e.target.value)} placeholder="e.g. 12,500 sq ft" />
               </Field>
-              <Field label="Date completed">
-                <input type="month" className={inputCls} value={form.dateCompleted} onChange={(e) => set("dateCompleted", e.target.value)} />
+              <Field label="Year completed">
+                <input type="number" min="1900" max="2100" placeholder="e.g. 2023" className={inputCls} value={form.dateCompleted} onChange={(e) => set("dateCompleted", e.target.value)} />
               </Field>
             </div>
             <Field label="Description">

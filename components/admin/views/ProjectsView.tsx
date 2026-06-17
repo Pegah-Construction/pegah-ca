@@ -188,7 +188,7 @@ export default function ProjectsView() {
                 <td className="px-5 py-3">{x.type ? <Pill text={x.type} /> : <span className="text-concrete-400">—</span>}</td>
                 <td className="px-5 py-3 text-concrete-500">{x.contractType || "—"}</td>
                 <td className="px-5 py-3 font-mono text-xs text-concrete-500">{x.value > 0 ? money(x.value) : "—"}</td>
-                <td className="px-5 py-3 font-mono text-xs text-concrete-500">{x.dateCompleted || "—"}</td>
+                <td className="px-5 py-3 font-mono text-xs text-concrete-500">{x.dateCompleted ? x.dateCompleted.slice(0, 4) : "—"}</td>
                 <td className="px-5 py-3 text-right">
                   {perms.editProjects && (
                     <div className="flex items-center justify-end gap-3">
@@ -290,12 +290,15 @@ export default function ProjectsView() {
                   placeholder="e.g. 12,500 sq ft"
                 />
               </Field>
-              <Field label="Date completed">
+              <Field label="Year completed">
                 <input
-                  type="month"
+                  type="number"
+                  min="1900"
+                  max="2100"
                   className={inputCls}
                   value={form.dateCompleted}
                   onChange={(e) => set("dateCompleted", e.target.value)}
+                  placeholder="e.g. 2023"
                 />
               </Field>
             </div>
