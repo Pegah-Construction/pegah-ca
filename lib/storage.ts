@@ -5,12 +5,26 @@ import { join, dirname } from "path";
 const useSupabase = () =>
   !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
 
+async function ensureBucket() {
+  const { error } = await supabase.storage.createBucket(BUCKET, { public: true });
+  // "already exists" is fine — any other error is real
+  if (error && !error.message.includes("already exists")) throw new Error(error.message);
+}
+
 export async function saveFile(file: File, storagePath: string): Promise<string> {
   if (useSupabase()) {
     const { error } = await supabase.storage
       .from(BUCKET)
       .upload(storagePath, file, { contentType: file.type, upsert: true });
-    if (error) throw new Error(error.message);
+    if (error?.message.includes("Bucket not found")) {
+      await ensureBucket();
+      const { error: e2 } = await supabase.storage
+        .from(BUCKET)
+        .upload(storagePath, file, { contentType: file.type, upsert: true });
+      if (e2) throw new Error(e2.message);
+    } else if (error) {
+      throw new Error(error.message);
+    }
     const { data } = supabase.storage.from(BUCKET).getPublicUrl(storagePath);
     return data.publicUrl;
   }
