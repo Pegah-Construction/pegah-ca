@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { put } from "@vercel/blob";
+import { saveFile } from "@/lib/storage";
 
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -17,16 +17,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (!file) return Response.json({ error: "No file" }, { status: 400 });
 
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-  const filename = `projects/${id}/${Date.now()}.${ext}`;
-  const blob = await put(filename, file, { access: "public" });
+  const url = await saveFile(file, `uploads/projects/${id}/${Date.now()}.${ext}`);
 
   const agg = await db.projectPhoto.aggregate({
     where: { projectId: id },
     _max: { order: true },
   });
   const order = (agg._max.order ?? -1) + 1;
-  const photo = await db.projectPhoto.create({
-    data: { projectId: id, path: blob.url, order },
-  });
+  const photo = await db.projectPhoto.create({ data: { projectId: id, path: url, order } });
   return Response.json(photo, { status: 201 });
 }

@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { put } from "@vercel/blob";
+import { saveFile } from "@/lib/storage";
 
 export async function GET() {
   const images = await db.heroImage.findMany({ orderBy: { order: "asc" } });
@@ -12,11 +12,10 @@ export async function POST(req: Request) {
   if (!file) return Response.json({ error: "No file" }, { status: 400 });
 
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-  const filename = `hero/${Date.now()}.${ext}`;
-  const blob = await put(filename, file, { access: "public" });
+  const url = await saveFile(file, `uploads/hero/${Date.now()}.${ext}`);
 
   const agg = await db.heroImage.aggregate({ _max: { order: true } });
   const order = (agg._max.order ?? -1) + 1;
-  const image = await db.heroImage.create({ data: { path: blob.url, order } });
+  const image = await db.heroImage.create({ data: { path: url, order } });
   return Response.json(image, { status: 201 });
 }

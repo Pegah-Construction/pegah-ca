@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/lib/auth";
 import { PERMS } from "@/lib/admin";
-import { Card } from "../ui";
+import { Card, Spinner } from "../ui";
 
 type OrgSettings = { companyName: string; phone: string; email: string; address: string };
 type HeroImage = { id: number; path: string; order: number };
@@ -160,7 +160,7 @@ export default function SettingsView() {
                   className="flex aspect-video items-center justify-center rounded-lg border-2 border-dashed border-concrete-300 text-concrete-400 transition hover:border-brand-400 hover:text-brand-500 disabled:opacity-50"
                 >
                   {uploadingHero ? (
-                    <span className="text-xs">Uploading…</span>
+                    <Spinner className="h-5 w-5" />
                   ) : (
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-6 w-6">
                       <path d="M12 5v14M5 12h14" />

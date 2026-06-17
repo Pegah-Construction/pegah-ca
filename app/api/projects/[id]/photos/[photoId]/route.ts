@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { del } from "@vercel/blob";
+import { deleteFile } from "@/lib/storage";
 
 export async function DELETE(
   _req: Request,
@@ -10,7 +10,7 @@ export async function DELETE(
   const photo = await db.projectPhoto.findUnique({ where: { id: numId } });
   if (!photo) return Response.json({ error: "Not found" }, { status: 404 });
 
-  await del(photo.path).catch(() => {});
+  await deleteFile(photo.path);
   await db.projectPhoto.delete({ where: { id: numId } });
   return new Response(null, { status: 204 });
 }

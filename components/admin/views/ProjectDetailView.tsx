@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth";
 import { PERMS, type Project, type Incident, type ProjectPhoto } from "@/lib/admin";
-import { Card, THead, Table, StatusPill, Pill, Modal, Field, inputCls } from "../ui";
+import { Card, THead, Table, StatusPill, Pill, Modal, Field, inputCls, Spinner } from "../ui";
 
 const PROJECT_TYPES = ["", "New Construction", "Renovation", "Retrofit", "Restoration", "Interior Fit-out", "Addition", "Demolition"];
 const CONTRACT_TYPES = ["", "General Contracting", "Design-Build", "Construction Management", "Project Management"];
@@ -85,8 +85,12 @@ export default function ProjectDetailView({ id }: { id: string }) {
     const fd = new FormData();
     fd.append("file", file);
     const res = await fetch(`/api/projects/${id}/photos`, { method: "POST", body: fd });
-    const photo = await res.json();
-    setPhotos((prev) => [...prev, photo]);
+    if (res.ok) {
+      const photo = await res.json();
+      setPhotos((prev) => [...prev, photo]);
+    } else {
+      alert("Upload failed. Please try again.");
+    }
     e.target.value = "";
     setUploading(false);
   };
@@ -138,7 +142,8 @@ export default function ProjectDetailView({ id }: { id: string }) {
                 Photos <span className="ml-1 font-mono text-xs font-normal text-concrete-400">({photos.length})</span>
               </h2>
               {perms.editProjects && (
-                <label className="cursor-pointer rounded-md border border-concrete-200 px-3 py-1 font-display text-xs font-semibold text-ink hover:bg-concrete-50">
+                <label className={`flex cursor-pointer items-center gap-1.5 rounded-md border border-concrete-200 px-3 py-1 font-display text-xs font-semibold text-ink hover:bg-concrete-50 ${uploading ? "pointer-events-none opacity-60" : ""}`}>
+                  {uploading && <Spinner className="h-3 w-3" />}
                   {uploading ? "Uploading…" : "Upload photo"}
                   <input
                     type="file"
