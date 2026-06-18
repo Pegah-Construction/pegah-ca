@@ -36,22 +36,35 @@
 
   /* Rich-text article body rendered from TipTap HTML */
   .article-body h2 {
-    @apply mt-8 font-display text-2xl font-bold tracking-tight text-ink;
+    @apply mt-14 mb-3 font-display text-2xl font-bold tracking-tight text-ink;
+    padding-top: 1.5rem;
+    border-top: 1px solid theme("colors.concrete.200");
+  }
+  .article-body h2:first-child {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
   }
   .article-body h3 {
-    @apply mt-6 font-display text-xl font-semibold tracking-tight text-ink;
+    @apply mt-8 mb-2 font-display text-xl font-semibold tracking-tight text-ink;
   }
   .article-body p {
     @apply my-4;
   }
   .article-body ul {
-    @apply my-4 ml-6 list-disc space-y-1;
+    @apply my-4 ml-6 list-disc space-y-1.5;
   }
   .article-body ol {
-    @apply my-4 ml-6 list-decimal space-y-1;
+    @apply my-4 ml-6 list-decimal space-y-1.5;
+  }
+  .article-body li {
+    @apply leading-relaxed;
   }
   .article-body blockquote {
-    @apply my-5 border-l-4 border-brand-300 pl-5 italic text-concrete-500;
+    @apply my-6 border-l-4 border-brand-400 pl-6 italic text-concrete-500;
+  }
+  .article-body hr {
+    @apply my-10 border-concrete-200;
   }
   .article-body pre {
     @apply my-4 overflow-x-auto rounded-lg bg-concrete-100 p-4 font-mono text-sm;
@@ -61,6 +74,88 @@
   }
   .article-body strong {
     @apply font-bold text-ink;
+  }
+  .article-body a {
+    @apply text-brand-700 underline underline-offset-2 hover:text-brand-800;
+  }
+
+  /* ── Progress Banner ── */
+  .article-body .article-progress-banner,
+  .article-progress-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    background: theme("colors.concrete.50");
+    border-left: 4px solid theme("colors.brand.600");
+    border-radius: 0 0.375rem 0.375rem 0;
+    padding: 1.25rem 1.5rem;
+    margin: 1.75rem 0;
+  }
+  .article-progress-banner .progress-left { display: flex; flex-direction: column; gap: 0.25rem; }
+  .article-progress-banner .progress-label {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: theme("colors.brand.600");
+  }
+  .article-progress-banner .progress-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: theme("colors.ink");
+  }
+  .article-progress-banner .progress-bar-wrap { flex: 1; min-width: 200px; }
+  .article-progress-banner .progress-bar-top {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: theme("colors.concrete.500");
+    margin-bottom: 0.375rem;
+  }
+  .article-progress-banner .progress-track {
+    height: 6px;
+    background: theme("colors.concrete.200");
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .article-progress-banner .progress-fill {
+    height: 100%;
+    background: theme("colors.brand.600");
+    border-radius: 3px;
+  }
+
+  /* ── Stats Strip ── */
+  .article-body .article-stats-strip,
+  .article-stats-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: theme("colors.concrete.200");
+    border: 1px solid theme("colors.concrete.200");
+    border-radius: 0.375rem;
+    overflow: hidden;
+    margin: 1.75rem 0;
+  }
+  .article-stats-strip .stats-cell {
+    background: white;
+    padding: 1.5rem 1rem;
+    text-align: center;
+  }
+  .article-stats-strip .stats-value {
+    font-family: theme("fontFamily.display");
+    font-size: 2rem;
+    font-weight: 900;
+    color: theme("colors.brand.700");
+    line-height: 1;
+    margin-bottom: 0.375rem;
+  }
+  .article-stats-strip .stats-label {
+    font-size: 0.75rem;
+    color: theme("colors.concrete.500");
+    font-weight: 500;
+    letter-spacing: 0.04em;
   }
   .article-body img {
     @apply my-6 w-full rounded-xl object-cover;
