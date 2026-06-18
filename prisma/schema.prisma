@@ -252,6 +252,18 @@ model Subcontractor {
   notes        String   @default("")
 }
 
+model JobPosting {
+  id           String   @id
+  createdAt    DateTime @default(now())
+  title        String
+  department   String   @default("")
+  location     String   @default("Toronto, ON")
+  type         String   @default("Full-time")
+  description  String   @default("")
+  requirements String   @default("")
+  status       String   @default("Draft")
+}
+
 model Article {
   id        String   @id
   title     String
