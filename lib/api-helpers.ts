@@ -28,7 +28,7 @@ export async function visibleProjectIds(userId: string): Promise<string[]> {
 
 export function mapProject(p: {
   id: string; name: string; location: string;
-  category?: string; type?: string; dateCompleted?: string; owner?: string; architect?: string;
+  category?: string; type?: string; constructionType?: string; dateCompleted?: string; owner?: string; architect?: string;
   contractType?: string; value?: number; grossFloorArea?: string; description?: string;
   clientId?: string | null; sector?: string; status?: string;
   progress?: number; budget?: number; spent?: number; start?: string; end?: string;
@@ -43,6 +43,7 @@ export function mapProject(p: {
     location: p.location ?? "",
     category: p.category ?? "",
     type: p.type ?? "",
+    constructionType: p.constructionType ?? "",
     dateCompleted: p.dateCompleted ?? "",
     owner: p.owner ?? "",
     architect: p.architect ?? "",

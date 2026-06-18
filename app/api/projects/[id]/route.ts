@@ -47,7 +47,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const { id } = await params;
   const body = await req.json();
   const allowed = [
-    "name", "location", "category", "type", "dateCompleted", "owner", "architect",
+    "name", "location", "category", "type", "constructionType", "dateCompleted", "owner", "architect",
     "contractType", "value", "grossFloorArea", "description",
   ] as const;
   const data: Record<string, unknown> = {};

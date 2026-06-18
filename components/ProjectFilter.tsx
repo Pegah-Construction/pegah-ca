@@ -14,28 +14,21 @@ export type PublicProject = {
   photos: string[];
 };
 
-const CATEGORIES = ["All", "Commercial", "Residential"] as const;
-type Category = (typeof CATEGORIES)[number];
+const TABS = ["All", "Commercial", "Residential"];
 
 export default function ProjectFilter({ projects }: { projects: PublicProject[] }) {
-  const [category, setCategory] = useState<Category>("All");
+  const [category, setCategory] = useState("All");
   const [subType, setSubType] = useState("All");
   const [q, setQ] = useState("");
 
-  const byCategory = category === "All"
-    ? projects
-    : category === "Commercial"
-    ? projects.filter((p) => p.category !== "Residential")
-    : projects.filter((p) => p.category === category);
+  const byCategory =
+    category === "All"
+      ? projects
+      : projects.filter((p) => p.category === category);
 
-  // For sub-type chips: when "All" is selected, exclude Residential entries
-  // (Residential has its own top-level tab, so it shouldn't appear as a sub-type chip)
-  const subTypeSource = category === "All"
-    ? projects.filter((p) => p.category !== "Residential")
-    : byCategory;
-  const subTypes = Array.from(new Set(subTypeSource.map((p) => p.type).filter(Boolean))).sort();
+  const PURPOSE_TYPES = ["Education", "Emergency Services", "Retail", "Recreation", "Transportation"];
 
-  const handleCategoryChange = (c: Category) => {
+  const handleCategoryChange = (c: string) => {
     setCategory(c);
     setSubType("All");
   };
@@ -43,17 +36,28 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
   const needle = q.trim().toLowerCase();
   const visible = byCategory
     .filter((p) => subType === "All" || p.type === subType)
-    .filter((p) =>
-      !needle || [p.name, p.location, p.type, p.category].some((v) => v.toLowerCase().includes(needle))
+    .filter(
+      (p) =>
+        !needle ||
+        [p.name, p.location, p.type, p.category].some((v) =>
+          v.toLowerCase().includes(needle)
+        )
     );
 
   return (
     <>
-      {/* Search + top-level category */}
+      {/* Search + category tabs */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative w-full sm:max-w-xs">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-concrete-400">
-            <circle cx="11" cy="11" r="8" /><path d="M21 21l-4-4" />
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-concrete-400"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="M21 21l-4-4" />
           </svg>
           <input
             type="search"
@@ -64,8 +68,8 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
           />
         </div>
 
-        <div className="flex gap-1 rounded-lg border border-concrete-200 bg-concrete-50 p-1">
-          {CATEGORIES.map((c) => (
+        <div className="flex flex-wrap gap-1 rounded-lg border border-concrete-200 bg-concrete-50 p-1">
+          {TABS.map((c) => (
             <button
               key={c}
               type="button"
@@ -82,23 +86,21 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
         </div>
       </div>
 
-      {/* Sub-type chips */}
-      {subTypes.length > 0 && (
+      {/* Sub-type chips (Commercial and other non-Residential categories) */}
+      {category === "Commercial" && (
         <div className="mb-8 flex flex-wrap gap-2">
-          {category !== "All" && (
-            <button
-              type="button"
-              onClick={() => setSubType("All")}
-              className={`rounded-full px-3 py-1.5 font-mono text-[11px] uppercase tracking-label transition-colors ${
-                subType === "All"
-                  ? "bg-brand-700 text-white"
-                  : "border border-concrete-300 text-concrete-500 hover:border-brand-400 hover:text-brand-700"
-              }`}
-            >
-              All {category}
-            </button>
-          )}
-          {subTypes.map((t) => (
+          <button
+            type="button"
+            onClick={() => setSubType("All")}
+            className={`rounded-full px-3 py-1.5 font-mono text-[11px] uppercase tracking-label transition-colors ${
+              subType === "All"
+                ? "bg-brand-700 text-white"
+                : "border border-concrete-300 text-concrete-500 hover:border-brand-400 hover:text-brand-700"
+            }`}
+          >
+            All Commercial
+          </button>
+          {PURPOSE_TYPES.map((t) => (
             <button
               key={t}
               type="button"
@@ -137,7 +139,9 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
             )}
             <div className="mt-3 flex items-start justify-between gap-2">
               <h3 className="font-display text-lg font-bold tracking-tight text-ink group-hover:text-brand-700">
-                <Link href={`/projects/${p.id}`} className="hover:text-brand-700">{p.name}</Link>
+                <Link href={`/projects/${p.id}`} className="hover:text-brand-700">
+                  {p.name}
+                </Link>
               </h3>
               {p.type && (
                 <span className="mt-1 shrink-0 font-mono text-[11px] uppercase tracking-label text-brand-700">
@@ -146,7 +150,9 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
               )}
             </div>
             {p.location && (
-              <p className="mt-0.5 font-mono text-[11px] text-concrete-400">{p.location}</p>
+              <p className="mt-0.5 font-mono text-[11px] text-concrete-400">
+                {p.location}
+              </p>
             )}
           </div>
         ))}
@@ -154,7 +160,9 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
 
       {visible.length === 0 && (
         <p className="py-16 text-center font-body text-lg text-concrete-400">
-          {needle ? "No projects match your search." : "No projects in this category yet."}
+          {needle
+            ? "No projects match your search."
+            : "No projects in this category yet."}
         </p>
       )}
     </>

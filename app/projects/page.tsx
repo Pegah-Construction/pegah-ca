@@ -4,6 +4,8 @@ import PageShell from "@/components/PageShell";
 import ProjectFilter, { type PublicProject } from "@/components/ProjectFilter";
 import { getStorageUrl } from "@/lib/storage-url";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Projects — Pegah Construction Ltd.",
 };

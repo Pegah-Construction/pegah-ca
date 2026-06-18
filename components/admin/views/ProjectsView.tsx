@@ -7,12 +7,13 @@ import { Card, THead, Table, Pill, PrimaryBtn, Modal, Field, inputCls, SearchInp
 import { getStorageUrl } from "@/lib/storage-url";
 
 const CATEGORIES = ["", "Commercial", "Residential"];
-const PROJECT_TYPES = ["", "New Construction", "Renovation", "Retrofit", "Restoration", "Interior Fit-out", "Addition", "Demolition"];
+const PURPOSE_TYPES = ["", "Education", "Emergency Services", "Retail", "Recreation", "Transportation", "Other"];
+const CONSTRUCTION_TYPES = ["", "New Construction", "Renovation", "Retrofit", "Restoration", "Interior Fit-out", "Addition", "Demolition"];
 const CONTRACT_TYPES = ["", "General Contracting", "Design-Build", "Construction Management", "Project Management"];
 
 const empty = () => ({
   name: "", location: "",
-  category: "", type: "", dateCompleted: "", owner: "", architect: "",
+  category: "", type: "", constructionType: "", dateCompleted: "", owner: "", architect: "",
   contractType: "", value: "", grossFloorArea: "", description: "",
 });
 
@@ -55,7 +56,7 @@ export default function ProjectsView() {
   const openEdit = (p: Project) => {
     setForm({
       name: p.name, location: p.location,
-      category: p.category ?? "", type: p.type, dateCompleted: p.dateCompleted, owner: p.owner,
+      category: p.category ?? "", type: p.type, constructionType: p.constructionType ?? "", dateCompleted: p.dateCompleted, owner: p.owner,
       architect: p.architect, contractType: p.contractType,
       value: p.value ? String(p.value) : "", grossFloorArea: p.grossFloorArea,
       description: p.description,
@@ -241,9 +242,16 @@ export default function ProjectsView() {
                   {CATEGORIES.map((c) => <option key={c} value={c}>{c || "Select category…"}</option>)}
                 </select>
               </Field>
-              <Field label="Type">
-                <select className={inputCls} value={form.type} onChange={(e) => set("type", e.target.value)}>
-                  {PROJECT_TYPES.map((t) => <option key={t} value={t}>{t || "Select type…"}</option>)}
+              {form.category === "Commercial" && (
+                <Field label="Purpose type">
+                  <select className={inputCls} value={form.type} onChange={(e) => set("type", e.target.value)}>
+                    {PURPOSE_TYPES.map((t) => <option key={t} value={t}>{t || "Select purpose…"}</option>)}
+                  </select>
+                </Field>
+              )}
+              <Field label="Construction type">
+                <select className={inputCls} value={form.constructionType} onChange={(e) => set("constructionType", e.target.value)}>
+                  {CONSTRUCTION_TYPES.map((t) => <option key={t} value={t}>{t || "Select construction type…"}</option>)}
                 </select>
               </Field>
             </div>

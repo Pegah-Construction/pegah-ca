@@ -51,6 +51,7 @@ model Project {
   dateCompleted  String @default("")
   owner          String @default("")
   architect      String @default("")
+  constructionType String @default("")
   contractType   String @default("")
   value          Float  @default(0)
   grossFloorArea String @default("")
