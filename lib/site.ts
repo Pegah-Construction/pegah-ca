@@ -7,6 +7,7 @@ export const company = {
   phone: "416 739 9300",
   phoneHref: "tel:+14167399300",
   email: "info@pegah.ca",
+  estimatingEmail: "estimating@pegah.ca",
   address: {
     line1: "5050 Dufferin Street, Suite 120",
     line2: "Toronto, Ontario M3H 5T5",

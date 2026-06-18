@@ -147,8 +147,8 @@ export default async function TendersPage() {
                         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                         <path d="m22 6-10 7L2 6" />
                       </svg>
-                      <a href={`mailto:${company.email}`} className="transition-colors hover:text-brand-700">
-                        {company.email}
+                      <a href={`mailto:${company.estimatingEmail}`} className="transition-colors hover:text-brand-700">
+                        {company.estimatingEmail}
                       </a>
                     </p>
                   </div>
@@ -171,7 +171,7 @@ export default async function TendersPage() {
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <a
-                    href={`mailto:${company.email}`}
+                    href={`mailto:${company.estimatingEmail}`}
                     className="inline-flex items-center gap-2 rounded-md bg-brand-700 px-5 py-2.5 font-display text-sm font-semibold text-white transition-colors hover:bg-brand-800"
                   >
                     Email our estimating team →
@@ -212,7 +212,7 @@ export default async function TendersPage() {
                     Register now →
                   </a>
                   <a
-                    href={`mailto:${company.email}`}
+                    href={`mailto:${company.estimatingEmail}`}
                     className="inline-flex items-center gap-2 rounded-md border border-white/20 px-6 py-3 font-display text-sm font-semibold text-white transition-colors hover:border-white/40 hover:bg-white/5"
                   >
                     Contact us
