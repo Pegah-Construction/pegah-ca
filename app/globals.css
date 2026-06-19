@@ -36,17 +36,15 @@
 
   /* Rich-text article body rendered from TipTap HTML */
   .article-body h2 {
-    @apply mt-14 mb-3 font-display text-2xl font-bold tracking-tight text-ink;
-    padding-top: 1.5rem;
-    border-top: 1px solid theme("colors.concrete.200");
-  }
-  .article-body h2:first-child {
-    border-top: none;
-    padding-top: 0;
-    margin-top: 0;
+    @apply mt-8 mb-3 font-display text-2xl font-bold tracking-tight text-ink;
   }
   .article-body h3 {
-    @apply mt-8 mb-2 font-display text-xl font-semibold tracking-tight text-ink;
+    @apply mt-6 mb-2 font-display text-xl font-semibold tracking-tight text-ink;
+  }
+  /* Section label — authored via toolbar "Label" button */
+  .article-body p.section-label {
+    @apply mb-1 mt-0 font-mono text-[11px] font-bold uppercase tracking-widest;
+    color: theme("colors.brand.600");
   }
   .article-body p {
     @apply my-4;

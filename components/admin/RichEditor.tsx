@@ -88,6 +88,14 @@ const ProgressBannerNode = TiptapNode.create({
   },
 });
 
+const SectionLabelNode = TiptapNode.create({
+  name: "sectionLabel",
+  group: "block",
+  content: "inline*",
+  parseHTML() { return [{ tag: "p.section-label" }]; },
+  renderHTML() { return ["p", { class: "section-label" }, 0]; },
+});
+
 const StatsStripNode = TiptapNode.create({
   name: "statsStrip",
   group: "block",
@@ -166,6 +174,7 @@ export default function RichEditor({ value, onChange, articleId }: { value: stri
       StarterKit,
       Image.configure({ inline: false, allowBase64: false }),
       Youtube.configure({ width: 640, height: 360, nocookie: true }),
+      SectionLabelNode,
       ProgressBannerNode,
       StatsStripNode,
     ],
@@ -250,6 +259,9 @@ export default function RichEditor({ value, onChange, articleId }: { value: stri
         <ToolBtn title="Italic" onClick={() => editor.chain().focus().toggleItalic().run()} active={editor.isActive("italic")}><em>I</em></ToolBtn>
         <ToolBtn title="Strikethrough" onClick={() => editor.chain().focus().toggleStrike().run()} active={editor.isActive("strike")}><s>S</s></ToolBtn>
         <Divider />
+        <ToolBtn title="Section label (small uppercase eyebrow)" onClick={() => editor.chain().focus().toggleNode("sectionLabel", "paragraph").run()} active={editor.isActive("sectionLabel")}>
+          <span style={{ fontSize: "9px", fontWeight: 700, letterSpacing: "0.08em" }}>LABEL</span>
+        </ToolBtn>
         <ToolBtn title="Heading 2" onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} active={editor.isActive("heading", { level: 2 })}>H2</ToolBtn>
         <ToolBtn title="Heading 3" onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} active={editor.isActive("heading", { level: 3 })}>H3</ToolBtn>
         <Divider />
@@ -353,7 +365,7 @@ export default function RichEditor({ value, onChange, articleId }: { value: stri
       )}
 
       {/* Editor area */}
-      <div className="px-3 py-2 text-sm text-ink [&_.prose-editor_blockquote]:my-2 [&_.prose-editor_blockquote]:border-l-4 [&_.prose-editor_blockquote]:border-concrete-300 [&_.prose-editor_blockquote]:pl-3 [&_.prose-editor_blockquote]:text-concrete-500 [&_.prose-editor_code]:rounded [&_.prose-editor_code]:bg-concrete-100 [&_.prose-editor_code]:px-1 [&_.prose-editor_h2]:mt-3 [&_.prose-editor_h2]:font-display [&_.prose-editor_h2]:text-lg [&_.prose-editor_h2]:font-bold [&_.prose-editor_h3]:mt-2 [&_.prose-editor_h3]:font-display [&_.prose-editor_h3]:text-base [&_.prose-editor_h3]:font-semibold [&_.prose-editor_img]:my-3 [&_.prose-editor_img]:max-w-full [&_.prose-editor_img]:rounded-lg [&_.prose-editor_li]:ml-4 [&_.prose-editor_ol]:list-decimal [&_.prose-editor_p]:my-1 [&_.prose-editor_p]:leading-relaxed [&_.prose-editor_ul]:list-disc [&_.prose-editor_iframe]:my-3 [&_.prose-editor_iframe]:max-w-full [&_.prose-editor_iframe]:rounded-lg">
+      <div className="px-3 py-2 text-sm text-ink [&_.prose-editor_.section-label]:font-mono [&_.prose-editor_.section-label]:text-[10px] [&_.prose-editor_.section-label]:font-bold [&_.prose-editor_.section-label]:uppercase [&_.prose-editor_.section-label]:tracking-widest [&_.prose-editor_.section-label]:text-brand-600 [&_.prose-editor_blockquote]:my-2 [&_.prose-editor_blockquote]:border-l-4 [&_.prose-editor_blockquote]:border-concrete-300 [&_.prose-editor_blockquote]:pl-3 [&_.prose-editor_blockquote]:text-concrete-500 [&_.prose-editor_code]:rounded [&_.prose-editor_code]:bg-concrete-100 [&_.prose-editor_code]:px-1 [&_.prose-editor_h2]:mt-3 [&_.prose-editor_h2]:font-display [&_.prose-editor_h2]:text-lg [&_.prose-editor_h2]:font-bold [&_.prose-editor_h3]:mt-2 [&_.prose-editor_h3]:font-display [&_.prose-editor_h3]:text-base [&_.prose-editor_h3]:font-semibold [&_.prose-editor_img]:my-3 [&_.prose-editor_img]:max-w-full [&_.prose-editor_img]:rounded-lg [&_.prose-editor_li]:ml-4 [&_.prose-editor_ol]:list-decimal [&_.prose-editor_p]:my-1 [&_.prose-editor_p]:leading-relaxed [&_.prose-editor_ul]:list-disc [&_.prose-editor_iframe]:my-3 [&_.prose-editor_iframe]:max-w-full [&_.prose-editor_iframe]:rounded-lg">
         <EditorContent editor={editor} />
       </div>
 
