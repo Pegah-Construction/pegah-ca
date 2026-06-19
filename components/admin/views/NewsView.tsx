@@ -21,6 +21,7 @@ export default function NewsView() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(empty);
   const [saving, setSaving] = useState(false);
+  const [formCoverImage, setFormCoverImage] = useState<string>("");
   const [uploadingCover, setUploadingCover] = useState(false);
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -36,10 +37,11 @@ export default function NewsView() {
   const perms = PERMS[user.role];
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
-  const openCreate = () => { setForm(empty()); setEditingId(null); setOpen(true); };
+  const openCreate = () => { setForm(empty()); setEditingId(null); setFormCoverImage(""); setOpen(true); };
   const openEdit = (n: ArticleWithBody) => {
     setForm({ title: n.title, tags: n.tags.join(", "), excerpt: n.excerpt, body: n.body ?? "" });
     setEditingId(n.id);
+    setFormCoverImage(n.coverImage ?? "");
     setOpen(true);
   };
 
@@ -53,6 +55,7 @@ export default function NewsView() {
     const res = await fetch(`/api/news/${editingId}/cover`, { method: "POST", body: fd });
     if (res.ok) {
       const { coverImage } = await res.json();
+      setFormCoverImage(coverImage);
       setNews((prev) => prev.map((n) => n.id === editingId ? { ...n, coverImage } : n));
     }
     e.target.value = "";
@@ -62,6 +65,7 @@ export default function NewsView() {
   const handleCoverDelete = async () => {
     if (!editingId) return;
     await fetch(`/api/news/${editingId}/cover`, { method: "DELETE" });
+    setFormCoverImage("");
     setNews((prev) => prev.map((n) => n.id === editingId ? { ...n, coverImage: "" } : n));
   };
 
@@ -208,11 +212,11 @@ export default function NewsView() {
                 <Field label="Cover image">
                   {editingId ? (
                     <div className="flex items-start gap-3">
-                      {news.find((n) => n.id === editingId)?.coverImage ? (
+                      {formCoverImage ? (
                         <div className="group relative h-24 w-40 shrink-0 overflow-hidden rounded-lg bg-concrete-100">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
-                            src={getStorageUrl(news.find((n) => n.id === editingId)!.coverImage!)}
+                            src={getStorageUrl(formCoverImage)}
                             alt=""
                             className="h-full w-full object-cover"
                           />
