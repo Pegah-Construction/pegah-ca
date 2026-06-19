@@ -14,6 +14,7 @@ const NAV: { key: NavKey; label: string; href: string }[] = [
   { key: "tenders", label: "Tenders", href: "/admin/tenders" },
   { key: "news", label: "News & Blog", href: "/admin/news" },
   { key: "careers", label: "Careers", href: "/admin/careers" },
+  { key: "inquiries", label: "Inquiries", href: "/admin/inquiries" },
   // { key: "clients", label: "Clients", href: "/admin/clients" },
   { key: "users", label: "Users & Roles", href: "/admin/users" },
   { key: "safety", label: "Safety", href: "/admin/safety" },
@@ -36,6 +37,7 @@ const ICONS: Record<string, React.ReactNode> = {
   tenders: <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6" /><path d="M9 13h6M9 17h6" /></>,
   careers: <><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" /><path d="M12 12v4m-2-2h4" /></>,
   subcontractors: <><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" /><path d="M12 17l2 2 4-4" /></>,
+  inquiries: <><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></>,
   news: <><path d="M4 4h16v16H4z" /><path d="M8 8h8M8 12h8M8 16h5" /></>,
   ai: <><path d="M12 2a3 3 0 0 1 3 3v1a3 3 0 0 1 3 3 3 3 0 0 1 0 6 3 3 0 0 1-3 3v1a3 3 0 0 1-6 0v-1a3 3 0 0 1-3-3 3 3 0 0 1 0-6 3 3 0 0 1 3-3V5a3 3 0 0 1 3-3z" /><circle cx="9" cy="11" r="1" /><circle cx="15" cy="11" r="1" /></>,
 };

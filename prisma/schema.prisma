@@ -265,6 +265,16 @@ model JobPosting {
   status       String   @default("Draft")
 }
 
+model ContactInquiry {
+  id        String   @id
+  createdAt DateTime @default(now())
+  name      String
+  email     String
+  company   String   @default("")
+  message   String
+  read      Boolean  @default(false)
+}
+
 model Article {
   id        String   @id
   title     String
