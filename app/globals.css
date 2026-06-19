@@ -47,6 +47,11 @@
     @apply mb-1 mt-0 font-mono text-[11px] font-bold uppercase tracking-widest;
     color: #7f1d1d !important;
   }
+  /* strong inside a label paragraph must not override the label's dark-red color */
+  .article-body p.section-label strong,
+  .article-body p:has(> strong:only-child) strong {
+    color: inherit;
+  }
   .article-body p {
     @apply my-4;
   }
