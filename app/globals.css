@@ -41,13 +41,18 @@
   .article-body h3 {
     @apply mt-6 mb-2 font-display text-xl font-semibold tracking-tight text-ink;
   }
-  /* Section label — authored via toolbar "Label" button */
-  .article-body p.section-label {
+  /* Section label — via toolbar "Label" button OR bold-only paragraph */
+  .article-body p.section-label,
+  .article-body p:has(> strong:only-child) {
     @apply mb-1 mt-0 font-mono text-[11px] font-bold uppercase tracking-widest;
-    color: theme("colors.brand.600");
+    color: #7f1d1d !important;
   }
   .article-body p {
     @apply my-4;
+  }
+  /* Empty paragraphs (blank lines) must have height so user-added spacing shows */
+  .article-body p:empty {
+    min-height: 1.25rem;
   }
   .article-body ul {
     @apply my-4 ml-6 list-disc space-y-1.5;

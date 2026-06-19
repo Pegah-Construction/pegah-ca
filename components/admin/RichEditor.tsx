@@ -6,6 +6,7 @@ import { Node as TiptapNode, type NodeViewProps } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Youtube from "@tiptap/extension-youtube";
+import { TextStyle, Color } from "@tiptap/extension-text-style";
 
 // ─── Progress Banner node view (rendered in editor) ─────────────────
 function ProgressBannerView({ node }: NodeViewProps) {
@@ -171,7 +172,9 @@ export default function RichEditor({ value, onChange, articleId }: { value: stri
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({ strike: false, code: false, codeBlock: false }),
+      TextStyle,
+      Color,
       Image.configure({ inline: false, allowBase64: false }),
       Youtube.configure({ width: 640, height: 360, nocookie: true }),
       SectionLabelNode,
@@ -180,7 +183,18 @@ export default function RichEditor({ value, onChange, articleId }: { value: stri
     ],
     content: value,
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
-    editorProps: { attributes: { class: "min-h-[220px] focus:outline-none prose-editor" } },
+    editorProps: {
+      attributes: { class: "min-h-[220px] focus:outline-none prose-editor" },
+      transformPastedHTML(html) {
+        // Strip all inline styles, colors, fonts — enforce brand consistency
+        return html
+          .replace(/\sstyle="[^"]*"/gi, "")
+          .replace(/\scolor="[^"]*"/gi, "")
+          .replace(/\sface="[^"]*"/gi, "")
+          .replace(/\ssize="[^"]*"/gi, "")
+          .replace(/\sfont-[^:]+:[^;]+;?/gi, "");
+      },
+    },
   });
 
   useEffect(() => {
@@ -257,7 +271,6 @@ export default function RichEditor({ value, onChange, articleId }: { value: stri
       <div className="flex flex-wrap items-center gap-0.5 border-b border-concrete-200 bg-concrete-50 px-2 py-1.5">
         <ToolBtn title="Bold" onClick={() => editor.chain().focus().toggleBold().run()} active={editor.isActive("bold")}><strong>B</strong></ToolBtn>
         <ToolBtn title="Italic" onClick={() => editor.chain().focus().toggleItalic().run()} active={editor.isActive("italic")}><em>I</em></ToolBtn>
-        <ToolBtn title="Strikethrough" onClick={() => editor.chain().focus().toggleStrike().run()} active={editor.isActive("strike")}><s>S</s></ToolBtn>
         <Divider />
         <ToolBtn title="Section label (small uppercase eyebrow)" onClick={() => editor.chain().focus().toggleNode("sectionLabel", "paragraph").run()} active={editor.isActive("sectionLabel")}>
           <span style={{ fontSize: "9px", fontWeight: 700, letterSpacing: "0.08em" }}>LABEL</span>
@@ -269,7 +282,7 @@ export default function RichEditor({ value, onChange, articleId }: { value: stri
         <ToolBtn title="Ordered list" onClick={() => editor.chain().focus().toggleOrderedList().run()} active={editor.isActive("orderedList")}>1.</ToolBtn>
         <Divider />
         <ToolBtn title="Blockquote" onClick={() => editor.chain().focus().toggleBlockquote().run()} active={editor.isActive("blockquote")}>❝</ToolBtn>
-        <ToolBtn title="Horizontal rule" onClick={() => editor.chain().focus().setHorizontalRule().run()}>—</ToolBtn>
+        <ToolBtn title="Section divider" onClick={() => editor.chain().focus().setHorizontalRule().run()}>—</ToolBtn>
         <Divider />
         {/* Image */}
         <ToolBtn title={articleId ? "Insert image" : "Save article first to insert images"} onClick={() => articleId && fileInputRef.current?.click()} active={false}>
@@ -302,6 +315,32 @@ export default function RichEditor({ value, onChange, articleId }: { value: stri
             <rect x="16" y="12" width="6" height="10" rx="1" />
           </svg>
         </ToolBtn>
+        <Divider />
+        {/* Text color swatches */}
+        {[
+          { color: "#7f1d1d", label: "Dark red" },
+          { color: "#1f3a93", label: "Brand blue" },
+          { color: "#0f172a", label: "Black" },
+        ].map(({ color, label }) => (
+          <button
+            key={color}
+            type="button"
+            title={label}
+            onClick={() => editor.chain().focus().setColor(color).run()}
+            className={`h-4 w-4 rounded-sm border transition-all hover:scale-110 ${
+              editor.isActive("textStyle", { color }) ? "ring-2 ring-offset-1 ring-brand-500" : "border-concrete-300"
+            }`}
+            style={{ backgroundColor: color }}
+          />
+        ))}
+        <button
+          type="button"
+          title="Reset color"
+          onClick={() => editor.chain().focus().unsetColor().run()}
+          className="h-4 w-4 rounded-sm border border-concrete-300 bg-white text-[8px] font-bold text-concrete-500 hover:border-concrete-400 leading-none"
+        >
+          ×
+        </button>
         <Divider />
         <ToolBtn title="Undo" onClick={() => editor.chain().focus().undo().run()}>↩</ToolBtn>
         <ToolBtn title="Redo" onClick={() => editor.chain().focus().redo().run()}>↪</ToolBtn>
