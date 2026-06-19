@@ -73,7 +73,7 @@ export default async function BlogPost({ params }: Props) {
             {/* back link */}
             <Link
               href="/blog"
-              className="mb-8 inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-label text-brand-300 transition-colors hover:text-white"
+              className="mb-8 inline-flex items-center gap-2 font-mono text-sm uppercase tracking-label text-white/60 transition-colors hover:text-white"
             >
               ← All articles
             </Link>
@@ -84,13 +84,13 @@ export default async function BlogPost({ params }: Props) {
                 {tags.map((t) => (
                   <span
                     key={t}
-                    className="inline-block rounded-full border border-brand-400/40 bg-brand-800/60 px-3 py-0.5 font-mono text-[10px] uppercase tracking-label text-brand-200"
+                    className="inline-block rounded-full border border-white/25 bg-white/10 px-3.5 py-1 font-mono text-xs uppercase tracking-label text-white/80"
                   >
                     {t}
                   </span>
                 ))}
                 {article.featured && (
-                  <span className="inline-block rounded-full border border-amber-400/40 bg-amber-500/20 px-3 py-0.5 font-mono text-[10px] uppercase tracking-label text-amber-300">
+                  <span className="inline-block rounded-full border border-amber-400/60 bg-amber-400/20 px-3.5 py-1 font-mono text-xs uppercase tracking-label text-amber-300">
                     Featured
                   </span>
                 )}
@@ -103,18 +103,18 @@ export default async function BlogPost({ params }: Props) {
             </h1>
 
             {/* meta strip */}
-            <div className="mt-8 flex flex-wrap gap-x-8 gap-y-3 border-t border-white/10 pt-6">
-              <div className="flex flex-col gap-0.5">
-                <span className="font-mono text-[10px] uppercase tracking-label text-brand-400">Author</span>
-                <span className="text-sm font-medium text-white/85">{article.author.name}</span>
+            <div className="mt-8 flex flex-wrap gap-x-10 gap-y-3 border-t border-white/10 pt-6">
+              <div className="flex flex-col gap-1">
+                <span className="font-mono text-xs uppercase tracking-label text-white/45">Author</span>
+                <span className="font-medium text-white">{article.author.name}</span>
               </div>
-              <div className="flex flex-col gap-0.5">
-                <span className="font-mono text-[10px] uppercase tracking-label text-brand-400">Published</span>
-                <span className="text-sm font-medium text-white/85">{article.date}</span>
+              <div className="flex flex-col gap-1">
+                <span className="font-mono text-xs uppercase tracking-label text-white/45">Published</span>
+                <span className="font-medium text-white">{article.date}</span>
               </div>
-              <div className="flex flex-col gap-0.5">
-                <span className="font-mono text-[10px] uppercase tracking-label text-brand-400">Reading time</span>
-                <span className="text-sm font-medium text-white/85">
+              <div className="flex flex-col gap-1">
+                <span className="font-mono text-xs uppercase tracking-label text-white/45">Reading time</span>
+                <span className="font-medium text-white">
                   {Math.ceil(article.words / 200)} min read
                 </span>
               </div>
