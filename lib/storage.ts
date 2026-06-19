@@ -1,4 +1,4 @@
-import { supabase, BUCKET } from "./supabase";
+import { getSupabase, BUCKET } from "./supabase";
 import { writeFile, mkdir, unlink } from "fs/promises";
 import { join, dirname } from "path";
 
@@ -6,7 +6,7 @@ const useSupabase = () =>
   !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
 
 async function ensureBucket() {
-  const { error } = await supabase.storage.createBucket(BUCKET, { public: true });
+  const { error } = await getSupabase().storage.createBucket(BUCKET, { public: true });
   if (error && !error.message.includes("already exists")) throw new Error(error.message);
 }
 
@@ -14,17 +14,17 @@ async function ensureBucket() {
 // Returns the relative path that was stored (not a full URL)
 export async function saveFile(file: File, storagePath: string): Promise<string> {
   if (useSupabase()) {
-    let { error } = await supabase.storage
+    let { error } = await getSupabase().storage
       .from(BUCKET)
       .upload(storagePath, file, { contentType: file.type, upsert: true });
     if (error?.message.includes("Bucket not found")) {
       await ensureBucket();
-      ({ error } = await supabase.storage
+      ({ error } = await getSupabase().storage
         .from(BUCKET)
         .upload(storagePath, file, { contentType: file.type, upsert: true }));
     }
     if (error) throw new Error(error.message);
-    return storagePath; // store relative path only
+    return storagePath;
   }
   // local dev — write to public/uploads/
   const localPath = `uploads/${storagePath}`;
@@ -36,18 +36,15 @@ export async function saveFile(file: File, storagePath: string): Promise<string>
 
 export async function deleteFile(path: string): Promise<void> {
   if (path.startsWith("http")) {
-    // legacy full URL — extract the storage path
     const marker = `/object/public/${BUCKET}/`;
     const idx = path.indexOf(marker);
     if (idx !== -1) {
-      await supabase.storage.from(BUCKET).remove([path.slice(idx + marker.length)]);
+      await getSupabase().storage.from(BUCKET).remove([path.slice(idx + marker.length)]);
     }
   } else if (path.startsWith("/") || path.startsWith("uploads/")) {
-    // local dev path
     const abs = path.startsWith("/") ? path : `/${path}`;
     await unlink(join(process.cwd(), "public", abs)).catch(() => {});
   } else {
-    // Supabase relative path
-    await supabase.storage.from(BUCKET).remove([path]);
+    await getSupabase().storage.from(BUCKET).remove([path]);
   }
 }

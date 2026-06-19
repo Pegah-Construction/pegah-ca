@@ -265,6 +265,15 @@ model JobPosting {
   status       String   @default("Draft")
 }
 
+model TeamMember {
+  id    String @id
+  order Int    @default(0)
+  name  String
+  title String
+  bio   String @default("")
+  photo String @default("")
+}
+
 model ContactInquiry {
   id        String   @id
   createdAt DateTime @default(now())

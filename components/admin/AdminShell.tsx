@@ -15,6 +15,7 @@ const NAV: { key: NavKey; label: string; href: string }[] = [
   { key: "news", label: "News & Blog", href: "/admin/news" },
   { key: "careers", label: "Careers", href: "/admin/careers" },
   { key: "inquiries", label: "Inquiries", href: "/admin/inquiries" },
+  { key: "team", label: "About / Team", href: "/admin/team" },
   // { key: "clients", label: "Clients", href: "/admin/clients" },
   { key: "users", label: "Users & Roles", href: "/admin/users" },
   { key: "safety", label: "Safety", href: "/admin/safety" },
@@ -38,6 +39,7 @@ const ICONS: Record<string, React.ReactNode> = {
   careers: <><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" /><path d="M12 12v4m-2-2h4" /></>,
   subcontractors: <><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" /><path d="M12 17l2 2 4-4" /></>,
   inquiries: <><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></>,
+  team: <><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /><path d="M12 17l2 2 4-4" /></>,
   news: <><path d="M4 4h16v16H4z" /><path d="M8 8h8M8 12h8M8 16h5" /></>,
   ai: <><path d="M12 2a3 3 0 0 1 3 3v1a3 3 0 0 1 3 3 3 3 0 0 1 0 6 3 3 0 0 1-3 3v1a3 3 0 0 1-6 0v-1a3 3 0 0 1-3-3 3 3 0 0 1 0-6 3 3 0 0 1 3-3V5a3 3 0 0 1 3-3z" /><circle cx="9" cy="11" r="1" /><circle cx="15" cy="11" r="1" /></>,
 };
@@ -88,6 +90,16 @@ export default function AdminShell({
               </Link>
             );
           })}
+          <div className="my-2 border-t border-white/10" />
+          <Link href="/" target="_blank"
+            className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-brand-100/70 transition-colors hover:bg-white/5 hover:text-white">
+            <span className="text-brand-200/70 group-hover:text-white">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><path d="M15 3h6v6" /><path d="M10 14L21 3" />
+              </svg>
+            </span>
+            View website
+          </Link>
         </nav>
         <div className="border-t border-white/10 p-3">
           <div className="flex items-center gap-3 rounded-lg px-2 py-2">

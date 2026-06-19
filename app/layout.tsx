@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Archivo, Source_Sans_3, Space_Mono } from "next/font/google";
+import { AuthProvider } from "@/lib/auth";
 import "./globals.css";
 
 const display = Archivo({
@@ -39,7 +40,7 @@ export default function RootLayout({
       lang="en"
       className={`${display.variable} ${body.variable} ${mono.variable}`}
     >
-      <body className="flex min-h-screen flex-col">{children}</body>
+      <body className="flex min-h-screen flex-col"><AuthProvider>{children}</AuthProvider></body>
     </html>
   );
 }

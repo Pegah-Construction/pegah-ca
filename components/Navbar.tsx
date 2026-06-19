@@ -4,9 +4,23 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { nav, company } from "@/lib/site";
 import { SiteLogo } from "./Brand";
+import { useAuth } from "@/lib/auth";
+
+const PALETTE = ["bg-brand-700", "bg-brand-500", "bg-brand-800", "bg-concrete-500", "bg-brand-600"];
+
+function UserAvatar({ name, id }: { name: string; id: string }) {
+  const initials = name.split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase();
+  const color = PALETTE[Math.abs(id.charCodeAt(1)) % PALETTE.length];
+  return (
+    <span className={`${color} inline-flex h-8 w-8 items-center justify-center rounded-full font-display text-xs font-bold text-white`}>
+      {initials}
+    </span>
+  );
+}
 
 export default function Navbar() {
   const pathname = usePathname();
+  const { user, ready } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 border-b border-concrete-200 bg-paper/90 backdrop-blur-md">
@@ -89,6 +103,19 @@ export default function Navbar() {
           >
             {company.phone}
           </a>
+          {ready && !user && (
+            <Link
+              href="/admin"
+              className="whitespace-nowrap rounded-md border border-concrete-200 px-4 py-2 font-display text-sm font-semibold text-ink transition-colors hover:bg-concrete-50"
+            >
+              Login
+            </Link>
+          )}
+          {user && (
+            <Link href="/admin" title="Go to dashboard">
+              <UserAvatar name={user.name} id={user.id} />
+            </Link>
+          )}
           <Link
             href="/contact"
             className="whitespace-nowrap rounded-md bg-brand-700 px-4 py-2 font-display text-sm font-semibold text-white transition-colors hover:bg-brand-800"
