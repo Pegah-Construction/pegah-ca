@@ -33,19 +33,19 @@ export type Perms = {
 
 export const PERMS: Record<RoleKey, Perms> = {
   admin: {
-    nav: ["dashboard","projects","board","schedule","tenders","news","careers","inquiries","team","clients","users","safety","documents","ai","settings"],
+    nav: ["dashboard","projects","board","schedule","tenders","news","careers","inquiries","team","clients","users","documents","settings"],
     projectScope: "all",
     viewBudget: true, editProjects: true, manageUsers: true, manageClients: true, resolveIncidents: true, editSettings: true,
     manageTenders: true, manageNews: true, manageCareers: true, manageInquiries: true, manageTeam: true, useAI: true, configureAI: true,
   },
   pm: {
-    nav: ["dashboard","projects","board","schedule","tenders","news","inquiries","team","clients","safety","documents","ai"],
+    nav: ["dashboard","projects","board","schedule","tenders","news","inquiries","team","clients","documents"],
     projectScope: "managed",
     viewBudget: true, editProjects: true, manageUsers: false, manageClients: true, resolveIncidents: true, editSettings: false,
     manageTenders: true, manageNews: true, manageCareers: false, manageInquiries: true, manageTeam: true, useAI: true, configureAI: false,
   },
   foreman: {
-    nav: ["dashboard","projects","board","safety","documents"],
+    nav: ["dashboard","projects","board","documents"],
     projectScope: "assigned",
     viewBudget: false, editProjects: false, manageUsers: false, manageClients: false, resolveIncidents: false, editSettings: false,
     manageTenders: false, manageNews: false, manageCareers: false, manageInquiries: false, manageTeam: false, useAI: false, configureAI: false,

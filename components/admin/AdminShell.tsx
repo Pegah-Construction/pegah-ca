@@ -18,9 +18,9 @@ const NAV: { key: NavKey; label: string; href: string }[] = [
   { key: "team", label: "About / Team", href: "/admin/team" },
   // { key: "clients", label: "Clients", href: "/admin/clients" },
   { key: "users", label: "Users & Roles", href: "/admin/users" },
-  { key: "safety", label: "Safety", href: "/admin/safety" },
+  // { key: "safety", label: "Safety", href: "/admin/safety" },
   // { key: "documents", label: "Documents", href: "/admin/documents" },
-  { key: "ai", label: "AI Assistant", href: "/admin/ai" },
+  // { key: "ai", label: "AI Assistant", href: "/admin/ai" },
   { key: "settings", label: "Settings", href: "/admin/settings" },
 ];
 
