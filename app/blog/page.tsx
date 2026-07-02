@@ -34,18 +34,20 @@ export default async function BlogPage() {
               <Reveal key={a.id} delay={(i % 3) * 80} direction="up">
                 <Link
                   href={`/blog/${a.slug}`}
-                  className="group flex h-full flex-col overflow-hidden rounded-2xl border border-concrete-200 bg-white transition-shadow hover:shadow-md"
+                  className="blog-card group flex h-full flex-col overflow-hidden rounded-2xl border-2 border-concrete-200 bg-white"
                 >
-                  {a.coverImage ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={getStorageUrl(a.coverImage)}
-                      alt={a.title}
-                      className="aspect-[16/9] w-full object-cover"
-                    />
-                  ) : (
-                    <div className="aspect-[16/9] w-full bg-[radial-gradient(ellipse_80%_60%_at_60%_40%,theme(colors.brand.700),theme(colors.brand.900))]" />
-                  )}
+                  <div className="aspect-[16/9] w-full overflow-hidden">
+                    {a.coverImage ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={getStorageUrl(a.coverImage)}
+                        alt={a.title}
+                        className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="h-full w-full bg-[radial-gradient(ellipse_80%_60%_at_60%_40%,theme(colors.brand.700),theme(colors.brand.900))] transition-transform duration-500 ease-out group-hover:scale-105" />
+                    )}
+                  </div>
 
                   <div className="flex flex-1 flex-col p-7">
                     <div className="flex items-center justify-between gap-2">

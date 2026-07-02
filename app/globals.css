@@ -35,6 +35,21 @@
   }
 }
 
+/* ── Blog card hover elevation ──
+   Explicit rules so the lift + shadow are guaranteed regardless of
+   Tailwind arbitrary-value generation. */
+.blog-card {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s ease;
+  will-change: transform;
+}
+.blog-card:hover {
+  transform: translateY(-10px);
+  border-color: theme("colors.brand.500");
+  box-shadow: 0 24px 40px -12px rgba(15, 31, 77, 0.28);
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Reveal from "@/components/Reveal";
 import { getStorageUrl } from "@/lib/storage-url";
 
 export const dynamic = "force-dynamic";
@@ -73,14 +74,15 @@ export default async function BlogPost({ params }: Props) {
             {/* back link */}
             <Link
               href="/blog"
-              className="mb-8 inline-flex items-center gap-2 font-mono text-sm uppercase tracking-label text-white/60 transition-colors hover:text-white"
+              className="hero-animate mb-8 inline-flex items-center gap-2 font-mono text-sm uppercase tracking-label text-white/60 transition-colors hover:text-white"
+              style={{ animationDelay: "0ms" }}
             >
               ← All articles
             </Link>
 
             {/* eyebrow: tags */}
             {tags.length > 0 && (
-              <div className="mb-5 flex flex-wrap items-center gap-2">
+              <div className="hero-animate mb-5 flex flex-wrap items-center gap-2" style={{ animationDelay: "100ms" }}>
                 {tags.map((t) => (
                   <span
                     key={t}
@@ -98,12 +100,12 @@ export default async function BlogPost({ params }: Props) {
             )}
 
             {/* title */}
-            <h1 className="font-display text-4xl font-black leading-[1.1] tracking-tight text-white lg:text-6xl">
+            <h1 className="hero-animate font-display text-4xl font-black leading-[1.1] tracking-tight text-white lg:text-6xl" style={{ animationDelay: "180ms" }}>
               {article.title}
             </h1>
 
             {/* meta strip */}
-            <div className="mt-8 flex flex-wrap gap-x-10 gap-y-3 border-t border-white/10 pt-6">
+            <div className="hero-animate mt-8 flex flex-wrap gap-x-10 gap-y-3 border-t border-white/10 pt-6" style={{ animationDelay: "300ms" }}>
               <div className="flex flex-col gap-1">
                 <span className="font-mono text-xs uppercase tracking-label text-white/45">Author</span>
                 <span className="font-medium text-white">{article.author.name}</span>
@@ -125,12 +127,14 @@ export default async function BlogPost({ params }: Props) {
         {/* ── Cover image ── */}
         {article.coverImage && (
           <div className="mx-auto max-w-4xl px-6 pt-10 lg:px-10">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={getStorageUrl(article.coverImage)}
-              alt={article.title}
-              className="aspect-[21/9] w-full rounded-2xl object-cover shadow-xl"
-            />
+            <Reveal>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={getStorageUrl(article.coverImage)}
+                alt={article.title}
+                className="aspect-[21/9] w-full rounded-2xl object-cover shadow-xl"
+              />
+            </Reveal>
           </div>
         )}
 
@@ -138,39 +142,43 @@ export default async function BlogPost({ params }: Props) {
         <div className="mx-auto max-w-4xl px-6 py-16 lg:px-10">
           <div className="mx-auto max-w-3xl">
 
-            {/* Excerpt as lead paragraph */}
-            <p className="font-display text-xl font-bold leading-snug tracking-tight text-ink lg:text-2xl">
-              {article.excerpt}
-            </p>
+            <Reveal>
+              {/* Excerpt as lead paragraph */}
+              <p className="font-display text-xl font-bold leading-snug tracking-tight text-ink lg:text-2xl">
+                {article.excerpt}
+              </p>
 
-            {/* Divider */}
-            <div className="my-8 h-px bg-concrete-200" />
+              {/* Divider */}
+              <div className="my-8 h-px bg-concrete-200" />
 
-            {/* Rich text body */}
-            {article.body ? (
-              <div
-                className="article-body text-lg leading-relaxed text-concrete-600"
-                dangerouslySetInnerHTML={{ __html: article.body }}
-              />
-            ) : null}
+              {/* Rich text body */}
+              {article.body ? (
+                <div
+                  className="article-body text-lg leading-relaxed text-concrete-600"
+                  dangerouslySetInnerHTML={{ __html: article.body }}
+                />
+              ) : null}
+            </Reveal>
 
             {/* Author footer */}
-            <div className="mt-12 flex items-center gap-4 border-t border-concrete-200 pt-8">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand-800 font-display text-base font-bold text-white">
-                {initials}
+            <Reveal delay={100}>
+              <div className="mt-12 flex items-center gap-4 border-t border-concrete-200 pt-8">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand-800 font-display text-base font-bold text-white">
+                  {initials}
+                </div>
+                <div>
+                  <div className="font-display font-semibold text-ink">{article.author.name}</div>
+                  <div className="mt-0.5 text-sm text-concrete-500">{article.author.title}</div>
+                </div>
               </div>
-              <div>
-                <div className="font-display font-semibold text-ink">{article.author.name}</div>
-                <div className="mt-0.5 text-sm text-concrete-500">{article.author.title}</div>
-              </div>
-            </div>
+            </Reveal>
           </div>
         </div>
 
         {/* ── Next article ── */}
         {next && (
           <section className="border-t border-concrete-200 bg-white">
-            <div className="mx-auto flex max-w-4xl flex-col gap-4 px-6 py-14 sm:flex-row sm:items-center sm:justify-between lg:px-10">
+            <Reveal className="mx-auto flex max-w-4xl flex-col gap-4 px-6 py-14 sm:flex-row sm:items-center sm:justify-between lg:px-10">
               <div>
                 <p className="font-mono text-[11px] uppercase tracking-label text-concrete-500">
                   Next article
@@ -188,7 +196,7 @@ export default async function BlogPost({ params }: Props) {
               >
                 Back to all articles
               </Link>
-            </div>
+            </Reveal>
           </section>
         )}
 
