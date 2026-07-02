@@ -2,6 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes hero-up {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero-animate {
+  animation: hero-up 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── Admin dashboard page entrance ──
+   Direct children of the content area fade + slide up with a short
+   stagger. Re-fires on every route change (main is keyed to pathname). */
+@keyframes admin-fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.admin-enter > * {
+  animation: admin-fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.admin-enter > *:nth-child(1) { animation-delay: 0.03s; }
+.admin-enter > *:nth-child(2) { animation-delay: 0.11s; }
+.admin-enter > *:nth-child(3) { animation-delay: 0.19s; }
+.admin-enter > *:nth-child(4) { animation-delay: 0.27s; }
+.admin-enter > *:nth-child(5) { animation-delay: 0.35s; }
+.admin-enter > *:nth-child(6) { animation-delay: 0.43s; }
+.admin-enter > *:nth-child(n+7) { animation-delay: 0.5s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-animate,
+  .admin-enter > * {
+    animation: none;
+  }
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;

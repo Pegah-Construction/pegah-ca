@@ -22,20 +22,20 @@ export default async function Hero() {
       <div className="absolute inset-0 -z-10 bg-gradient-to-t from-brand-900/85 via-brand-900/35 to-brand-900/30" />
 
       <div className="mx-auto w-full max-w-8xl px-6 pb-28 pt-40 lg:px-10">
-        <Eyebrow className="text-brand-200">
+        <Eyebrow className="hero-animate text-brand-200" style={{ animationDelay: "0ms" }}>
           General Contracting · Project Management
         </Eyebrow>
-        <h1 className="mt-5 max-w-4xl font-display text-5xl font-black leading-[1.02] tracking-tight text-white sm:text-6xl lg:text-7xl">
+        <h1 className="hero-animate mt-5 max-w-4xl font-display text-5xl font-black leading-[1.02] tracking-tight text-white sm:text-6xl lg:text-7xl" style={{ animationDelay: "120ms" }}>
           Building {company.region}
           <br />
           since {company.established}.
         </h1>
-        <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/80">
+        <p className="hero-animate mt-6 max-w-xl text-lg leading-relaxed text-white/80" style={{ animationDelay: "260ms" }}>
           An established general contracting and project-management firm
           delivering quality workmanship across commercial, industrial and
           institutional projects.
         </p>
-        <div className="mt-9 flex flex-wrap gap-3">
+        <div className="hero-animate mt-9 flex flex-wrap gap-3" style={{ animationDelay: "380ms" }}>
           <Button href="/projects" variant="solid">
             View our work →
           </Button>

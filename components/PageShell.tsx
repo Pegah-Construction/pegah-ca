@@ -24,12 +24,12 @@ export default function PageShell({
       <main className="flex-1">
         <section className="border-b border-concrete-200 bg-white pt-32">
           <div className="mx-auto max-w-8xl px-6 pb-16 lg:px-10">
-            <Eyebrow>{eyebrow}</Eyebrow>
-            <h1 className="mt-4 max-w-3xl font-display text-4xl font-black tracking-tight text-ink lg:text-6xl">
+            <Eyebrow className="hero-animate" style={{ animationDelay: "0ms" }}>{eyebrow}</Eyebrow>
+            <h1 className="hero-animate mt-4 max-w-3xl font-display text-4xl font-black tracking-tight text-ink lg:text-6xl" style={{ animationDelay: "100ms" }}>
               {title}
             </h1>
             {intro ? (
-              <p className="mt-5 max-w-xl text-lg leading-relaxed text-concrete-500">
+              <p className="hero-animate mt-5 max-w-xl text-lg leading-relaxed text-concrete-500" style={{ animationDelay: "220ms" }}>
                 {intro}
               </p>
             ) : null}

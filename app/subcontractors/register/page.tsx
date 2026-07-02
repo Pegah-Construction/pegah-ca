@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Reveal from "@/components/Reveal";
 import { Eyebrow } from "@/components/Brand";
 
 const PROVINCES = [
@@ -153,14 +154,15 @@ export default function SubcontractorRegisterPage() {
     <>
       <Navbar />
       <main className="flex-1 bg-paper">
+
         {/* Header */}
         <section className="border-b border-concrete-200 bg-white">
           <div className="mx-auto max-w-8xl px-6 py-14 lg:px-10">
-            <Eyebrow>Tenders</Eyebrow>
-            <h1 className="mt-3 font-display text-4xl font-black tracking-tight text-ink lg:text-5xl">
+            <Eyebrow className="hero-animate" style={{ animationDelay: "0ms" }}>Tenders</Eyebrow>
+            <h1 className="hero-animate mt-3 font-display text-4xl font-black tracking-tight text-ink lg:text-5xl" style={{ animationDelay: "120ms" }}>
               Subcontractor Registration
             </h1>
-            <div className="mt-5 grid max-w-4xl gap-6 text-base leading-relaxed text-concrete-500 sm:grid-cols-2">
+            <div className="hero-animate mt-5 grid max-w-4xl gap-6 text-base leading-relaxed text-concrete-500 sm:grid-cols-2" style={{ animationDelay: "260ms" }}>
               <p>
                 Register to be included in our directory of subcontractors. Registration is free and will make your company&rsquo;s information available to our Estimating Department.
               </p>
@@ -175,137 +177,141 @@ export default function SubcontractorRegisterPage() {
         <div className="mx-auto max-w-4xl px-6 py-14 lg:px-10">
           <form onSubmit={handleSubmit} className="space-y-6">
 
-            {/* Company Information */}
-            <Section title="Company Information">
-              <div className="grid gap-5 sm:grid-cols-2">
-                <div className="sm:col-span-2">
-                  <Field label="Company Name" required>
-                    <input required className={inputCls} value={form.companyName} onChange={(e) => set("companyName", e.target.value)} placeholder="Acme Mechanical Inc." />
-                  </Field>
-                </div>
-                <Field label="Phone" required>
-                  <input required type="tel" className={inputCls} value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="(416) 555-0100" />
-                </Field>
-                <Field label="Fax">
-                  <input type="tel" className={inputCls} value={form.fax} onChange={(e) => set("fax", e.target.value)} placeholder="(416) 555-0101" />
-                </Field>
-                <div className="sm:col-span-2">
-                  <Field label="Website">
-                    <input type="url" className={inputCls} value={form.website} onChange={(e) => set("website", e.target.value)} placeholder="https://example.com" />
-                  </Field>
-                </div>
-              </div>
-
-              <div className="mt-6 border-t border-concrete-100 pt-6">
-                <p className={`${labelCls} mb-4`}>Physical Address</p>
+            <Reveal>
+              <Section title="Company Information">
                 <div className="grid gap-5 sm:grid-cols-2">
                   <div className="sm:col-span-2">
-                    <Field label="Street Address">
-                      <input className={inputCls} value={form.address} onChange={(e) => set("address", e.target.value)} placeholder="123 Industrial Pkwy" />
+                    <Field label="Company Name" required>
+                      <input required className={inputCls} value={form.companyName} onChange={(e) => set("companyName", e.target.value)} placeholder="Acme Mechanical Inc." />
                     </Field>
                   </div>
-                  <Field label="City" required>
-                    <input required className={inputCls} value={form.city} onChange={(e) => set("city", e.target.value)} placeholder="Toronto" />
+                  <Field label="Phone" required>
+                    <input required type="tel" className={inputCls} value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="(416) 555-0100" />
                   </Field>
-                  <Field label="Postal Code" required>
-                    <input required className={inputCls} value={form.postalCode} onChange={(e) => set("postalCode", e.target.value)} placeholder="M3H 5T5" />
+                  <Field label="Fax">
+                    <input type="tel" className={inputCls} value={form.fax} onChange={(e) => set("fax", e.target.value)} placeholder="(416) 555-0101" />
                   </Field>
                   <div className="sm:col-span-2">
-                    <Field label="Province" required>
-                      <select required className={inputCls} value={form.province} onChange={(e) => set("province", e.target.value)}>
-                        <option value="">Select province…</option>
-                        {PROVINCES.map((p) => <option key={p} value={p}>{p}</option>)}
-                      </select>
+                    <Field label="Website">
+                      <input type="url" className={inputCls} value={form.website} onChange={(e) => set("website", e.target.value)} placeholder="https://example.com" />
                     </Field>
                   </div>
                 </div>
-              </div>
-            </Section>
+                <div className="mt-6 border-t border-concrete-100 pt-6">
+                  <p className={`${labelCls} mb-4`}>Physical Address</p>
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    <div className="sm:col-span-2">
+                      <Field label="Street Address">
+                        <input className={inputCls} value={form.address} onChange={(e) => set("address", e.target.value)} placeholder="123 Industrial Pkwy" />
+                      </Field>
+                    </div>
+                    <Field label="City" required>
+                      <input required className={inputCls} value={form.city} onChange={(e) => set("city", e.target.value)} placeholder="Toronto" />
+                    </Field>
+                    <Field label="Postal Code" required>
+                      <input required className={inputCls} value={form.postalCode} onChange={(e) => set("postalCode", e.target.value)} placeholder="M3H 5T5" />
+                    </Field>
+                    <div className="sm:col-span-2">
+                      <Field label="Province" required>
+                        <select required className={inputCls} value={form.province} onChange={(e) => set("province", e.target.value)}>
+                          <option value="">Select province…</option>
+                          {PROVINCES.map((p) => <option key={p} value={p}>{p}</option>)}
+                        </select>
+                      </Field>
+                    </div>
+                  </div>
+                </div>
+              </Section>
+            </Reveal>
 
-            {/* Contact Information */}
-            <Section title="Contact Information">
-              <div className="grid gap-5 sm:grid-cols-2">
-                <Field label="First Name" required>
-                  <input required className={inputCls} value={form.firstName} onChange={(e) => set("firstName", e.target.value)} />
-                </Field>
-                <Field label="Last Name" required>
-                  <input required className={inputCls} value={form.lastName} onChange={(e) => set("lastName", e.target.value)} />
-                </Field>
-                <div className="sm:col-span-2">
-                  <Field label="Title / Position">
-                    <input className={inputCls} value={form.title} onChange={(e) => set("title", e.target.value)} placeholder="e.g. Project Manager, Estimator" />
+            <Reveal delay={80}>
+              <Section title="Contact Information">
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <Field label="First Name" required>
+                    <input required className={inputCls} value={form.firstName} onChange={(e) => set("firstName", e.target.value)} />
+                  </Field>
+                  <Field label="Last Name" required>
+                    <input required className={inputCls} value={form.lastName} onChange={(e) => set("lastName", e.target.value)} />
+                  </Field>
+                  <div className="sm:col-span-2">
+                    <Field label="Title / Position">
+                      <input className={inputCls} value={form.title} onChange={(e) => set("title", e.target.value)} placeholder="e.g. Project Manager, Estimator" />
+                    </Field>
+                  </div>
+                  <Field label="Email" required>
+                    <input required type="email" className={inputCls} value={form.email} onChange={(e) => set("email", e.target.value)} />
+                  </Field>
+                  <Field label="Confirm Email" required>
+                    <input required type="email" className={inputCls} value={form.confirmEmail} onChange={(e) => set("confirmEmail", e.target.value)} />
+                  </Field>
+                  <Field label="Phone">
+                    <input type="tel" className={inputCls} value={form.contactPhone} onChange={(e) => set("contactPhone", e.target.value)} />
+                  </Field>
+                  <Field label="Mobile">
+                    <input type="tel" className={inputCls} value={form.mobile} onChange={(e) => set("mobile", e.target.value)} />
                   </Field>
                 </div>
-                <Field label="Email" required>
-                  <input required type="email" className={inputCls} value={form.email} onChange={(e) => set("email", e.target.value)} />
-                </Field>
-                <Field label="Confirm Email" required>
-                  <input required type="email" className={inputCls} value={form.confirmEmail} onChange={(e) => set("confirmEmail", e.target.value)} />
-                </Field>
-                <Field label="Phone">
-                  <input type="tel" className={inputCls} value={form.contactPhone} onChange={(e) => set("contactPhone", e.target.value)} />
-                </Field>
-                <Field label="Mobile">
-                  <input type="tel" className={inputCls} value={form.mobile} onChange={(e) => set("mobile", e.target.value)} />
-                </Field>
-              </div>
-            </Section>
+              </Section>
+            </Reveal>
 
-            {/* Trade Divisions */}
-            <Section title="Trade Divisions / Codes">
-              <p className="mb-5 text-sm leading-relaxed text-concrete-500">
-                Select all divisions that apply to your company. This determines which project invitations you receive. <span className="font-semibold text-red-600">At least one selection is required.</span>
-              </p>
-              <div className="grid gap-3 sm:grid-cols-2">
-                {TRADES.map((t) => (
-                  <label key={t.div} className="flex cursor-pointer items-start gap-3 rounded-lg border border-concrete-200 px-4 py-3 transition-colors hover:border-brand-300 hover:bg-brand-50/50 has-[:checked]:border-brand-400 has-[:checked]:bg-brand-50">
-                    <input
-                      type="checkbox"
-                      className="mt-0.5 h-4 w-4 shrink-0 rounded border-concrete-300 accent-brand-700"
-                      checked={form.trades.includes(t.div)}
-                      onChange={() => toggleTrade(t.div)}
-                    />
-                    <span className="text-sm text-ink">
-                      <span className="mr-1.5 font-mono text-[11px] text-concrete-400">Div. {t.div}</span>
-                      {t.label}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </Section>
+            <Reveal delay={160}>
+              <Section title="Trade Divisions / Codes">
+                <p className="mb-5 text-sm leading-relaxed text-concrete-500">
+                  Select all divisions that apply to your company. This determines which project invitations you receive. <span className="font-semibold text-red-600">At least one selection is required.</span>
+                </p>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {TRADES.map((t) => (
+                    <label key={t.div} className="flex cursor-pointer items-start gap-3 rounded-lg border border-concrete-200 px-4 py-3 transition-colors hover:border-brand-300 hover:bg-brand-50/50 has-[:checked]:border-brand-400 has-[:checked]:bg-brand-50">
+                      <input
+                        type="checkbox"
+                        className="mt-0.5 h-4 w-4 shrink-0 rounded border-concrete-300 accent-brand-700"
+                        checked={form.trades.includes(t.div)}
+                        onChange={() => toggleTrade(t.div)}
+                      />
+                      <span className="text-sm text-ink">
+                        <span className="mr-1.5 font-mono text-[11px] text-concrete-400">Div. {t.div}</span>
+                        {t.label}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </Section>
+            </Reveal>
 
-            {/* Certifications */}
-            <Section title="Certifications & Compliance">
-              <div className="grid gap-3 sm:grid-cols-2">
-                {CERTS.map((cert) => (
-                  <label key={cert.key} className="flex cursor-pointer items-start gap-3 rounded-lg border border-concrete-200 px-4 py-3 transition-colors hover:border-brand-300 hover:bg-brand-50/50 has-[:checked]:border-brand-400 has-[:checked]:bg-brand-50">
-                    <input
-                      type="checkbox"
-                      className="mt-0.5 h-4 w-4 shrink-0 rounded border-concrete-300 accent-brand-700"
-                      checked={form[cert.key]}
-                      onChange={(e) => set(cert.key, e.target.checked)}
-                    />
-                    <span className="text-sm">
-                      <span className="font-semibold text-ink">{cert.label}</span>
-                      <span className="ml-1 text-concrete-500">— {cert.desc}</span>
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </Section>
+            <Reveal delay={240}>
+              <Section title="Certifications & Compliance">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {CERTS.map((cert) => (
+                    <label key={cert.key} className="flex cursor-pointer items-start gap-3 rounded-lg border border-concrete-200 px-4 py-3 transition-colors hover:border-brand-300 hover:bg-brand-50/50 has-[:checked]:border-brand-400 has-[:checked]:bg-brand-50">
+                      <input
+                        type="checkbox"
+                        className="mt-0.5 h-4 w-4 shrink-0 rounded border-concrete-300 accent-brand-700"
+                        checked={form[cert.key]}
+                        onChange={(e) => set(cert.key, e.target.checked)}
+                      />
+                      <span className="text-sm">
+                        <span className="font-semibold text-ink">{cert.label}</span>
+                        <span className="ml-1 text-concrete-500">— {cert.desc}</span>
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </Section>
+            </Reveal>
 
-            {/* Additional notes */}
-            <Section title="Additional Information">
-              <Field label="Notes (optional)">
-                <textarea
-                  rows={4}
-                  className={inputCls}
-                  value={form.notes}
-                  onChange={(e) => set("notes", e.target.value)}
-                  placeholder="Describe your company's experience, geographic coverage, or anything else relevant to our estimating team."
-                />
-              </Field>
-            </Section>
+            <Reveal delay={320}>
+              <Section title="Additional Information">
+                <Field label="Notes (optional)">
+                  <textarea
+                    rows={4}
+                    className={inputCls}
+                    value={form.notes}
+                    onChange={(e) => set("notes", e.target.value)}
+                    placeholder="Describe your company's experience, geographic coverage, or anything else relevant to our estimating team."
+                  />
+                </Field>
+              </Section>
+            </Reveal>
 
             {error && (
               <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -313,18 +319,21 @@ export default function SubcontractorRegisterPage() {
               </div>
             )}
 
-            <div className="flex items-center justify-between border-t border-concrete-200 pt-6">
-              <p className="text-xs text-concrete-400">
-                Fields marked <span className="text-red-500">*</span> are required.
-              </p>
-              <button
-                type="submit"
-                disabled={submitting}
-                className="rounded-md bg-brand-700 px-8 py-3 font-display text-sm font-semibold text-white transition-colors hover:bg-brand-800 disabled:opacity-50"
-              >
-                {submitting ? "Submitting…" : "Submit registration →"}
-              </button>
-            </div>
+            <Reveal delay={400}>
+              <div className="flex items-center justify-between border-t border-concrete-200 pt-6">
+                <p className="text-xs text-concrete-400">
+                  Fields marked <span className="text-red-500">*</span> are required.
+                </p>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="rounded-md bg-brand-700 px-8 py-3 font-display text-sm font-semibold text-white transition-colors hover:bg-brand-800 disabled:opacity-50"
+                >
+                  {submitting ? "Submitting…" : "Submit registration →"}
+                </button>
+              </div>
+            </Reveal>
+
           </form>
         </div>
       </main>

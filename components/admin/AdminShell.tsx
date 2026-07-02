@@ -127,7 +127,7 @@ export default function AdminShell({
             <RolePill role={user.role} />
           </div>
         </header>
-        <main className="px-8 py-8">{children}</main>
+        <main key={pathname} className="admin-enter px-8 py-8">{children}</main>
       </div>
     </div>
   );

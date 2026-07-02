@@ -38,9 +38,11 @@ export function Wordmark({ light = false }: { light?: boolean }) {
 export function Eyebrow({
   children,
   className = "",
+  style,
 }: {
   children: React.ReactNode;
   className?: string;
+  style?: React.CSSProperties;
 }) {
-  return <p className={`eyebrow ${className}`}>{children}</p>;
+  return <p className={`eyebrow ${className}`} style={style}>{children}</p>;
 }
