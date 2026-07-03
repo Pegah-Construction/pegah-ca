@@ -10,7 +10,14 @@ export async function DELETE(
   const numId = parseInt(photoId, 10);
   const photo = await db.projectPhoto.findUnique({ where: { id: numId } });
   if (!photo) return Response.json({ error: "Not found" }, { status: 404 });
-  await deleteFile(photo.path);
+  // Remove the storage file best-effort — a failure here (e.g. missing
+  // storage config, orphaned path) must NOT prevent the DB record from
+  // being deleted, otherwise the photo reappears on reload.
+  try {
+    await deleteFile(photo.path);
+  } catch (err) {
+    console.error(`Failed to delete storage file for photo ${numId}:`, err);
+  }
   await db.projectPhoto.delete({ where: { id: numId } });
   revalidatePath("/");
   revalidatePath("/projects");

@@ -36,6 +36,8 @@ export async function saveFile(file: File, storagePath: string): Promise<string>
 
 export async function deleteFile(path: string): Promise<void> {
   if (path.startsWith("http")) {
+    // Full Supabase URL — only reachable if storage is configured
+    if (!useSupabase()) return;
     const marker = `/object/public/${BUCKET}/`;
     const idx = path.indexOf(marker);
     if (idx !== -1) {
@@ -45,6 +47,10 @@ export async function deleteFile(path: string): Promise<void> {
     const abs = path.startsWith("/") ? path : `/${path}`;
     await unlink(join(process.cwd(), "public", abs)).catch(() => {});
   } else {
+    // Bare Supabase-relative path (e.g. "projects/p_abc/123.jpg").
+    // If Supabase isn't configured there's nothing we can remove — skip
+    // rather than throwing so the DB record can still be deleted.
+    if (!useSupabase()) return;
     await getSupabase().storage.from(BUCKET).remove([path]);
   }
 }

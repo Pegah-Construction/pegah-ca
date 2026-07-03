@@ -1,6 +1,19 @@
-import { randomBytes, scryptSync, timingSafeEqual } from "crypto";
+import { randomBytes, scryptSync, timingSafeEqual, createHash } from "crypto";
 
 const KEY_LENGTH = 64;
+
+/**
+ * Creates a password-reset token. Returns the raw token (emailed to the user,
+ * never stored) and its SHA-256 hash (stored in the DB for lookup).
+ */
+export function createResetToken(): { token: string; tokenHash: string } {
+  const token = randomBytes(32).toString("hex");
+  return { token, tokenHash: hashToken(token) };
+}
+
+export function hashToken(token: string): string {
+  return createHash("sha256").update(token).digest("hex");
+}
 
 /** Derives a temporary password from a user's name and email, e.g. "Sarah-chen!42". */
 export function generatePassword(name: string, email: string): string {

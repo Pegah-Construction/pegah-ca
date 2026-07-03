@@ -91,7 +91,11 @@ export default function ProjectsView() {
 
   const handleDeleteEditPhoto = async (photoId: number) => {
     if (!editingId) return;
-    await fetch(`/api/projects/${editingId}/photos/${photoId}`, { method: "DELETE" });
+    const res = await fetch(`/api/projects/${editingId}/photos/${photoId}`, { method: "DELETE" });
+    if (!res.ok) {
+      alert("Could not delete the photo. Please try again.");
+      return;
+    }
     setEditPhotos((prev) => prev.filter((p) => p.id !== photoId));
   };
 

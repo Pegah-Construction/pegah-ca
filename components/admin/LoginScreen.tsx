@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useAuth } from "@/lib/auth";
 
 export default function LoginScreen() {
@@ -55,7 +56,12 @@ export default function LoginScreen() {
               />
             </div>
             <div>
-              <label className="font-mono text-[11px] uppercase tracking-label text-concrete-500">Password</label>
+              <div className="flex items-center justify-between">
+                <label className="font-mono text-[11px] uppercase tracking-label text-concrete-500">Password</label>
+                <Link href="/admin/forgot-password" className="font-mono text-[11px] text-brand-700 hover:text-brand-800 hover:underline">
+                  Forgot password?
+                </Link>
+              </div>
               <input
                 required
                 type="password"

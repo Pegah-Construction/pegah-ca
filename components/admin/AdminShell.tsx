@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { PERMS, ROLES, type NavKey } from "@/lib/admin";
 import { Avatar, RolePill } from "./ui";
+import ChangePasswordModal from "./ChangePasswordModal";
 
 const NAV: { key: NavKey; label: string; href: string }[] = [
   { key: "dashboard", label: "Dashboard", href: "/admin" },
@@ -65,6 +67,7 @@ export default function AdminShell({
 }) {
   const { user, signOut } = useAuth();
   const pathname = usePathname();
+  const [showChangePassword, setShowChangePassword] = useState(false);
   if (!user) return null;
   const perms = PERMS[user.role];
   const items = NAV.filter((n) => perms.nav.includes(n.key));
@@ -109,12 +112,18 @@ export default function AdminShell({
               <div className="truncate font-mono text-[11px] text-brand-200/70">{ROLES[user.role].label}</div>
             </div>
           </div>
-          <button onClick={signOut} className="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-brand-100/70 transition-colors hover:bg-white/5 hover:text-white">
+          <button onClick={() => setShowChangePassword(true)} className="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-brand-100/70 transition-colors hover:bg-white/5 hover:text-white">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+            Change password
+          </button>
+          <button onClick={signOut} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-brand-100/70 transition-colors hover:bg-white/5 hover:text-white">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><path d="M16 17l5-5-5-5" /><path d="M21 12H9" /></svg>
             Sign out
           </button>
         </div>
       </aside>
+
+      {showChangePassword && <ChangePasswordModal onClose={() => setShowChangePassword(false)} />}
 
       {/* Main */}
       <div className="pl-64">

@@ -9,7 +9,9 @@ export async function POST(req: Request) {
     return Response.json({ error: "Email and password are required." }, { status: 400 });
   }
 
-  const user = await db.user.findUnique({ where: { email: email.trim().toLowerCase() } });
+  const user = await db.user.findFirst({
+    where: { email: { equals: email.trim(), mode: "insensitive" } },
+  });
   if (!user) {
     return Response.json({ error: "Invalid email or password." }, { status: 401 });
   }
