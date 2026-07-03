@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export default function PhotoCarousel({ photos, imgClassName }: { photos: string[]; imgClassName?: string }) {
+export default function PhotoCarousel({ photos, imgClassName, className }: { photos: string[]; imgClassName?: string; className?: string }) {
   const [idx, setIdx] = useState(0);
   if (photos.length === 0) return null;
 
@@ -10,7 +10,7 @@ export default function PhotoCarousel({ photos, imgClassName }: { photos: string
   const next = () => setIdx((i) => (i + 1) % photos.length);
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-concrete-100">
+    <div className={`relative overflow-hidden rounded-2xl bg-concrete-100 ${className ?? ""}`}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={photos[idx]}

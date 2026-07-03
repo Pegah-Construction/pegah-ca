@@ -77,16 +77,16 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
           <Reveal key={p.id} delay={(i % 3) * 80} direction="up">
             <div className="group">
               {p.photos.length > 1 ? (
-                <PhotoCarousel photos={p.photos} imgClassName="aspect-[4/3]" />
+                <PhotoCarousel photos={p.photos} imgClassName="aspect-[4/3]" className="img-card" />
               ) : p.photos.length === 1 ? (
                 <Link href={`/projects/${p.id}`} className="block">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={p.photos[0]} alt={p.name}
-                    className="aspect-[4/3] w-full rounded-xl object-cover transition-opacity group-hover:opacity-90" />
+                    className="img-card aspect-[4/3] w-full rounded-xl object-cover" />
                 </Link>
               ) : (
                 <Link href={`/projects/${p.id}`} className="block">
-                  <div className="aspect-[4/3] rounded-xl bg-concrete-100 transition-opacity group-hover:opacity-90" />
+                  <div className="img-card aspect-[4/3] rounded-xl bg-concrete-100" />
                 </Link>
               )}
               <div className="mt-3 flex items-start justify-between gap-2">

@@ -50,19 +50,19 @@ export default async function FeaturedProjects() {
                 <article className="grid items-center gap-8 lg:grid-cols-2 lg:gap-14">
                   <div className={flipped ? "lg:order-2" : ""}>
                     {photos.length > 1 ? (
-                      <PhotoCarousel photos={photos} imgClassName="aspect-[4/3]" />
+                      <PhotoCarousel photos={photos} imgClassName="aspect-[4/3]" className="img-card" />
                     ) : photos.length === 1 ? (
-                      <Link href={`/projects/${p.id}`} className="group block">
+                      <Link href={`/projects/${p.id}`} className="block">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={photos[0]}
                           alt={p.name}
-                          className="aspect-[4/3] w-full rounded-xl object-cover transition-opacity group-hover:opacity-90"
+                          className="img-card aspect-[4/3] w-full rounded-xl object-cover"
                         />
                       </Link>
                     ) : (
-                      <Link href={`/projects/${p.id}`} className="group block">
-                        <div className="aspect-[4/3] w-full rounded-xl bg-concrete-100 transition-opacity group-hover:opacity-90" />
+                      <Link href={`/projects/${p.id}`} className="block">
+                        <div className="img-card aspect-[4/3] w-full rounded-xl bg-concrete-100" />
                       </Link>
                     )}
                   </div>
