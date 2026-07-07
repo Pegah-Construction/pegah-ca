@@ -170,6 +170,12 @@ export default function RichEditor({ value, onChange, articleId }: { value: stri
   const [progressForm, setProgressForm] = useState(emptyProgress);
   const [stats, setStats] = useState(emptyStats);
 
+  // Guards a programmatic setContent so its emitted update doesn't echo back
+  // through onUpdate. (TipTap v3 removed the `emitUpdate` option from
+  // setContent, so setContent always emits — without this guard the external
+  // sync effect below would loop and freeze the editor.)
+  const applyingExternal = useRef(false);
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ strike: false, code: false, codeBlock: false }),
@@ -182,7 +188,10 @@ export default function RichEditor({ value, onChange, articleId }: { value: stri
       StatsStripNode,
     ],
     content: value,
-    onUpdate: ({ editor }) => onChange(editor.getHTML()),
+    onUpdate: ({ editor }) => {
+      if (applyingExternal.current) return;
+      onChange(editor.getHTML());
+    },
     editorProps: {
       attributes: { class: "min-h-[220px] focus:outline-none prose-editor" },
       transformPastedHTML(html) {
@@ -197,9 +206,19 @@ export default function RichEditor({ value, onChange, articleId }: { value: stri
     },
   });
 
+  // Push *external* value changes into the editor. The editor is initialised
+  // with `content: value`, so this only matters when the parent swaps in a
+  // different document. Guard the emitted update and skip when the current
+  // document already matches, so it can never thrash.
+  const lastSynced = useRef(value);
   useEffect(() => {
     if (!editor) return;
-    if (editor.getHTML() !== value) editor.commands.setContent(value, { emitUpdate: false });
+    if (value === lastSynced.current) return; // came from our own onChange
+    lastSynced.current = value;
+    if (value === editor.getHTML()) return;
+    applyingExternal.current = true;
+    editor.commands.setContent(value);
+    applyingExternal.current = false;
   }, [value, editor]);
 
   const togglePanel = (p: Panel) => setPanel((cur) => (cur === p ? null : p));
