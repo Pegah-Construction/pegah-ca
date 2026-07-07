@@ -1,30 +1,64 @@
-import { getSupabase, BUCKET } from "./supabase";
-import { writeFile, mkdir, unlink } from "fs/promises";
-import { join, dirname } from "path";
+import { put, del } from "@vercel/blob";
+import { writeFile, mkdir, unlink, readFile } from "fs/promises";
+import { join, dirname, extname } from "path";
 
-const useSupabase = () =>
-  !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
+// Storage backend: Vercel Blob when configured, otherwise local disk (dev only).
+const useVercelBlob = () => !!process.env.BLOB_READ_WRITE_TOKEN;
 
-async function ensureBucket() {
-  const { error } = await getSupabase().storage.createBucket(BUCKET, { public: true });
-  if (error && !error.message.includes("already exists")) throw new Error(error.message);
+const isBlobUrl = (path: string) => path.includes(".blob.vercel-storage.com");
+
+const MEDIA_TYPES: Record<string, string> = {
+  ".pdf": "application/pdf",
+  ".txt": "text/plain",
+  ".md": "text/markdown",
+  ".csv": "text/csv",
+  ".json": "application/json",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".webp": "image/webp",
+  ".gif": "image/gif",
+};
+
+export function mediaTypeFor(path: string): string {
+  return MEDIA_TYPES[extname(path).toLowerCase()] ?? "application/octet-stream";
+}
+
+/**
+ * Reads a stored file's raw bytes. Returns null (never throws) when the file
+ * can't be reached — e.g. a legacy path with no backing file — so callers can
+ * skip it gracefully.
+ */
+export async function readFileBytes(path: string): Promise<Buffer | null> {
+  try {
+    if (path.startsWith("http")) {
+      const res = await fetch(path);
+      if (!res.ok) return null;
+      return Buffer.from(await res.arrayBuffer());
+    }
+    if (path.startsWith("/") || path.startsWith("uploads/")) {
+      const abs = path.startsWith("/") ? path : `/${path}`;
+      return await readFile(join(process.cwd(), "public", abs));
+    }
+    // Legacy relative path with no reachable backing store.
+    return null;
+  } catch {
+    return null;
+  }
 }
 
 // storagePath should NOT include the bucket name — e.g. "projects/p_abc/123.jpg"
-// Returns the relative path that was stored (not a full URL)
+// Returns what's stored in the DB: a full URL for Vercel Blob, or a relative
+// "uploads/…" path for local dev.
 export async function saveFile(file: File, storagePath: string): Promise<string> {
-  if (useSupabase()) {
-    let { error } = await getSupabase().storage
-      .from(BUCKET)
-      .upload(storagePath, file, { contentType: file.type, upsert: true });
-    if (error?.message.includes("Bucket not found")) {
-      await ensureBucket();
-      ({ error } = await getSupabase().storage
-        .from(BUCKET)
-        .upload(storagePath, file, { contentType: file.type, upsert: true }));
-    }
-    if (error) throw new Error(error.message);
-    return storagePath;
+  if (useVercelBlob()) {
+    const { url } = await put(storagePath, file, {
+      access: "public",
+      contentType: file.type,
+      addRandomSuffix: false,
+      allowOverwrite: true,
+    });
+    return url;
   }
   // local dev — write to public/uploads/
   const localPath = `uploads/${storagePath}`;
@@ -35,22 +69,18 @@ export async function saveFile(file: File, storagePath: string): Promise<string>
 }
 
 export async function deleteFile(path: string): Promise<void> {
-  if (path.startsWith("http")) {
-    // Full Supabase URL — only reachable if storage is configured
-    if (!useSupabase()) return;
-    const marker = `/object/public/${BUCKET}/`;
-    const idx = path.indexOf(marker);
-    if (idx !== -1) {
-      await getSupabase().storage.from(BUCKET).remove([path.slice(idx + marker.length)]);
-    }
-  } else if (path.startsWith("/") || path.startsWith("uploads/")) {
+  if (!path) return;
+  if (isBlobUrl(path)) {
+    // Vercel Blob public URL — del() reads BLOB_READ_WRITE_TOKEN from env.
+    if (!useVercelBlob()) return;
+    await del(path);
+    return;
+  }
+  if (path.startsWith("/") || path.startsWith("uploads/")) {
     const abs = path.startsWith("/") ? path : `/${path}`;
     await unlink(join(process.cwd(), "public", abs)).catch(() => {});
-  } else {
-    // Bare Supabase-relative path (e.g. "projects/p_abc/123.jpg").
-    // If Supabase isn't configured there's nothing we can remove — skip
-    // rather than throwing so the DB record can still be deleted.
-    if (!useSupabase()) return;
-    await getSupabase().storage.from(BUCKET).remove([path]);
+    return;
   }
+  // Anything else (external URLs, legacy relative paths) has no reachable
+  // backing store — nothing to delete, so no-op rather than throwing.
 }

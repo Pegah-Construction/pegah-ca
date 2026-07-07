@@ -38,6 +38,11 @@ export default function ProjectDetailView({ id }: { id: string }) {
   const [photos, setPhotos] = useState<ProjectPhoto[]>([]);
   const [uploading, setUploading] = useState(false);
 
+  const [generating, setGenerating] = useState(false);
+  const [genResult, setGenResult] = useState<
+    { ok: true; title: string; docsUsed: number; warnings: string[] } | { ok: false; error: string } | null
+  >(null);
+
   useEffect(() => {
     if (!user) return;
     fetch(`/api/projects/${id}?userId=${user.id}`)
@@ -103,6 +108,29 @@ export default function ProjectDetailView({ id }: { id: string }) {
     setPhotos((prev) => prev.filter((p) => p.id !== photoId));
   };
 
+  const handleGenerateArticle = async () => {
+    if (generating) return;
+    setGenResult(null);
+    setGenerating(true);
+    try {
+      const res = await fetch(`/api/projects/${id}/generate-article`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setGenResult({ ok: true, title: data.title, docsUsed: data.docsUsed ?? 0, warnings: data.warnings ?? [] });
+      } else {
+        setGenResult({ ok: false, error: data.error ?? "Blog generation failed. Please try again." });
+      }
+    } catch {
+      setGenResult({ ok: false, error: "Network error. Please try again." });
+    } finally {
+      setGenerating(false);
+    }
+  };
+
   return (
     <>
       {/* Header */}
@@ -113,19 +141,79 @@ export default function ProjectDetailView({ id }: { id: string }) {
         <div className="mt-3 flex flex-wrap items-center gap-3">
           <h2 className="font-display text-2xl font-black tracking-tight text-ink">{x.name}</h2>
           {x.type && <Pill text={x.type} />}
-          {perms.editProjects && (
-            <button
-              onClick={openEdit}
-              className="ml-auto rounded-md border border-concrete-200 bg-white px-3 py-1.5 font-display text-xs font-semibold text-ink hover:bg-concrete-50"
-            >
-              Edit project
-            </button>
-          )}
+          <div className="ml-auto flex items-center gap-2">
+            {perms.manageNews && (
+              <button
+                onClick={handleGenerateArticle}
+                disabled={generating}
+                title="Draft a blog post from this project's details, photos and documents"
+                className="flex items-center gap-1.5 rounded-md bg-brand-700 px-3 py-1.5 font-display text-xs font-semibold text-white hover:bg-brand-800 disabled:opacity-60"
+              >
+                {generating ? (
+                  <Spinner className="h-3.5 w-3.5" />
+                ) : (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5">
+                    <path d="M12 3a3 3 0 0 1 3 3v1a3 3 0 0 1 3 3 3 3 0 0 1 0 6 3 3 0 0 1-3 3v-1a3 3 0 0 1-6 0v1a3 3 0 0 1-3-3 3 3 0 0 1 0-6 3 3 0 0 1 3-3V6a3 3 0 0 1 3-3z" />
+                  </svg>
+                )}
+                {generating ? "Generating…" : "Generate blog post"}
+              </button>
+            )}
+            {perms.editProjects && (
+              <button
+                onClick={openEdit}
+                className="rounded-md border border-concrete-200 bg-white px-3 py-1.5 font-display text-xs font-semibold text-ink hover:bg-concrete-50"
+              >
+                Edit project
+              </button>
+            )}
+          </div>
         </div>
         <p className="mt-1 font-mono text-xs text-concrete-500">
           {x.location}{x.dateCompleted ? ` · Completed ${x.dateCompleted.slice(0, 4)}` : ""}
         </p>
       </div>
+
+      {/* Blog generation result */}
+      {genResult && (
+        genResult.ok ? (
+          <div className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="font-display text-sm font-bold text-emerald-800">Draft created</p>
+                <p className="mt-1 text-sm text-emerald-700">
+                  &ldquo;{genResult.title}&rdquo; was saved as a draft
+                  {genResult.docsUsed > 0 ? ` (using ${genResult.docsUsed} document${genResult.docsUsed === 1 ? "" : "s"})` : ""}.
+                  Review and publish it in News &amp; Blog.
+                </p>
+                {genResult.warnings.length > 0 && (
+                  <ul className="mt-2 list-disc space-y-0.5 pl-5 text-xs text-emerald-700/80">
+                    {genResult.warnings.map((w, i) => <li key={i}>{w}</li>)}
+                  </ul>
+                )}
+              </div>
+              <div className="flex shrink-0 items-center gap-2">
+                <Link href="/admin/news" className="rounded-md bg-emerald-700 px-3 py-1.5 font-display text-xs font-semibold text-white hover:bg-emerald-800">
+                  Open in News &amp; Blog →
+                </Link>
+                <button onClick={() => setGenResult(null)} className="rounded-md p-1.5 text-emerald-600 hover:bg-emerald-100" aria-label="Dismiss">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-3.5 w-3.5"><path d="M18 6 6 18M6 6l12 12" /></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="mb-6 flex items-start justify-between gap-4 rounded-xl border border-red-200 bg-red-50 px-5 py-4">
+            <div>
+              <p className="font-display text-sm font-bold text-red-700">Couldn&rsquo;t generate a post</p>
+              <p className="mt-1 text-sm text-red-600">{genResult.error}</p>
+            </div>
+            <button onClick={() => setGenResult(null)} className="shrink-0 rounded-md p-1.5 text-red-500 hover:bg-red-100" aria-label="Dismiss">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-3.5 w-3.5"><path d="M18 6 6 18M6 6l12 12" /></svg>
+            </button>
+          </div>
+        )
+      )}
 
       {/* Description */}
       {x.description && (
