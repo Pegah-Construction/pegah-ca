@@ -3,14 +3,12 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth";
-import { PERMS, type Project, type Incident, type ProjectPhoto } from "@/lib/admin";
-import { Card, THead, Table, StatusPill, Pill, Modal, Field, inputCls, Spinner } from "../ui";
+import { PERMS, type Project, type ProjectPhoto } from "@/lib/admin";
+import { Card, Pill, Modal, Field, inputCls, Spinner } from "../ui";
 import { getStorageUrl } from "@/lib/storage-url";
 
 const PROJECT_TYPES = ["", "New Construction", "Renovation", "Retrofit", "Restoration", "Interior Fit-out", "Addition", "Demolition"];
 const CONTRACT_TYPES = ["", "General Contracting", "Design-Build", "Construction Management", "Project Management"];
-
-type UserRow = { id: string; name: string };
 
 function Fact({ k, v }: { k: string; v: string }) {
   return (
@@ -24,9 +22,7 @@ function Fact({ k, v }: { k: string; v: string }) {
 export default function ProjectDetailView({ id }: { id: string }) {
   const { user } = useAuth();
   const [project, setProject] = useState<Project | null>(null);
-  const [incidents, setIncidents] = useState<Incident[]>([]);
   const [denied, setDenied] = useState(false);
-  const [users, setUsers] = useState<UserRow[]>([]);
 
   const [editOpen, setEditOpen] = useState(false);
   const [form, setForm] = useState({
@@ -48,8 +44,6 @@ export default function ProjectDetailView({ id }: { id: string }) {
     fetch(`/api/projects/${id}?userId=${user.id}`)
       .then((r) => { if (r.status === 404) { setDenied(true); return null; } return r.json(); })
       .then((data) => { if (data) { setProject(data); setPhotos(data.photos ?? []); } });
-    fetch(`/api/incidents?userId=${user.id}&projectId=${id}`).then((r) => r.json()).then(setIncidents);
-    fetch("/api/users").then((r) => r.json()).then(setUsers);
   }, [user, id]);
 
   if (!user) return null;
@@ -269,26 +263,6 @@ export default function ProjectDetailView({ id }: { id: string }) {
               </div>
             )}
           </section>
-
-          {/* Safety incidents */}
-          <Card title="Safety incidents">
-            <Table>
-              <THead cols={["Date", "Type", "Detail", "Reported by", "Status"]} />
-              <tbody>
-                {incidents.length ? incidents.map((s) => (
-                  <tr key={s.id} className="border-b border-concrete-100 last:border-0">
-                    <td className="px-5 py-3 font-mono text-xs text-concrete-500">{s.date}</td>
-                    <td className="px-5 py-3"><Pill text={s.type} /></td>
-                    <td className="px-5 py-3 text-ink">{s.note}</td>
-                    <td className="px-5 py-3 text-concrete-500">{users.find((u) => u.id === s.reportedBy)?.name ?? "—"}</td>
-                    <td className="px-5 py-3"><StatusPill status={s.status} /></td>
-                  </tr>
-                )) : (
-                  <tr><td colSpan={5} className="px-5 py-6 text-sm text-concrete-400">No incidents reported.</td></tr>
-                )}
-              </tbody>
-            </Table>
-          </Card>
         </div>
 
         {/* Sidebar */}
