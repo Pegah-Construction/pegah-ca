@@ -28,6 +28,12 @@ export default function NewsView() {
   const [users, setUsers] = useState<UserRow[]>([]);
   const [q, setQ] = useState("");
 
+  // LinkedIn post viewer/editor
+  const [linkedinFor, setLinkedinFor] = useState<ArticleWithBody | null>(null);
+  const [linkedinText, setLinkedinText] = useState("");
+  const [linkedinSaving, setLinkedinSaving] = useState(false);
+  const [linkedinCopied, setLinkedinCopied] = useState(false);
+
   useEffect(() => {
     fetch("/api/news").then((r) => r.json()).then(setNews);
     fetch("/api/users").then((r) => r.json()).then(setUsers);
@@ -125,6 +131,37 @@ export default function NewsView() {
     setSaving(false);
   };
 
+  const openLinkedin = (n: ArticleWithBody) => {
+    setLinkedinFor(n);
+    setLinkedinText(n.linkedinPost ?? "");
+    setLinkedinCopied(false);
+  };
+
+  const copyLinkedin = async () => {
+    try {
+      await navigator.clipboard.writeText(linkedinText);
+      setLinkedinCopied(true);
+      setTimeout(() => setLinkedinCopied(false), 2000);
+    } catch {
+      /* clipboard blocked — user can select manually */
+    }
+  };
+
+  const saveLinkedin = async () => {
+    if (!linkedinFor) return;
+    setLinkedinSaving(true);
+    const res = await fetch(`/api/news/${linkedinFor.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ linkedinPost: linkedinText }),
+    });
+    if (res.ok) {
+      setNews((prev) => prev.map((n) => (n.id === linkedinFor.id ? { ...n, linkedinPost: linkedinText } : n)));
+      setLinkedinFor((f) => (f ? { ...f, linkedinPost: linkedinText } : f));
+    }
+    setLinkedinSaving(false);
+  };
+
   return (
     <>
       <div className="mb-6 grid gap-4 sm:grid-cols-3">
@@ -165,6 +202,13 @@ export default function NewsView() {
                     <div className="flex items-center justify-end gap-3">
                       {perms.manageNews && (
                         <button onClick={() => openEdit(n)} className="font-display text-xs font-semibold text-concrete-500 hover:text-ink">Edit</button>
+                      )}
+                      {perms.manageNews && (
+                        <button onClick={() => openLinkedin(n)} title="View / copy the LinkedIn post"
+                          className="flex items-center gap-1 font-display text-xs font-semibold text-[#0A66C2] hover:opacity-75">
+                          <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+                          LinkedIn
+                        </button>
                       )}
                       {perms.manageNews && (
                         <button onClick={() => togglePublish(n.id)} disabled={!!togglingId}
@@ -257,6 +301,58 @@ export default function NewsView() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* LinkedIn post modal */}
+      {linkedinFor && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setLinkedinFor(null)}>
+          <div className="flex max-h-[90vh] w-full max-w-lg flex-col rounded-xl bg-white shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between border-b border-concrete-200 px-6 py-4">
+              <div className="flex items-center gap-2">
+                <svg viewBox="0 0 24 24" fill="#0A66C2" className="h-4 w-4"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+                <h2 className="font-display text-sm font-bold text-ink">LinkedIn post</h2>
+              </div>
+              <button onClick={() => setLinkedinFor(null)} className="rounded-md p-1 text-concrete-400 hover:bg-concrete-100 hover:text-ink">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              </button>
+            </div>
+            <div className="flex-1 space-y-3 overflow-y-auto p-6">
+              <p className="truncate font-mono text-[11px] text-concrete-500">For: {linkedinFor.title}</p>
+              {!linkedinText.trim() && (
+                <p className="rounded-md bg-amber-50 px-3 py-2 text-xs text-amber-700">
+                  No LinkedIn post yet. Write one below, or use “Generate blog post” on the project page to create one automatically.
+                </p>
+              )}
+              <textarea
+                value={linkedinText}
+                onChange={(e) => setLinkedinText(e.target.value)}
+                rows={12}
+                placeholder="LinkedIn post copy…"
+                className={`${inputCls} font-body leading-relaxed`}
+              />
+              <span className="block text-right font-mono text-[11px] text-concrete-400">{linkedinText.length} characters</span>
+            </div>
+            <div className="flex items-center justify-between gap-2 border-t border-concrete-100 px-6 py-4">
+              <button
+                type="button"
+                onClick={copyLinkedin}
+                className="flex items-center gap-1.5 rounded-md border border-concrete-200 px-4 py-2 font-display text-sm font-semibold text-ink hover:bg-concrete-50"
+              >
+                {linkedinCopied ? (
+                  <><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-3.5 w-3.5 text-emerald-600"><path d="M20 6 9 17l-5-5"/></svg>Copied!</>
+                ) : (
+                  <><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-3.5 w-3.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</>
+                )}
+              </button>
+              <div className="flex gap-2">
+                <button type="button" onClick={() => setLinkedinFor(null)} className="rounded-md px-4 py-2 text-sm font-medium text-concrete-600 hover:text-ink">Close</button>
+                <button type="button" onClick={saveLinkedin} disabled={linkedinSaving} className="rounded-md bg-brand-700 px-4 py-2 font-display text-sm font-semibold text-white hover:bg-brand-800 disabled:opacity-50">
+                  {linkedinSaving ? "Saving…" : "Save"}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

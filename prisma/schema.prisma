@@ -309,8 +309,9 @@ model Article {
   tags      String
   featured  Boolean  @default(false)
   excerpt   String
-  body        String   @default("")
-  coverImage  String   @default("")
+  body         String   @default("")
+  coverImage   String   @default("")
+  linkedinPost String   @default("")
   words       Int
   project   Project? @relation(fields: [projectId], references: [id])
   author    User     @relation(fields: [authorId], references: [id])
