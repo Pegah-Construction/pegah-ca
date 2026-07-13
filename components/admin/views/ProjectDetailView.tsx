@@ -217,7 +217,7 @@ export default function ProjectDetailView({ id }: { id: string }) {
       )}
 
       <div className="grid gap-6 xl:grid-cols-3">
-        <div className="space-y-6 xl:col-span-2">
+        <div className="min-w-0 space-y-6 xl:col-span-2">
 
           {/* Photos */}
           <section className="rounded-xl border border-concrete-200 bg-white">
@@ -289,7 +289,7 @@ export default function ProjectDetailView({ id }: { id: string }) {
             <Field label="Project name">
               <input required className={inputCls} value={form.name} onChange={(e) => set("name", e.target.value)} />
             </Field>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Location">
                 <input className={inputCls} value={form.location} onChange={(e) => set("location", e.target.value)} />
               </Field>
@@ -299,7 +299,7 @@ export default function ProjectDetailView({ id }: { id: string }) {
                 </select>
               </Field>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Owner">
                 <input className={inputCls} value={form.owner} onChange={(e) => set("owner", e.target.value)} placeholder="e.g. City of Toronto" />
               </Field>
@@ -307,7 +307,7 @@ export default function ProjectDetailView({ id }: { id: string }) {
                 <input className={inputCls} value={form.architect} onChange={(e) => set("architect", e.target.value)} />
               </Field>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Contract type">
                 <select className={inputCls} value={form.contractType} onChange={(e) => set("contractType", e.target.value)}>
                   {CONTRACT_TYPES.map((t) => <option key={t} value={t}>{t || "Select contract…"}</option>)}
@@ -317,7 +317,7 @@ export default function ProjectDetailView({ id }: { id: string }) {
                 <input type="number" min="0" className={inputCls} value={form.value} onChange={(e) => set("value", e.target.value)} />
               </Field>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Gross floor area">
                 <input className={inputCls} value={form.grossFloorArea} onChange={(e) => set("grossFloorArea", e.target.value)} placeholder="e.g. 12,500 sq ft" />
               </Field>

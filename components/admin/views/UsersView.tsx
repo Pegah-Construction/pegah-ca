@@ -159,7 +159,7 @@ export default function UsersView() {
             <Field label="Email">
               <input required type="email" className={inputCls} value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="a.nguyen@pegah.ca" />
             </Field>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Role">
                 <select className={inputCls} value={form.role} onChange={(e) => set("role", e.target.value)}>
                   <option value="admin">Administrator</option>
@@ -175,7 +175,7 @@ export default function UsersView() {
                 </select>
               </Field>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Job title">
                 <input required className={inputCls} value={form.title} onChange={(e) => set("title", e.target.value)} placeholder="e.g. Project Coordinator" />
               </Field>

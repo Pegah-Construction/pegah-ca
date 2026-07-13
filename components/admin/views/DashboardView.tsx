@@ -44,7 +44,7 @@ export default function DashboardView() {
       </div>
 
       <div className="mt-6 grid gap-6 xl:grid-cols-3">
-        <div className="xl:col-span-2">
+        <div className="min-w-0 xl:col-span-2">
           <Card title="Projects" right={<Link href="/admin/projects" className="font-display text-xs font-semibold text-brand-700 hover:text-brand-800">View all →</Link>}>
             <Table>
               <THead cols={["Project", "Type", "Value", ""]} />
@@ -81,7 +81,7 @@ export default function DashboardView() {
           )}
         </div>
 
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
           {/* Latest articles */}
           <Card title="Latest articles" right={<Link href="/admin/news" className="font-display text-xs font-semibold text-brand-700 hover:text-brand-800">View all →</Link>}>
             <ul>

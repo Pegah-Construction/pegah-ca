@@ -232,7 +232,7 @@ export default function ProjectsView() {
                 placeholder="e.g. Riverside Office Tower"
               />
             </Field>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid gap-4 sm:grid-cols-3">
               <Field label="Location">
                 <input
                   className={inputCls}
@@ -259,7 +259,7 @@ export default function ProjectsView() {
                 </select>
               </Field>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Owner">
                 <input
                   className={inputCls}
@@ -277,7 +277,7 @@ export default function ProjectsView() {
                 />
               </Field>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Contract type">
                 <select className={inputCls} value={form.contractType} onChange={(e) => set("contractType", e.target.value)}>
                   {CONTRACT_TYPES.map((t) => <option key={t} value={t}>{t || "Select contract…"}</option>)}
@@ -294,7 +294,7 @@ export default function ProjectsView() {
                 />
               </Field>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Gross floor area">
                 <input
                   className={inputCls}

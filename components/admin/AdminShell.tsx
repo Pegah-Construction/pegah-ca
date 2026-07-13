@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth";
@@ -68,19 +68,37 @@ export default function AdminShell({
   const { user, signOut } = useAuth();
   const pathname = usePathname();
   const [showChangePassword, setShowChangePassword] = useState(false);
+  const [navOpen, setNavOpen] = useState(false);
+
+  // Close the mobile sidebar whenever the route changes.
+  useEffect(() => { setNavOpen(false); }, [pathname]);
+
   if (!user) return null;
   const perms = PERMS[user.role];
   const items = NAV.filter((n) => perms.nav.includes(n.key));
 
   return (
     <div className="min-h-screen bg-paper">
+      {/* Mobile backdrop */}
+      {navOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black/40 lg:hidden"
+          onClick={() => setNavOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-30 flex w-64 flex-col bg-brand-900">
+      <aside
+        className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-brand-900 transition-transform duration-200 lg:translate-x-0 ${
+          navOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
         <div className="flex items-center gap-2 px-6 py-5">
           <span className="flex h-8 w-8 items-center justify-center rounded-[7px] bg-white font-display text-lg font-black text-brand-800">P</span>
           <span className="font-display text-base font-extrabold tracking-tight text-white">PEGAH<span className="text-brand-300"> Admin</span></span>
         </div>
-        <nav className="mt-2 flex-1 space-y-1 px-3">
+        <nav className="mt-2 min-h-0 flex-1 space-y-1 overflow-y-auto px-3">
           {items.map((n) => {
             const on = n.key === active || (n.href !== "/admin" && pathname.startsWith(n.href));
             return (
@@ -126,17 +144,27 @@ export default function AdminShell({
       {showChangePassword && <ChangePasswordModal onClose={() => setShowChangePassword(false)} />}
 
       {/* Main */}
-      <div className="pl-64">
-        <header className="sticky top-0 z-20 flex items-center gap-4 border-b border-concrete-200 bg-paper/85 px-8 py-4 backdrop-blur-md">
-          <div>
-            <h1 className="font-display text-xl font-bold tracking-tight text-ink">{title}</h1>
-            {sub ? <p className="font-mono text-xs text-concrete-500">{sub}</p> : null}
+      <div className="lg:pl-64">
+        <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-concrete-200 bg-paper/85 px-4 py-4 backdrop-blur-md sm:gap-4 sm:px-8">
+          <button
+            type="button"
+            onClick={() => setNavOpen(true)}
+            aria-label="Open menu"
+            className="-ml-1 inline-flex items-center justify-center rounded-md p-2 text-ink hover:bg-concrete-100 lg:hidden"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+              <path d="M3 12h18" /><path d="M3 6h18" /><path d="M3 18h18" />
+            </svg>
+          </button>
+          <div className="min-w-0">
+            <h1 className="truncate font-display text-lg font-bold tracking-tight text-ink sm:text-xl">{title}</h1>
+            {sub ? <p className="truncate font-mono text-xs text-concrete-500">{sub}</p> : null}
           </div>
           <div className="ml-auto flex items-center gap-4">
             <RolePill role={user.role} />
           </div>
         </header>
-        <main key={pathname} className="admin-enter px-8 py-8">{children}</main>
+        <main key={pathname} className="admin-enter px-4 py-6 sm:px-8 sm:py-8">{children}</main>
       </div>
     </div>
   );

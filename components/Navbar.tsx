@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { nav, company } from "@/lib/site";
 import { SiteLogo } from "./Brand";
 import { useAuth } from "@/lib/auth";
@@ -21,6 +22,10 @@ function UserAvatar({ name, id }: { name: string; id: string }) {
 export default function Navbar() {
   const pathname = usePathname();
   const { user, ready } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Close the mobile menu whenever the route changes.
+  useEffect(() => { setMenuOpen(false); }, [pathname]);
 
   return (
     <header className="sticky top-0 z-50 border-b border-concrete-200 bg-paper/90 backdrop-blur-md">
@@ -96,17 +101,17 @@ export default function Navbar() {
           })}
         </ul>
 
-        <div className="ml-auto flex items-center gap-5">
+        <div className="ml-auto flex items-center gap-3 sm:gap-5">
           <a
             href={company.phoneHref}
-            className="hidden font-mono text-xs tracking-wide text-concrete-500 sm:inline"
+            className="hidden font-mono text-xs tracking-wide text-concrete-500 lg:inline"
           >
             {company.phone}
           </a>
           {ready && !user && (
             <Link
               href="/admin"
-              className="whitespace-nowrap rounded-md border border-concrete-200 px-4 py-2 font-display text-sm font-semibold text-ink transition-colors hover:bg-concrete-50"
+              className="hidden whitespace-nowrap rounded-md border border-concrete-200 px-4 py-2 font-display text-sm font-semibold text-ink transition-colors hover:bg-concrete-50 sm:inline-flex"
             >
               Login
             </Link>
@@ -118,12 +123,78 @@ export default function Navbar() {
           )}
           <Link
             href="/contact"
-            className="whitespace-nowrap rounded-md bg-brand-700 px-4 py-2 font-display text-sm font-semibold text-white transition-colors hover:bg-brand-800"
+            className="hidden whitespace-nowrap rounded-md bg-brand-700 px-4 py-2 font-display text-sm font-semibold text-white transition-colors hover:bg-brand-800 sm:inline-flex"
           >
             Start a project
           </Link>
+
+          {/* Mobile menu toggle */}
+          <button
+            type="button"
+            onClick={() => setMenuOpen((o) => !o)}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+            className="-mr-1 inline-flex items-center justify-center rounded-md p-2 text-ink hover:bg-concrete-100 lg:hidden"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+              {menuOpen ? <path d="M18 6 6 18M6 6l12 12" /> : <><path d="M3 12h18" /><path d="M3 6h18" /><path d="M3 18h18" /></>}
+            </svg>
+          </button>
         </div>
       </nav>
+
+      {/* Mobile menu panel */}
+      {menuOpen && (
+        <div className="border-t border-concrete-200 bg-paper lg:hidden">
+          <ul className="mx-auto max-w-8xl space-y-1 px-6 py-4">
+            {nav.map((item) => {
+              const isActive = pathname === item.href || item.children?.some((c) => pathname === c.href);
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className={`block rounded-md px-3 py-2.5 font-display text-base font-medium transition-colors ${
+                      isActive ? "bg-brand-50 text-brand-700" : "text-ink/80 hover:bg-concrete-100"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                  {item.children && (
+                    <ul className="ml-3 border-l border-concrete-200 pl-3">
+                      {item.children.map((child) => (
+                        <li key={child.href}>
+                          <Link
+                            href={child.href}
+                            className={`block rounded-md px-3 py-2 text-sm transition-colors ${
+                              pathname === child.href ? "text-brand-700" : "text-ink/60 hover:text-brand-700"
+                            }`}
+                          >
+                            {child.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              );
+            })}
+
+            <li className="!mt-3 flex flex-wrap items-center gap-3 border-t border-concrete-200 pt-4">
+              {ready && !user && (
+                <Link href="/admin" className="rounded-md border border-concrete-200 px-4 py-2 font-display text-sm font-semibold text-ink hover:bg-concrete-50">
+                  Login
+                </Link>
+              )}
+              <Link href="/contact" className="rounded-md bg-brand-700 px-4 py-2 font-display text-sm font-semibold text-white hover:bg-brand-800">
+                Start a project
+              </Link>
+              <a href={company.phoneHref} className="ml-auto font-mono text-xs tracking-wide text-concrete-500">
+                {company.phone}
+              </a>
+            </li>
+          </ul>
+        </div>
+      )}
     </header>
   );
 }

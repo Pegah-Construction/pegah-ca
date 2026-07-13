@@ -245,7 +245,7 @@ export default function NewsView() {
                 <Field label="Title">
                   <input required className={inputCls} value={form.title} onChange={(e) => set("title", e.target.value)} placeholder="e.g. Lessons from the Harbourside Build" />
                 </Field>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <Field label="Tags (comma-separated)">
                     <input className={inputCls} value={form.tags} onChange={(e) => set("tags", e.target.value)} placeholder="e.g. Commercial, Design-Build" />
                   </Field>

@@ -181,7 +181,7 @@ export default function CareersView() {
                 <Field label="Job title">
                   <input required className={inputCls} value={form.title} onChange={(e) => set("title", e.target.value)} placeholder="e.g. Senior Project Manager" />
                 </Field>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <Field label="Department">
                     <select className={inputCls} value={form.department} onChange={(e) => set("department", e.target.value)}>
                       <option value="">Select…</option>
@@ -194,7 +194,7 @@ export default function CareersView() {
                     </select>
                   </Field>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <Field label="Location">
                     <input className={inputCls} value={form.location} onChange={(e) => set("location", e.target.value)} placeholder="e.g. Toronto, ON" />
                   </Field>

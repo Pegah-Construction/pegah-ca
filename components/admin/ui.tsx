@@ -70,7 +70,7 @@ export function StatCard({ label, value, hint }: { label: string; value: React.R
 export function Card({ title, right, children }: { title: string; right?: React.ReactNode; children: React.ReactNode }) {
   return (
     <section className="rounded-xl border border-concrete-200 bg-white">
-      <div className="flex items-center justify-between border-b border-concrete-200 px-5 py-4">
+      <div className="flex flex-col gap-3 border-b border-concrete-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="font-display text-sm font-bold tracking-tight text-ink">{title}</h2>
         {right}
       </div>

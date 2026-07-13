@@ -89,7 +89,7 @@ export default function TenderDetailView({ id }: { id: string }) {
       </div>
 
       <div className="mt-6 grid gap-6 xl:grid-cols-3">
-        <div className="space-y-6 xl:col-span-2">
+        <div className="min-w-0 space-y-6 xl:col-span-2">
           <Card title="Description">
             <div className="px-5 py-5 leading-relaxed text-concrete-600">{t.desc}</div>
           </Card>
@@ -124,7 +124,7 @@ export default function TenderDetailView({ id }: { id: string }) {
             <Field label="Title">
               <input required className={inputCls} value={form.title} onChange={(e) => set("title", e.target.value)} />
             </Field>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Reference #">
                 <input required className={inputCls} value={form.ref} onChange={(e) => set("ref", e.target.value)} />
               </Field>
@@ -134,7 +134,7 @@ export default function TenderDetailView({ id }: { id: string }) {
                 </select>
               </Field>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Organization">
                 <input required className={inputCls} value={form.org} onChange={(e) => set("org", e.target.value)} />
               </Field>
@@ -142,7 +142,7 @@ export default function TenderDetailView({ id }: { id: string }) {
                 <input required className={inputCls} value={form.platform} onChange={(e) => set("platform", e.target.value)} />
               </Field>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Type">
                 <select className={inputCls} value={form.type} onChange={(e) => set("type", e.target.value)}>
                   {TYPES.map((s) => <option key={s}>{s}</option>)}
@@ -154,7 +154,7 @@ export default function TenderDetailView({ id }: { id: string }) {
                 </select>
               </Field>
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid gap-4 sm:grid-cols-3">
               <Field label="Est. value ($)">
                 <input required type="number" min="0" className={inputCls} value={form.value} onChange={(e) => set("value", e.target.value)} />
               </Field>
@@ -165,7 +165,7 @@ export default function TenderDetailView({ id }: { id: string }) {
                 <input required className={inputCls} value={form.province} onChange={(e) => set("province", e.target.value)} />
               </Field>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Published">
                 <input required className={inputCls} value={form.published} onChange={(e) => set("published", e.target.value)} placeholder="YYYY-MM-DD" />
               </Field>
@@ -181,7 +181,7 @@ export default function TenderDetailView({ id }: { id: string }) {
             </Field>
             <fieldset className="space-y-3 rounded-lg border border-concrete-200 px-4 pb-4 pt-3">
               <legend className="px-1 font-mono text-[11px] font-semibold uppercase tracking-wide text-concrete-500">Buyer contact</legend>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid gap-4 sm:grid-cols-3">
                 <Field label="Name">
                   <input className={inputCls} value={form.contactName} onChange={(e) => set("contactName", e.target.value)} />
                 </Field>

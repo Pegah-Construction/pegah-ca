@@ -384,7 +384,7 @@ export default function RichEditor({ value, onChange, articleId }: { value: stri
       {panel === "progress" && (
         <div className="border-b border-concrete-200 bg-concrete-50 px-3 py-3">
           <p className="mb-2 font-mono text-[10px] uppercase tracking-widest text-concrete-500">Progress Banner</p>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid gap-2 sm:grid-cols-2">
             <input autoFocus placeholder="Label (e.g. Billing Progress)" value={progressForm.label} onChange={(e) => setProgressForm((f) => ({ ...f, label: e.target.value }))}
               className="rounded border border-concrete-200 bg-white px-2 py-1 font-mono text-xs text-ink outline-none focus:border-brand-400 placeholder:text-concrete-400" />
             <input placeholder="Title (e.g. Progress Draw #29 — May 2026)" value={progressForm.title} onChange={(e) => setProgressForm((f) => ({ ...f, title: e.target.value }))}

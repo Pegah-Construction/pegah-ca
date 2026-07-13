@@ -63,23 +63,16 @@ export default function InquiriesView() {
           <div className="divide-y divide-concrete-100">
             {inquiries.map((inq) => (
               <div key={inq.id} className={`px-5 py-4 transition-colors ${!inq.read ? "bg-brand-50/40" : ""}`}>
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-start gap-3">
+                {/* Header row: name + actions aligned on one line */}
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex min-w-0 items-center gap-3">
                     {/* Unread dot */}
-                    <div className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${!inq.read ? "bg-brand-600" : "bg-transparent"}`} />
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-display font-semibold text-ink">{inq.name}</span>
-                        {inq.company && (
-                          <span className="font-mono text-[11px] text-concrete-400">· {inq.company}</span>
-                        )}
-                      </div>
-                      <a href={`mailto:${inq.email}`} className="font-mono text-xs text-brand-700 hover:text-brand-800">
-                        {inq.email}
-                      </a>
-                      <div className="font-mono text-[11px] text-concrete-400">
-                        {new Date(inq.createdAt).toLocaleDateString("en-CA", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
-                      </div>
+                    <div className={`h-2 w-2 shrink-0 rounded-full ${!inq.read ? "bg-brand-600" : "bg-transparent"}`} />
+                    <div className="flex min-w-0 items-baseline gap-2">
+                      <span className="truncate font-display font-semibold text-ink">{inq.name}</span>
+                      {inq.company && (
+                        <span className="truncate font-mono text-[11px] text-concrete-400">· {inq.company}</span>
+                      )}
                     </div>
                   </div>
 
@@ -106,6 +99,16 @@ export default function InquiriesView() {
                     >
                       {deletingId === inq.id ? "…" : "Delete"}
                     </button>
+                  </div>
+                </div>
+
+                {/* Email + date, indented to align under the name */}
+                <div className="ml-5 mt-0.5">
+                  <a href={`mailto:${inq.email}`} className="block truncate font-mono text-xs text-brand-700 hover:text-brand-800">
+                    {inq.email}
+                  </a>
+                  <div className="font-mono text-[11px] text-concrete-400">
+                    {new Date(inq.createdAt).toLocaleDateString("en-CA", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
                   </div>
                 </div>
 
