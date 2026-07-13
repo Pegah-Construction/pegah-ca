@@ -176,9 +176,13 @@ model Tender {
   closing      String
   status       String
   tracked      Boolean @default(false)
+  address      String  @default("")
+  postalCode   String  @default("")
   contactName  String
   contactEmail String
   contactPhone String
+  contactFax   String  @default("")
+  codes        String  @default("[]") // JSON array of "code - description" strings (CSI divisions needed)
   note         String?
   desc         String
 

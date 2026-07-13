@@ -12,6 +12,7 @@ const emptyTender = () => ({
   title: "", ref: "", org: "", platform: "Internal", type: "RFQ", category: "Commercial",
   value: "", province: "", city: "", published: "", closing: "", status: "Open",
   desc: "", note: "", contactName: "", contactEmail: "", contactPhone: "",
+  address: "", postalCode: "", contactFax: "", codesText: "",
 });
 const emptySub = () => ({
   companyName: "", phone: "", website: "", address: "", city: "", province: "", postalCode: "",
@@ -122,10 +123,11 @@ export default function TendersView() {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
+    const codes = form.codesText.split("\n").map((s) => s.trim()).filter(Boolean);
     const res = await fetch("/api/tenders", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify({ ...form, codes }),
     });
     setSaving(false);
     if (res.ok) {
@@ -495,10 +497,33 @@ export default function TendersView() {
               <Field label="Published">
                 <input className={inputCls} value={form.published} onChange={(e) => setF("published", e.target.value)} placeholder="YYYY-MM-DD" />
               </Field>
-              <Field label="Closing">
-                <input className={inputCls} value={form.closing} onChange={(e) => setF("closing", e.target.value)} placeholder="YYYY-MM-DD" />
+              <Field label="Closing / bid date">
+                <input className={inputCls} value={form.closing} onChange={(e) => setF("closing", e.target.value)} placeholder="YYYY-MM-DD (blank = No Due Date)" />
               </Field>
             </div>
+            <Field label="Street address">
+              <input className={inputCls} value={form.address} onChange={(e) => setF("address", e.target.value)} placeholder="e.g. 267 Hemlock St" />
+            </Field>
+            <Field label="Postal code">
+              <input className={inputCls} value={form.postalCode} onChange={(e) => setF("postalCode", e.target.value)} placeholder="e.g. N2L 0K2" />
+            </Field>
+            <fieldset className="space-y-3 rounded-lg border border-concrete-200 px-4 pb-4 pt-3">
+              <legend className="px-1 font-mono text-[11px] font-semibold uppercase tracking-wide text-concrete-500">Contact</legend>
+              <div className="grid gap-4 sm:grid-cols-3">
+                <Field label="Name">
+                  <input className={inputCls} value={form.contactName} onChange={(e) => setF("contactName", e.target.value)} />
+                </Field>
+                <Field label="Phone">
+                  <input className={inputCls} value={form.contactPhone} onChange={(e) => setF("contactPhone", e.target.value)} />
+                </Field>
+                <Field label="Fax">
+                  <input className={inputCls} value={form.contactFax} onChange={(e) => setF("contactFax", e.target.value)} />
+                </Field>
+              </div>
+            </fieldset>
+            <Field label="Codes needed (one per line)">
+              <textarea rows={4} className={`${inputCls} font-mono text-xs`} value={form.codesText} onChange={(e) => setF("codesText", e.target.value)} placeholder={"03100 - Concrete Forms And Accessories\n03200 - Concrete Reinforcement\n22000 - Plumbing"} />
+            </Field>
             <Field label="Description">
               <textarea rows={3} className={inputCls} value={form.desc} onChange={(e) => setF("desc", e.target.value)} />
             </Field>

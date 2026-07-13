@@ -13,6 +13,12 @@ export type PublicTender = {
   city: string;
   closing: string;
   status: string;
+  address: string;
+  postalCode: string;
+  contactName: string;
+  contactPhone: string;
+  contactFax: string;
+  codes: string[];
 };
 
 const STATUS_STYLE: Record<string, string> = {
@@ -35,6 +41,71 @@ function fmt(iso: string) {
   const d = new Date(iso);
   if (isNaN(d.getTime())) return iso;
   return d.toLocaleDateString("en-CA", { month: "short", day: "numeric", year: "numeric" });
+}
+
+function locationLine(t: PublicTender) {
+  const cityProv = [t.city, t.province].filter(Boolean).join(", ");
+  return [t.address, cityProv, t.postalCode].filter(Boolean).join(" · ") || "—";
+}
+
+function Detail({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="min-w-0">
+      <span className="font-mono text-[10px] uppercase tracking-label text-concrete-400">{label}</span>
+      <p className="mt-0.5 break-words text-sm text-ink">{value}</p>
+    </div>
+  );
+}
+
+function TenderCard({ t }: { t: PublicTender }) {
+  const [showAll, setShowAll] = useState(false);
+  const codes = t.codes ?? [];
+  const shown = showAll ? codes : codes.slice(0, 6);
+  const phoneFax = [t.contactPhone, t.contactFax && `Fax ${t.contactFax}`].filter(Boolean).join(" · ") || "—";
+
+  return (
+    <div className="rounded-xl border border-concrete-200 bg-white p-5 transition-shadow hover:shadow-sm sm:p-6">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h3 className="font-display text-lg font-bold leading-snug tracking-tight text-ink">{t.title}</h3>
+          <p className="mt-0.5 font-mono text-[11px] text-concrete-500">{t.ref}{t.org ? ` · ${t.org}` : ""}</p>
+        </div>
+        <StatusBadge status={t.status} />
+      </div>
+
+      <div className="mt-4 grid gap-x-8 gap-y-3 sm:grid-cols-2">
+        <Detail label="Location" value={locationLine(t)} />
+        <Detail label="Bid date" value={t.closing ? fmt(t.closing) : "No Due Date"} />
+        <Detail label="Contact" value={t.contactName || "—"} />
+        <Detail label="Phone / Fax" value={phoneFax} />
+      </div>
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        <span className="rounded-full bg-brand-50 px-2.5 py-1 font-mono text-[10px] uppercase tracking-label text-brand-700">{t.type}</span>
+        <span className="rounded-full bg-concrete-100 px-2.5 py-1 font-mono text-[10px] uppercase tracking-label text-concrete-500">{t.category}</span>
+      </div>
+
+      {codes.length > 0 && (
+        <div className="mt-5 border-t border-concrete-100 pt-4">
+          <p className="mb-2 font-mono text-[11px] uppercase tracking-label text-concrete-500">Codes needed ({codes.length})</p>
+          <div className="flex flex-wrap gap-1.5">
+            {shown.map((c, i) => (
+              <span key={i} className="rounded bg-concrete-100 px-2 py-1 font-mono text-[11px] text-concrete-600">{c}</span>
+            ))}
+            {codes.length > 6 && (
+              <button
+                type="button"
+                onClick={() => setShowAll((v) => !v)}
+                className="rounded bg-brand-50 px-2 py-1 font-mono text-[11px] font-semibold text-brand-700 hover:bg-brand-100"
+              >
+                {showAll ? "Show less" : `+${codes.length - 6} more`}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 const STATUSES = ["Active", "Open", "Closing soon", "Closed", "All"] as const;
@@ -164,47 +235,9 @@ export default function TenderList({ tenders }: { tenders: PublicTender[] }) {
           )}
         </div>
       ) : (
-        <div className="divide-y divide-concrete-200 overflow-hidden rounded-xl border border-concrete-200 bg-white">
+        <div className="space-y-4">
           {visible.map((t) => (
-            <div
-              key={t.id}
-              className="flex flex-col gap-4 px-6 py-5 sm:flex-row sm:items-center sm:gap-6"
-            >
-              <StatusBadge status={t.status} />
-
-              <div className="min-w-0 flex-1">
-                <p className="font-display font-semibold leading-snug text-ink">
-                  {t.title}
-                </p>
-                <p className="mt-0.5 font-mono text-[11px] text-concrete-500">
-                  {t.ref} &middot; {t.org}
-                </p>
-              </div>
-
-              <div className="flex shrink-0 flex-wrap items-center gap-2">
-                <span className="rounded-full bg-brand-50 px-2.5 py-1 font-mono text-[10px] uppercase tracking-label text-brand-700">
-                  {t.type}
-                </span>
-                <span className="rounded-full bg-concrete-100 px-2.5 py-1 font-mono text-[10px] uppercase tracking-label text-concrete-500">
-                  {t.category}
-                </span>
-              </div>
-
-              <div className="shrink-0 sm:text-right">
-                <p className="font-mono text-xs text-ink">
-                  {t.city}, {t.province}
-                </p>
-                <p
-                  className={`mt-0.5 font-mono text-[11px] ${
-                    t.status === "Closing soon"
-                      ? "font-semibold text-amber-600"
-                      : "text-concrete-500"
-                  }`}
-                >
-                  Closes {fmt(t.closing)}
-                </p>
-              </div>
-            </div>
+            <TenderCard key={t.id} t={t} />
           ))}
         </div>
       )}

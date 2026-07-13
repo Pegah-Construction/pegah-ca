@@ -28,6 +28,7 @@ export default function TenderDetailView({ id }: { id: string }) {
     title: "", ref: "", org: "", platform: "", type: "ITT", category: "Commercial",
     value: "", province: "", city: "", published: "", closing: "", status: "Open" as Tender["status"],
     desc: "", note: "", contactName: "", contactEmail: "", contactPhone: "",
+    address: "", postalCode: "", contactFax: "", codesText: "",
   });
 
   useEffect(() => {
@@ -50,6 +51,8 @@ export default function TenderDetailView({ id }: { id: string }) {
       province: t.province, city: t.city, published: t.published, closing: t.closing,
       status: t.status, desc: t.desc, note: t.note ?? "",
       contactName: t.contact.name, contactEmail: t.contact.email, contactPhone: t.contact.phone,
+      address: t.address ?? "", postalCode: t.postalCode ?? "", contactFax: t.contact.fax ?? "",
+      codesText: (t.codes ?? []).join("\n"),
     });
     setEditOpen(true);
   };
@@ -57,10 +60,11 @@ export default function TenderDetailView({ id }: { id: string }) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
+    const codes = form.codesText.split("\n").map((s) => s.trim()).filter(Boolean);
     const res = await fetch(`/api/tenders/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify({ ...form, codes }),
     });
     const updated = await res.json();
     setTender(updated);
@@ -94,6 +98,19 @@ export default function TenderDetailView({ id }: { id: string }) {
           <Card title="Description">
             <div className="px-5 py-5 leading-relaxed text-concrete-600">{t.desc}</div>
           </Card>
+          <Card title={`Codes needed${t.codes && t.codes.length ? ` (${t.codes.length})` : ""}`}>
+            <div className="px-5 py-5">
+              {t.codes && t.codes.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {t.codes.map((c, i) => (
+                    <span key={i} className="rounded-md bg-concrete-100 px-2.5 py-1 font-mono text-[11px] text-concrete-600">{c}</span>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-concrete-400">No trade codes listed. Add them via “Edit tender”.</p>
+              )}
+            </div>
+          </Card>
           <Card title="Your notes">
             <div className="px-5 py-5">
               {t.note ? <p className="rounded-lg bg-brand-50 px-4 py-3 text-sm text-brand-800">{t.note}</p> : <p className="text-sm text-concrete-400">No notes yet.</p>}
@@ -104,17 +121,19 @@ export default function TenderDetailView({ id }: { id: string }) {
         <div className="space-y-6">
           <Card title="Buyer contact">
             <dl className="divide-y divide-concrete-100 px-5">
-              <Fact k="Name" v={t.contact.name} />
-              <Fact k="Email" v={t.contact.email} />
-              <Fact k="Phone" v={t.contact.phone} />
+              {t.contact.name && <Fact k="Name" v={t.contact.name} />}
+              {t.contact.email && <Fact k="Email" v={t.contact.email} />}
+              {t.contact.phone && <Fact k="Phone" v={t.contact.phone} />}
+              {t.contact.fax && <Fact k="Fax" v={t.contact.fax} />}
             </dl>
           </Card>
           <Card title="Details">
             <dl className="divide-y divide-concrete-100 px-5">
               <Fact k="Reference" v={t.ref} />
               <Fact k="Category" v={t.category} />
-              <Fact k="Published" v={t.published} />
-              <Fact k="Closing" v={t.closing} />
+              <Fact k="Location" v={[t.address, t.city, t.province, t.postalCode].filter(Boolean).join(", ") || "—"} />
+              <Fact k="Published" v={t.published || "—"} />
+              <Fact k="Bid date" v={t.closing || "No Due Date"} />
             </dl>
           </Card>
         </div>
@@ -171,19 +190,30 @@ export default function TenderDetailView({ id }: { id: string }) {
               <Field label="Published">
                 <input required className={inputCls} value={form.published} onChange={(e) => set("published", e.target.value)} placeholder="YYYY-MM-DD" />
               </Field>
-              <Field label="Closing">
-                <input required className={inputCls} value={form.closing} onChange={(e) => set("closing", e.target.value)} placeholder="YYYY-MM-DD" />
+              <Field label="Closing / bid date">
+                <input className={inputCls} value={form.closing} onChange={(e) => set("closing", e.target.value)} placeholder="YYYY-MM-DD (blank = No Due Date)" />
+              </Field>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="Street address">
+                <input className={inputCls} value={form.address} onChange={(e) => set("address", e.target.value)} placeholder="e.g. 267 Hemlock St" />
+              </Field>
+              <Field label="Postal code">
+                <input className={inputCls} value={form.postalCode} onChange={(e) => set("postalCode", e.target.value)} placeholder="e.g. N2L 0K2" />
               </Field>
             </div>
             <Field label="Description">
               <textarea rows={3} className={inputCls} value={form.desc} onChange={(e) => set("desc", e.target.value)} />
+            </Field>
+            <Field label="Codes needed (one per line)">
+              <textarea rows={4} className={`${inputCls} font-mono text-xs`} value={form.codesText} onChange={(e) => set("codesText", e.target.value)} placeholder={"03100 - Concrete Forms And Accessories\n03200 - Concrete Reinforcement"} />
             </Field>
             <Field label="Notes">
               <textarea rows={2} className={inputCls} value={form.note} onChange={(e) => set("note", e.target.value)} placeholder="Internal notes about this tender…" />
             </Field>
             <fieldset className="space-y-3 rounded-lg border border-concrete-200 px-4 pb-4 pt-3">
               <legend className="px-1 font-mono text-[11px] font-semibold uppercase tracking-wide text-concrete-500">Buyer contact</legend>
-              <div className="grid gap-4 sm:grid-cols-3">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <Field label="Name">
                   <input className={inputCls} value={form.contactName} onChange={(e) => set("contactName", e.target.value)} />
                 </Field>
@@ -192,6 +222,9 @@ export default function TenderDetailView({ id }: { id: string }) {
                 </Field>
                 <Field label="Phone">
                   <input className={inputCls} value={form.contactPhone} onChange={(e) => set("contactPhone", e.target.value)} />
+                </Field>
+                <Field label="Fax">
+                  <input className={inputCls} value={form.contactFax} onChange={(e) => set("contactFax", e.target.value)} />
                 </Field>
               </div>
             </fieldset>

@@ -14,12 +14,19 @@ export const metadata: Metadata = {
 };
 
 export default async function TendersPage() {
-  const rows = await db.tender.findMany({
-    orderBy: { closing: "asc" },
-    select: { id: true, ref: true, title: true, org: true, type: true, category: true, province: true, city: true, closing: true, status: true },
-  });
+  const rows = await db.tender.findMany({ orderBy: { closing: "asc" } });
 
-  const tenders = rows as PublicTender[];
+  const tenders: PublicTender[] = rows.map((t) => {
+    let codes: string[] = [];
+    try { codes = JSON.parse(t.codes || "[]"); } catch { codes = []; }
+    return {
+      id: t.id, ref: t.ref, title: t.title, org: t.org, type: t.type, category: t.category,
+      province: t.province, city: t.city, closing: t.closing, status: t.status,
+      address: t.address, postalCode: t.postalCode,
+      contactName: t.contactName, contactPhone: t.contactPhone, contactFax: t.contactFax,
+      codes,
+    };
+  });
 
   return (
     <>

@@ -180,7 +180,8 @@ export type Tender = {
   id: string; ref: string; title: string; org: string; platform: string;
   type: string; category: string; value: number; province: string; city: string;
   published: string; closing: string; status: "Open" | "Closing soon" | "Closed";
-  tracked: boolean; contact: { name: string; email: string; phone: string }; note?: string; desc: string;
+  tracked: boolean; contact: { name: string; email: string; phone: string; fax?: string }; note?: string; desc: string;
+  address?: string; postalCode?: string; codes?: string[];
 };
 
 export const TENDERS: Tender[] = [

@@ -72,15 +72,21 @@ export function mapTender(t: {
   id: string; ref: string; title: string; org: string; platform: string;
   type: string; category: string; value: number; province: string; city: string;
   published: string; closing: string; status: string; tracked: boolean;
-  contactName: string; contactEmail: string; contactPhone: string;
+  address?: string; postalCode?: string;
+  contactName: string; contactEmail: string; contactPhone: string; contactFax?: string;
+  codes?: string;
   note: string | null; desc: string;
 }) {
+  let codes: string[] = [];
+  try { codes = JSON.parse(t.codes ?? "[]"); } catch { codes = []; }
   return {
     id: t.id, ref: t.ref, title: t.title, org: t.org, platform: t.platform,
     type: t.type, category: t.category, value: t.value, province: t.province,
     city: t.city, published: t.published, closing: t.closing, status: t.status,
     tracked: t.tracked, desc: t.desc, note: t.note ?? undefined,
-    contact: { name: t.contactName, email: t.contactEmail, phone: t.contactPhone },
+    address: t.address ?? "", postalCode: t.postalCode ?? "",
+    codes,
+    contact: { name: t.contactName, email: t.contactEmail, phone: t.contactPhone, fax: t.contactFax ?? "" },
   };
 }
 
