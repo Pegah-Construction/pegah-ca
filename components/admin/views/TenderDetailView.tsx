@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { money, type Tender } from "@/lib/admin";
 import { StatCard, Card, Pill, Modal, Field, inputCls } from "../ui";
+import BidManagement from "../BidManagement";
 
 const TYPES = ["ITT", "RFP", "RFQ", "EOI", "RFPQ"];
 const STATUSES = ["Open", "Closing soon", "Closed"] as const;
@@ -98,6 +99,7 @@ export default function TenderDetailView({ id }: { id: string }) {
               {t.note ? <p className="rounded-lg bg-brand-50 px-4 py-3 text-sm text-brand-800">{t.note}</p> : <p className="text-sm text-concrete-400">No notes yet.</p>}
             </div>
           </Card>
+          <BidManagement tenderId={id} />
         </div>
         <div className="space-y-6">
           <Card title="Buyer contact">

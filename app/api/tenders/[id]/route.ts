@@ -8,6 +8,13 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   return Response.json(mapTender(t));
 }
 
+export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  // Bid invitations and bids cascade-delete via the schema relations.
+  await db.tender.delete({ where: { id } });
+  return new Response(null, { status: 204 });
+}
+
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const body = await req.json();

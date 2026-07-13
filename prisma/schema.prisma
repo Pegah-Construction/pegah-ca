@@ -181,6 +181,39 @@ model Tender {
   contactPhone String
   note         String?
   desc         String
+
+  invitations  BidInvitation[]
+  bids         Bid[]
+}
+
+model BidInvitation {
+  id              String   @id
+  tenderId        String
+  subcontractorId String
+  status          String   @default("Invited") // Invited | Viewed | Submitted | Declined
+  createdAt       DateTime @default(now())
+
+  tender          Tender        @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  subcontractor   Subcontractor @relation(fields: [subcontractorId], references: [id], onDelete: Cascade)
+
+  @@unique([tenderId, subcontractorId])
+  @@index([tenderId])
+}
+
+model Bid {
+  id              String   @id
+  tenderId        String
+  subcontractorId String
+  division        String   @default("")
+  amount          Float    @default(0)
+  note            String   @default("")
+  status          String   @default("Received") // Received | Shortlisted | Awarded | Rejected
+  createdAt       DateTime @default(now())
+
+  tender          Tender        @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  subcontractor   Subcontractor @relation(fields: [subcontractorId], references: [id], onDelete: Cascade)
+
+  @@index([tenderId])
 }
 
 model Card {
@@ -265,6 +298,9 @@ model Subcontractor {
   isInsured    Boolean  @default(false)
 
   notes        String   @default("")
+
+  invitations  BidInvitation[]
+  bids         Bid[]
 }
 
 model JobPosting {

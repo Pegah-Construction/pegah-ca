@@ -39,6 +39,19 @@ export const nav: NavItem[] = [
   { label: "Contact", href: "/contact" },
 ];
 
+// Memberships / affiliations shown on the Tenders page.
+// Drop matching logo files into /public/affiliations/ (see that folder's
+// README). Any logo whose file is missing falls back to a text badge.
+export type Affiliation = { name: string; href: string; logo: string };
+
+export const affiliations: Affiliation[] = [
+  { name: "OGCA", href: "https://ogca.ca/", logo: "/affiliations/ogca.png" },
+  { name: "IHSA · COR", href: "https://www.ihsa.ca/cor-home", logo: "/affiliations/ihsa.png" },
+  { name: "Smartbid", href: "https://smartbid.co/", logo: "/affiliations/smartbid.png" },
+  { name: "Procore", href: "https://www.procore.com/", logo: "/affiliations/procore.png" },
+  { name: "Format Group", href: "http://formatgroup.ca/", logo: "/affiliations/format-group.png" },
+];
+
 export type Stat = { value: string; label: string; href: string };
 
 export const stats: Stat[] = [

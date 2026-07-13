@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
+import AffiliationLogo from "@/components/AffiliationLogo";
 import TenderList, { type PublicTender } from "@/components/TenderList";
 import { db } from "@/lib/db";
-import { company } from "@/lib/site";
+import { company, affiliations } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Tenders — Pegah Construction Ltd.",
@@ -88,8 +89,8 @@ export default async function TendersPage() {
               </div>
             </Reveal>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              <Reveal direction="up" delay={80}>
-                <div className="rounded-xl border border-concrete-200 bg-paper p-8">
+              <Reveal direction="up" delay={80} className="h-full">
+                <div className="h-full rounded-xl border border-concrete-200 bg-paper p-8">
                   <p className="font-mono text-[11px] uppercase tracking-label text-brand-600">Head Office — Toronto</p>
                   <h3 className="mt-3 font-display text-xl font-bold text-ink">Pegah Construction Ltd.</h3>
                   <address className="mt-4 space-y-3 not-italic">
@@ -129,6 +130,34 @@ export default async function TendersPage() {
                 </div>
               </Reveal>
             </div>
+          </div>
+        </section>
+
+        {/* Memberships & affiliations */}
+        <section className="border-t border-concrete-200 bg-paper">
+          <div className="mx-auto max-w-8xl px-6 py-16 lg:px-10">
+            <Reveal>
+              <p className="text-center font-mono text-[11px] uppercase tracking-label text-concrete-500">Memberships &amp; Affiliations</p>
+              <h2 className="mt-2 text-center font-display text-2xl font-bold tracking-tight text-ink lg:text-3xl">
+                Trusted partners &amp; certifications
+              </h2>
+            </Reveal>
+            <Reveal delay={100}>
+              <div className="mt-10 flex flex-wrap items-center justify-center gap-x-12 gap-y-8">
+                {affiliations.map((a) => (
+                  <a
+                    key={a.name}
+                    href={a.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={a.name}
+                    className="group inline-flex items-center"
+                  >
+                    <AffiliationLogo name={a.name} logo={a.logo} />
+                  </a>
+                ))}
+              </div>
+            </Reveal>
           </div>
         </section>
 
