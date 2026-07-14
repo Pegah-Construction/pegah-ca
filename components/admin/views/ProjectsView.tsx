@@ -9,7 +9,7 @@ import { getStorageUrl } from "@/lib/storage-url";
 const CATEGORIES = ["", "Commercial", "Residential"];
 const PURPOSE_TYPES = ["", "Education", "Emergency Services", "Retail", "Recreation", "Transportation", "Other"];
 const CONSTRUCTION_TYPES = ["", "New Construction", "Renovation", "Retrofit", "Restoration", "Interior Fit-out", "Addition", "Demolition"];
-const CONTRACT_TYPES = ["", "General Contracting", "Design-Build", "Construction Management", "Project Management"];
+const CONTRACT_TYPES = ["", "General Contracting", "Construction Management", "Prime Contractor", "Design-Build", "Project Management", "Private"];
 
 const empty = () => ({
   name: "", location: "",
