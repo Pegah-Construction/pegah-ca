@@ -26,6 +26,18 @@ export async function visibleProjectIds(userId: string): Promise<string[]> {
   return assigned.length > 0 ? assigned.map((p) => p.id) : allIds;
 }
 
+// constructionType is stored as a JSON array string. Older records may hold a
+// plain single value — treat those as a one-element list.
+export function parseConstructionType(v: string | undefined | null): string[] {
+  if (!v) return [];
+  try {
+    const arr = JSON.parse(v);
+    return Array.isArray(arr) ? arr.map(String) : [String(v)];
+  } catch {
+    return [v];
+  }
+}
+
 export function mapProject(p: {
   id: string; name: string; location: string;
   category?: string; type?: string; constructionType?: string; dateCompleted?: string; owner?: string; architect?: string;
@@ -43,7 +55,7 @@ export function mapProject(p: {
     location: p.location ?? "",
     category: p.category ?? "",
     type: p.type ?? "",
-    constructionType: p.constructionType ?? "",
+    constructionType: parseConstructionType(p.constructionType),
     dateCompleted: p.dateCompleted ?? "",
     owner: p.owner ?? "",
     architect: p.architect ?? "",

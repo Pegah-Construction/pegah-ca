@@ -88,7 +88,7 @@ export type Milestone = { n: string; d: string; done: boolean };
 export type ProjectPhoto = { id: number; path: string; order: number };
 export type Project = {
   id: string; name: string; location: string;
-  category: string; type: string; constructionType: string; dateCompleted: string; owner: string; architect: string;
+  category: string; type: string; constructionType: string[]; dateCompleted: string; owner: string; architect: string;
   contractType: string; value: number; grossFloorArea: string; description: string;
   photos: ProjectPhoto[];
   // kept for board/tasks/incidents compatibility
@@ -97,7 +97,7 @@ export type Project = {
   pm: string; foreman: string; team: string[]; milestones: Milestone[];
 };
 
-const NEW_FIELDS = { category:"", type:"", constructionType:"", dateCompleted:"", owner:"", architect:"", contractType:"", value:0, grossFloorArea:"", description:"", photos:[] as ProjectPhoto[] };
+const NEW_FIELDS = { category:"", type:"", constructionType:[] as string[], dateCompleted:"", owner:"", architect:"", contractType:"", value:0, grossFloorArea:"", description:"", photos:[] as ProjectPhoto[] };
 
 export const PROJECTS = ([
   { ...NEW_FIELDS, id:"p1", name:"Harbourside Commercial Centre", client:"c1", sector:"Commercial", status:"In Progress", progress:68, budget:4200000, spent:2730000, start:"2023-03", end:"2025-09", pm:"u2", foreman:"u3", team:["u2","u3","u6"], location:"Toronto, ON",

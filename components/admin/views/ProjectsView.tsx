@@ -8,12 +8,12 @@ import { getStorageUrl } from "@/lib/storage-url";
 
 const CATEGORIES = ["", "Commercial", "Residential"];
 const PURPOSE_TYPES = ["", "Education", "Emergency Services", "Retail", "Recreation", "Transportation", "Other"];
-const CONSTRUCTION_TYPES = ["", "New Construction", "Renovation", "Retrofit", "Restoration", "Interior Fit-out", "Addition", "Demolition"];
-const CONTRACT_TYPES = ["", "General Contracting", "Construction Management", "Prime Contractor", "Design-Build", "Project Management", "Private"];
+const CONSTRUCTION_TYPES = ["New Construction", "Renovation", "Retrofit", "Restoration", "Interior Fit-out", "Addition", "Demolition"];
+const CONTRACT_TYPES = ["", "General Contracting", "Construction Management", "Prime Contractor", "Design-Build", "Cost-Plus", "Project Management", "Private"];
 
 const empty = () => ({
   name: "", location: "",
-  category: "", type: "", constructionType: "", dateCompleted: "", owner: "", architect: "",
+  category: "", type: "", constructionType: [] as string[], dateCompleted: "", owner: "", architect: "",
   contractType: "", value: "", grossFloorArea: "", description: "",
 });
 
@@ -57,7 +57,7 @@ export default function ProjectsView() {
   const openEdit = (p: Project) => {
     setForm({
       name: p.name, location: p.location,
-      category: p.category ?? "", type: p.type, constructionType: p.constructionType ?? "", dateCompleted: p.dateCompleted, owner: p.owner,
+      category: p.category ?? "", type: p.type, constructionType: p.constructionType ?? [], dateCompleted: p.dateCompleted, owner: p.owner,
       architect: p.architect, contractType: p.contractType,
       value: p.value ? String(p.value) : "", grossFloorArea: p.grossFloorArea,
       description: p.description,
@@ -75,6 +75,13 @@ export default function ProjectsView() {
   };
 
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
+  const toggleConstruction = (t: string) =>
+    setForm((f) => ({
+      ...f,
+      constructionType: f.constructionType.includes(t)
+        ? f.constructionType.filter((x) => x !== t)
+        : [...f.constructionType, t],
+    }));
 
   const handleUploadEditPhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
@@ -214,7 +221,14 @@ export default function ProjectsView() {
                   className="cursor-pointer px-5 py-3"
                   onClick={() => (location.href = `/admin/projects/${x.id}`)}
                 >
-                  <div className="font-display font-semibold text-ink">{x.name}</div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-display font-semibold text-ink">{x.name}</span>
+                    {x.category === "Residential" && (
+                      <span className="rounded-full bg-brand-50 px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-label text-brand-700 ring-1 ring-brand-600/20">
+                        Residential
+                      </span>
+                    )}
+                  </div>
                   <div className="font-mono text-[11px] text-concrete-500">{x.location}</div>
                 </td>
                 <td className="px-5 py-3">{x.type ? <Pill text={x.type} /> : <span className="text-concrete-400">—</span>}</td>
@@ -279,10 +293,24 @@ export default function ProjectsView() {
                   </select>
                 </Field>
               )}
-              <Field label="Construction type">
-                <select className={inputCls} value={form.constructionType} onChange={(e) => set("constructionType", e.target.value)}>
-                  {CONSTRUCTION_TYPES.map((t) => <option key={t} value={t}>{t || "Select construction type…"}</option>)}
-                </select>
+              <Field label="Construction type (select all that apply)">
+                <div className="mt-1 flex flex-wrap gap-2">
+                  {CONSTRUCTION_TYPES.map((t) => {
+                    const on = form.constructionType.includes(t);
+                    return (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() => toggleConstruction(t)}
+                        className={`rounded-full px-3 py-1.5 font-mono text-[11px] uppercase tracking-label transition-colors ${
+                          on ? "bg-brand-700 text-white" : "border border-concrete-300 text-concrete-500 hover:border-brand-400 hover:text-brand-700"
+                        }`}
+                      >
+                        {t}
+                      </button>
+                    );
+                  })}
+                </div>
               </Field>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">

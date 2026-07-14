@@ -8,7 +8,7 @@ import { Card, Pill, Modal, Field, inputCls, Spinner } from "../ui";
 import { getStorageUrl } from "@/lib/storage-url";
 
 const PROJECT_TYPES = ["", "New Construction", "Renovation", "Retrofit", "Restoration", "Interior Fit-out", "Addition", "Demolition"];
-const CONTRACT_TYPES = ["", "General Contracting", "Construction Management", "Prime Contractor", "Design-Build", "Project Management", "Private"];
+const CONTRACT_TYPES = ["", "General Contracting", "Construction Management", "Prime Contractor", "Design-Build", "Cost-Plus", "Project Management", "Private"];
 
 function Fact({ k, v }: { k: string; v: string }) {
   return (
