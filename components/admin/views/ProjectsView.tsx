@@ -221,17 +221,14 @@ export default function ProjectsView() {
                   className="cursor-pointer px-5 py-3"
                   onClick={() => (location.href = `/admin/projects/${x.id}`)}
                 >
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-display font-semibold text-ink">{x.name}</span>
-                    {x.category === "Residential" && (
-                      <span className="rounded-full bg-brand-50 px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-label text-brand-700 ring-1 ring-brand-600/20">
-                        Residential
-                      </span>
-                    )}
-                  </div>
+                  <div className="font-display font-semibold text-ink">{x.name}</div>
                   <div className="font-mono text-[11px] text-concrete-500">{x.location}</div>
                 </td>
-                <td className="px-5 py-3">{x.type ? <Pill text={x.type} /> : <span className="text-concrete-400">—</span>}</td>
+                <td className="px-5 py-3">
+                  {x.category === "Residential"
+                    ? <Pill text="Residential" />
+                    : x.type ? <Pill text={x.type} /> : <span className="text-concrete-400">—</span>}
+                </td>
                 <td className="px-5 py-3 text-concrete-500">{x.contractType || "—"}</td>
                 <td className="px-5 py-3 font-mono text-xs text-concrete-500">{x.value > 0 ? money(x.value) : "—"}</td>
                 <td className="px-5 py-3 font-mono text-xs text-concrete-500">{x.dateCompleted ? x.dateCompleted.slice(0, 4) : "—"}</td>
