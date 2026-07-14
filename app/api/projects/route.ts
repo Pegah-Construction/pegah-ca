@@ -12,7 +12,7 @@ export async function POST(req: Request) {
       location: body.location || "",
       category: body.category || "",
       type: body.type || "",
-      constructionType: JSON.stringify(Array.isArray(body.constructionType) ? body.constructionType : (body.constructionType ? [body.constructionType] : [])),
+      constructionType: body.constructionType || "",
       dateCompleted: body.dateCompleted || "",
       owner: body.owner || "",
       architect: body.architect || "",

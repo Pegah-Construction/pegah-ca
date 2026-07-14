@@ -47,17 +47,13 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const { id } = await params;
   const body = await req.json();
   const allowed = [
-    "name", "location", "category", "type", "dateCompleted", "owner", "architect",
+    "name", "location", "category", "type", "constructionType", "dateCompleted", "owner", "architect",
     "contractType", "value", "grossFloorArea", "description",
   ] as const;
   const data: Record<string, unknown> = {};
   for (const key of allowed) {
     if (!(key in body)) continue;
     data[key] = key === "value" ? parseFloat(body[key]) || 0 : body[key];
-  }
-  if ("constructionType" in body) {
-    const ct = body.constructionType;
-    data.constructionType = JSON.stringify(Array.isArray(ct) ? ct : (ct ? [ct] : []));
   }
   const updated = await db.project.update({
     where: { id },

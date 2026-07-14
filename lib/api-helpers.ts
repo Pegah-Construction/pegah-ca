@@ -26,15 +26,16 @@ export async function visibleProjectIds(userId: string): Promise<string[]> {
   return assigned.length > 0 ? assigned.map((p) => p.id) : allIds;
 }
 
-// constructionType is stored as a JSON array string. Older records may hold a
-// plain single value — treat those as a one-element list.
-export function parseConstructionType(v: string | undefined | null): string[] {
-  if (!v) return [];
+// constructionType is a single string. Some records may hold a legacy JSON
+// array (from a brief multi-select experiment) — show the first value.
+export function parseConstructionType(v: string | undefined | null): string {
+  if (!v) return "";
   try {
     const arr = JSON.parse(v);
-    return Array.isArray(arr) ? arr.map(String) : [String(v)];
+    if (Array.isArray(arr)) return arr.length ? String(arr[0]) : "";
+    return String(v);
   } catch {
-    return [v];
+    return v;
   }
 }
 
