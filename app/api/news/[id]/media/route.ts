@@ -12,7 +12,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (!file) return Response.json({ error: "No file" }, { status: 400 });
 
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "bin";
-  const path = await saveFile(file, `news/${id}/media/${Date.now()}.${ext}`);
+  let path: string;
+  try {
+    path = await saveFile(file, `news/${id}/media/${Date.now()}.${ext}`);
+  } catch (err) {
+    console.error("Media upload failed:", err);
+    return Response.json({ error: "Upload failed. Please try again." }, { status: 502 });
+  }
   const url = getStorageUrl(path);
 
   return Response.json({ url }, { status: 201 });

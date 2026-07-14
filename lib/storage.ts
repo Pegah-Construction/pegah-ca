@@ -52,11 +52,14 @@ export async function readFileBytes(path: string): Promise<Buffer | null> {
 // "uploads/…" path for local dev.
 export async function saveFile(file: File, storagePath: string): Promise<string> {
   if (useVercelBlob()) {
+    // Bound the upload so a misconfigured/unreachable store can never hang the
+    // request (which would tie up the server and stall other actions).
     const { url } = await put(storagePath, file, {
       access: "public",
       contentType: file.type,
       addRandomSuffix: false,
       allowOverwrite: true,
+      abortSignal: AbortSignal.timeout(25000),
     });
     return url;
   }
@@ -64,7 +67,7 @@ export async function saveFile(file: File, storagePath: string): Promise<string>
   const localPath = `uploads/${storagePath}`;
   const abs = join(process.cwd(), "public", localPath);
   await mkdir(dirname(abs), { recursive: true });
-  await writeFile(abs, Buffer.from(await file.arrayBuffer()));
+  await writeFile(abs, new Uint8Array(await file.arrayBuffer()));
   return localPath;
 }
 

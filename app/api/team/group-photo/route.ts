@@ -20,7 +20,13 @@ export async function POST(req: Request) {
   if (existing?.value) await deleteFile(existing.value).catch(() => null);
 
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-  const path = await saveFile(file, `team/group/${Date.now()}.${ext}`);
+  let path: string;
+  try {
+    path = await saveFile(file, `team/group/${Date.now()}.${ext}`);
+  } catch (err) {
+    console.error("Group photo upload failed:", err);
+    return Response.json({ error: "Upload failed. Please try again." }, { status: 502 });
+  }
 
   await db.setting.upsert({
     where: { key: "team_photo" },

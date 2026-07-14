@@ -14,7 +14,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (article.coverImage) await deleteFile(article.coverImage).catch(() => null);
 
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-  const path = await saveFile(file, `news/${id}/${Date.now()}.${ext}`);
+  let path: string;
+  try {
+    path = await saveFile(file, `news/${id}/${Date.now()}.${ext}`);
+  } catch (err) {
+    console.error("Cover upload failed:", err);
+    return Response.json({ error: "Upload failed. Please try again." }, { status: 502 });
+  }
 
   const updated = await db.article.update({ where: { id }, data: { coverImage: path } });
   revalidatePath("/blog");

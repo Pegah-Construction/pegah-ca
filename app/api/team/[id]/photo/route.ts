@@ -14,7 +14,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (member.photo) await deleteFile(member.photo).catch(() => null);
 
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-  const path = await saveFile(file, `team/${id}/${Date.now()}.${ext}`);
+  let path: string;
+  try {
+    path = await saveFile(file, `team/${id}/${Date.now()}.${ext}`);
+  } catch (err) {
+    console.error("Team photo upload failed:", err);
+    return Response.json({ error: "Upload failed. Please try again." }, { status: 502 });
+  }
 
   const updated = await db.teamMember.update({ where: { id }, data: { photo: path } });
   revalidatePath("/about");

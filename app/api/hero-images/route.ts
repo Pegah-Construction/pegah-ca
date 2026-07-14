@@ -13,7 +13,13 @@ export async function POST(req: Request) {
   if (!file) return Response.json({ error: "No file" }, { status: 400 });
 
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-  const url = await saveFile(file, `hero/${Date.now()}.${ext}`);
+  let url: string;
+  try {
+    url = await saveFile(file, `hero/${Date.now()}.${ext}`);
+  } catch (err) {
+    console.error("Hero image upload failed:", err);
+    return Response.json({ error: "Upload failed. Please try again." }, { status: 502 });
+  }
 
   const agg = await db.heroImage.aggregate({ _max: { order: true } });
   const order = (agg._max.order ?? -1) + 1;

@@ -77,16 +77,24 @@ export default function ProjectsView() {
     const files = Array.from(e.target.files ?? []);
     if (!files.length || !editingId) return;
     setUploadingPhoto(true);
-    for (const file of files) {
-      const fd = new FormData();
-      fd.append("file", file);
-      if (user?.id) fd.append("userId", user.id);
-      const res = await fetch(`/api/projects/${editingId}/photos`, { method: "POST", body: fd });
-      const photo = await res.json();
-      setEditPhotos((prev) => [...prev, photo]);
+    try {
+      for (const file of files) {
+        const fd = new FormData();
+        fd.append("file", file);
+        if (user?.id) fd.append("userId", user.id);
+        const res = await fetch(`/api/projects/${editingId}/photos`, { method: "POST", body: fd });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          alert(data.error ?? "Upload failed. Please try again.");
+          break;
+        }
+        const photo = await res.json();
+        setEditPhotos((prev) => [...prev, photo]);
+      }
+    } finally {
+      e.target.value = "";
+      setUploadingPhoto(false);
     }
-    e.target.value = "";
-    setUploadingPhoto(false);
   };
 
   const handleDeleteEditPhoto = async (photoId: number) => {
