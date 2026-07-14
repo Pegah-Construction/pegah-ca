@@ -108,23 +108,6 @@ export default async function ProjectDetail({ params }: Params) {
           )}
         </div>
 
-        {/* Photo grid */}
-        {photoPaths.length > 1 && (
-          <div className="mx-auto max-w-8xl px-6 pb-20 lg:px-10">
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {photoPaths.slice(1).map((src, i) => (
-                /* eslint-disable-next-line @next/next/no-img-element */
-                <img
-                  key={i}
-                  src={src}
-                  alt=""
-                  className="img-card aspect-[4/3] w-full rounded-xl object-cover"
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* Back to projects */}
         <section className="border-t border-concrete-200 bg-white">
           <div className="mx-auto flex max-w-8xl items-center justify-center px-6 py-14 lg:px-10">
