@@ -50,6 +50,7 @@ export default function ProjectsView() {
     setForm(empty());
     setEditingId(null);
     resetPhotos();
+    setSaving(false);
     setOpen(true);
   };
 
@@ -63,11 +64,13 @@ export default function ProjectsView() {
     });
     setEditPhotos(p.photos ?? []);
     setEditingId(p.id);
+    setSaving(false);
     setOpen(true);
   };
 
   const closeModal = () => {
     setOpen(false);
+    setSaving(false);
     resetPhotos();
   };
 
@@ -125,38 +128,53 @@ export default function ProjectsView() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
-    if (editingId) {
-      const res = await fetch(`/api/projects/${editingId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      const updated = await res.json();
-      setProjects((prev) => prev.map((p) => p.id === editingId ? { ...p, ...updated, photos: editPhotos } : p));
-    } else {
-      const res = await fetch("/api/projects", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, userId: user?.id }),
-      });
-      const created = await res.json();
-
-      // Upload any staged photos now that we have the project ID
-      if (pendingFiles.length > 0) {
-        const uploaded: { id: number; path: string; order: number }[] = [];
-        for (const file of pendingFiles) {
-          const fd = new FormData();
-          fd.append("file", file);
-          const pr = await fetch(`/api/projects/${created.id}/photos`, { method: "POST", body: fd });
-          uploaded.push(await pr.json());
+    try {
+      if (editingId) {
+        const res = await fetch(`/api/projects/${editingId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form),
+        });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          alert(data.error ?? "Could not save changes. Please try again.");
+          return;
         }
-        created.photos = uploaded;
-      }
+        const updated = await res.json();
+        setProjects((prev) => prev.map((p) => p.id === editingId ? { ...p, ...updated, photos: editPhotos } : p));
+      } else {
+        const res = await fetch("/api/projects", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...form, userId: user?.id }),
+        });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          alert(data.error ?? "Could not create the project. Please try again.");
+          return;
+        }
+        const created = await res.json();
 
-      setProjects((prev) => [created, ...prev]);
+        // Upload any staged photos now that we have the project ID
+        if (pendingFiles.length > 0) {
+          const uploaded: { id: number; path: string; order: number }[] = [];
+          for (const file of pendingFiles) {
+            const fd = new FormData();
+            fd.append("file", file);
+            const pr = await fetch(`/api/projects/${created.id}/photos`, { method: "POST", body: fd });
+            if (pr.ok) uploaded.push(await pr.json());
+          }
+          created.photos = uploaded;
+        }
+
+        setProjects((prev) => [created, ...prev]);
+      }
+      closeModal();
+    } catch {
+      alert("Network error. Please try again.");
+    } finally {
+      setSaving(false);
     }
-    closeModal();
-    setSaving(false);
   };
 
   const handleDelete = async (e: React.MouseEvent, id: string) => {
