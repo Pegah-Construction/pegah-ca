@@ -68,7 +68,15 @@ function TenderCard({ t }: { t: PublicTender }) {
     <div className="rounded-xl border border-concrete-200 bg-white p-5 transition-shadow hover:shadow-sm sm:p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <h3 className="font-display text-lg font-bold leading-snug tracking-tight text-ink">{t.title}</h3>
+          <h3 className="font-display text-lg font-bold leading-snug tracking-tight text-ink">
+            {t.bidUrl ? (
+              <a href={t.bidUrl} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-brand-700 hover:underline">
+                {t.title}
+              </a>
+            ) : (
+              t.title
+            )}
+          </h3>
           <p className="mt-0.5 font-mono text-[11px] text-concrete-500">{t.ref}{t.org ? ` · ${t.org}` : ""}</p>
         </div>
         <StatusBadge status={t.status} />

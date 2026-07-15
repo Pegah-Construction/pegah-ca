@@ -3,6 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
 import AffiliationLogo from "@/components/AffiliationLogo";
+import SmartbidBanner from "@/components/SmartbidBanner";
 import TenderList, { type PublicTender } from "@/components/TenderList";
 import { db } from "@/lib/db";
 import { company, affiliations } from "@/lib/site";
@@ -82,6 +83,9 @@ export default async function TendersPage() {
             </div>
           </Reveal>
           <Reveal delay={100}>
+            <SmartbidBanner />
+          </Reveal>
+          <Reveal delay={150}>
             <TenderList tenders={tenders} />
           </Reveal>
         </section>
