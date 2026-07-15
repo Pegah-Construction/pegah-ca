@@ -26,7 +26,6 @@ export default function DashboardView() {
   if (!user) return null;
   const perms = PERMS[user.role];
   const active = projects.filter((x) => x.status !== "Complete");
-  const avg = active.length ? Math.round(active.reduce((a, x) => a + x.progress, 0) / active.length) : 0;
   const spent = projects.reduce((a, x) => a + x.spent, 0);
   const openInc = incidents.filter((i) => i.status !== "Closed");
   const myTasks = tasks.filter((t) => t.assignee === user.id && t.status !== "Done");
@@ -66,19 +65,6 @@ export default function DashboardView() {
               </tbody>
             </Table>
           </Card>
-
-          {/* Avg completion bar — only meaningful once there are active projects */}
-          {active.length > 0 && (
-            <div className="mt-4 rounded-xl border border-concrete-200 bg-white px-5 py-4">
-              <div className="flex items-center justify-between text-sm">
-                <span className="font-display font-semibold text-ink">Average project completion</span>
-                <span className="font-mono text-xs text-brand-700">{avg}%</span>
-              </div>
-              <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-concrete-100">
-                <div className="h-full rounded-full bg-brand-600 transition-all" style={{ width: `${avg}%` }} />
-              </div>
-            </div>
-          )}
         </div>
 
         <div className="min-w-0 space-y-6">
