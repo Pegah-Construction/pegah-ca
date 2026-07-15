@@ -51,7 +51,7 @@ export function Avatar({ name, id, size = "h-9 w-9 text-xs" }: { name: string; i
   const initials = name.split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase();
   const color = PALETTE[Math.abs(id.charCodeAt(1)) % PALETTE.length];
   return (
-    <span className={`${size} ${color} inline-flex items-center justify-center rounded-full font-display font-bold text-white`}>
+    <span className={`${size} ${color} inline-flex shrink-0 items-center justify-center rounded-full font-display font-bold text-white`}>
       {initials}
     </span>
   );
