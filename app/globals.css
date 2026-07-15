@@ -86,7 +86,7 @@
   html {
     scroll-behavior: smooth;
     color-scheme: light;
-    font-size: 18px;
+    font-size: 20px;
   }
   body {
     @apply bg-paper text-ink font-body antialiased;

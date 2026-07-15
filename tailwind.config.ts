@@ -27,8 +27,9 @@ const config: Config = {
           100: "#ece9e3",
           200: "#dcd8cf",
           300: "#bfbab0",
-          400: "#9a958b",
-          500: "#6f6a61",
+          // Darkened so secondary/muted text has real contrast (was light grey)
+          400: "#615d55",
+          500: "#4a453f",
         },
       },
       fontFamily: {
