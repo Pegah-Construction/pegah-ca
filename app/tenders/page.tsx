@@ -3,7 +3,6 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
 import AffiliationLogo from "@/components/AffiliationLogo";
-import SmartbidBanner from "@/components/SmartbidBanner";
 import TenderList, { type PublicTender } from "@/components/TenderList";
 import { db } from "@/lib/db";
 import { company, affiliations } from "@/lib/site";
@@ -83,7 +82,16 @@ export default async function TendersPage() {
             </div>
           </Reveal>
           <Reveal delay={100}>
-            <SmartbidBanner />
+            <a
+              href="https://smartbid.co/"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="SmartBid by ConstructConnect"
+              className="mx-auto mb-8 block w-fit transition-opacity hover:opacity-80"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/smartbid.png" alt="SmartBid by ConstructConnect" className="h-14 w-auto object-contain" />
+            </a>
           </Reveal>
           <Reveal delay={150}>
             <TenderList tenders={tenders} />
