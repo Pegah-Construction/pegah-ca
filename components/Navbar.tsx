@@ -44,7 +44,7 @@ export default function Navbar() {
                   <Link
                     href={item.href}
                     className={`flex items-center gap-1 font-display text-sm font-medium transition-colors ${
-                      isActive ? "text-brand-700" : "text-ink/70 hover:text-brand-700"
+                      isActive ? "text-ink underline underline-offset-8 decoration-2" : "text-ink/70 hover:text-ink"
                     }`}
                   >
                     {item.label}
@@ -91,7 +91,7 @@ export default function Navbar() {
                 <Link
                   href={item.href}
                   className={`font-display text-sm font-medium transition-colors ${
-                    isActive ? "text-brand-700" : "text-ink/70 hover:text-brand-700"
+                    isActive ? "text-ink underline underline-offset-8 decoration-2" : "text-ink/70 hover:text-ink"
                   }`}
                 >
                   {item.label}

@@ -34,7 +34,7 @@ export const nav: NavItem[] = [
     ],
   },
   { label: "Blog", href: "/blog" },
-  { label: "Safety", href: "/safety" },
+  { label: "Health & Safety", href: "/safety" },
   { label: "Careers", href: "/careers" },
   { label: "Contact", href: "/contact" },
 ];
