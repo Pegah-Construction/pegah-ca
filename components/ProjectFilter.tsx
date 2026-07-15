@@ -86,8 +86,6 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
   const matchesSearch = (p: PublicProject) =>
     !needle || [p.name, p.location, p.type, p.category].some((v) => v.toLowerCase().includes(needle));
 
-  const shownSections = SECTIONS.filter((s) => filter === "All Projects" || filter === s.key);
-
   return (
     <>
       {/* Hero: title, intro, category filters */}
@@ -139,9 +137,25 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
         </div>
       </div>
 
-      {/* Category sections */}
+      {/* Results */}
       <div className="mx-auto max-w-8xl space-y-16 px-6 py-16 lg:px-10">
-        {shownSections.map((section) => {
+        {filter === "All Projects" ? (
+          (() => {
+            const items = projects.filter(matchesSearch);
+            return items.length > 0 ? (
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {items.map((p, i) => (
+                  <ProjectCard key={p.id} p={p} i={i} />
+                ))}
+              </div>
+            ) : (
+              <p className="font-body text-concrete-400">
+                {needle ? "No projects match your search." : "No projects yet."}
+              </p>
+            );
+          })()
+        ) : (
+          SECTIONS.filter((s) => s.key === filter).map((section) => {
           const isCommercial = section.key === "Commercial";
           let items = projects.filter(section.match).filter(matchesSearch);
           if (isCommercial && subType !== "All") items = items.filter((p) => p.type === subType);
@@ -194,7 +208,8 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
               )}
             </section>
           );
-        })}
+          })
+        )}
       </div>
     </>
   );
