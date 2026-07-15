@@ -29,6 +29,7 @@ export async function POST(req: Request) {
       tracked: false,
       address: body.address?.trim() ?? "",
       postalCode: body.postalCode?.trim() ?? "",
+      bidUrl: body.bidUrl?.trim() ?? "",
       contactName: body.contactName?.trim() ?? "",
       contactEmail: body.contactEmail?.trim() ?? "",
       contactPhone: body.contactPhone?.trim() ?? "",

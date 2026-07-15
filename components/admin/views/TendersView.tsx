@@ -12,7 +12,7 @@ const emptyTender = () => ({
   title: "", ref: "", org: "", platform: "Internal", type: "RFQ", category: "Commercial",
   value: "", province: "", city: "", published: "", closing: "", status: "Open",
   desc: "", note: "", contactName: "", contactEmail: "", contactPhone: "",
-  address: "", postalCode: "", contactFax: "", codesText: "",
+  address: "", postalCode: "", contactFax: "", codesText: "", bidUrl: "",
 });
 const emptySub = () => ({
   companyName: "", phone: "", website: "", address: "", city: "", province: "", postalCode: "",
@@ -506,6 +506,9 @@ export default function TendersView() {
             </Field>
             <Field label="Postal code">
               <input className={inputCls} value={form.postalCode} onChange={(e) => setF("postalCode", e.target.value)} placeholder="e.g. N2L 0K2" />
+            </Field>
+            <Field label="Bid room link (SmartBid, optional)">
+              <input type="url" className={inputCls} value={form.bidUrl} onChange={(e) => setF("bidUrl", e.target.value)} placeholder="https://securecc.smartinsight.co/#/PublicBidProject/…" />
             </Field>
             <fieldset className="space-y-3 rounded-lg border border-concrete-200 px-4 pb-4 pt-3">
               <legend className="px-1 font-mono text-[11px] font-semibold uppercase tracking-wide text-concrete-500">Contact</legend>

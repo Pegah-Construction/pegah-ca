@@ -19,7 +19,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const { id } = await params;
   const body = await req.json();
   const data: Record<string, unknown> = {};
-  const text = ["title","ref","org","platform","type","category","province","city","published","closing","status","note","desc","address","postalCode","contactName","contactEmail","contactPhone","contactFax"] as const;
+  const text = ["title","ref","org","platform","type","category","province","city","published","closing","status","note","desc","address","postalCode","bidUrl","contactName","contactEmail","contactPhone","contactFax"] as const;
   for (const key of text) if (key in body) data[key] = body[key];
   if ("value" in body) data.value = parseFloat(body.value);
   if ("tracked" in body) data.tracked = body.tracked;

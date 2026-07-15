@@ -85,7 +85,7 @@ export function mapTender(t: {
   id: string; ref: string; title: string; org: string; platform: string;
   type: string; category: string; value: number; province: string; city: string;
   published: string; closing: string; status: string; tracked: boolean;
-  address?: string; postalCode?: string;
+  address?: string; postalCode?: string; bidUrl?: string;
   contactName: string; contactEmail: string; contactPhone: string; contactFax?: string;
   codes?: string;
   note: string | null; desc: string;
@@ -97,7 +97,7 @@ export function mapTender(t: {
     type: t.type, category: t.category, value: t.value, province: t.province,
     city: t.city, published: t.published, closing: t.closing, status: t.status,
     tracked: t.tracked, desc: t.desc, note: t.note ?? undefined,
-    address: t.address ?? "", postalCode: t.postalCode ?? "",
+    address: t.address ?? "", postalCode: t.postalCode ?? "", bidUrl: t.bidUrl ?? "",
     codes,
     contact: { name: t.contactName, email: t.contactEmail, phone: t.contactPhone, fax: t.contactFax ?? "" },
   };

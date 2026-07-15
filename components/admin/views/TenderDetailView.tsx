@@ -28,7 +28,7 @@ export default function TenderDetailView({ id }: { id: string }) {
     title: "", ref: "", org: "", platform: "", type: "ITT", category: "Commercial",
     value: "", province: "", city: "", published: "", closing: "", status: "Open" as Tender["status"],
     desc: "", note: "", contactName: "", contactEmail: "", contactPhone: "",
-    address: "", postalCode: "", contactFax: "", codesText: "",
+    address: "", postalCode: "", contactFax: "", codesText: "", bidUrl: "",
   });
 
   useEffect(() => {
@@ -52,7 +52,7 @@ export default function TenderDetailView({ id }: { id: string }) {
       status: t.status, desc: t.desc, note: t.note ?? "",
       contactName: t.contact.name, contactEmail: t.contact.email, contactPhone: t.contact.phone,
       address: t.address ?? "", postalCode: t.postalCode ?? "", contactFax: t.contact.fax ?? "",
-      codesText: (t.codes ?? []).join("\n"),
+      codesText: (t.codes ?? []).join("\n"), bidUrl: t.bidUrl ?? "",
     });
     setEditOpen(true);
   };
@@ -79,9 +79,17 @@ export default function TenderDetailView({ id }: { id: string }) {
         <div className="mt-3 flex flex-wrap items-center gap-3">
           <h2 className="font-display text-2xl font-black tracking-tight text-ink">{t.title}</h2>
           <Pill text={t.status} tone={tone} />
-          <button onClick={openEdit} className="ml-auto rounded-md border border-concrete-200 bg-white px-3 py-1.5 font-display text-xs font-semibold text-ink hover:bg-concrete-50">
-            Edit tender
-          </button>
+          <div className="ml-auto flex items-center gap-2">
+            {t.bidUrl && (
+              <a href={t.bidUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-md bg-brand-700 px-3 py-1.5 font-display text-xs font-semibold text-white hover:bg-brand-800">
+                Open bid room
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><path d="M15 3h6v6" /><path d="M10 14 21 3" /></svg>
+              </a>
+            )}
+            <button onClick={openEdit} className="rounded-md border border-concrete-200 bg-white px-3 py-1.5 font-display text-xs font-semibold text-ink hover:bg-concrete-50">
+              Edit tender
+            </button>
+          </div>
         </div>
         <p className="mt-1 font-mono text-xs text-concrete-500">{t.ref} · {t.org} · {t.platform}</p>
       </div>
@@ -202,6 +210,9 @@ export default function TenderDetailView({ id }: { id: string }) {
                 <input className={inputCls} value={form.postalCode} onChange={(e) => set("postalCode", e.target.value)} placeholder="e.g. N2L 0K2" />
               </Field>
             </div>
+            <Field label="Bid room link (SmartBid)">
+              <input type="url" className={inputCls} value={form.bidUrl} onChange={(e) => set("bidUrl", e.target.value)} placeholder="https://securecc.smartinsight.co/#/PublicBidProject/…" />
+            </Field>
             <Field label="Description">
               <textarea rows={3} className={inputCls} value={form.desc} onChange={(e) => set("desc", e.target.value)} />
             </Field>

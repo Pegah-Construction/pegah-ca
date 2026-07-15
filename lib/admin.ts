@@ -181,7 +181,7 @@ export type Tender = {
   type: string; category: string; value: number; province: string; city: string;
   published: string; closing: string; status: "Open" | "Closing soon" | "Closed";
   tracked: boolean; contact: { name: string; email: string; phone: string; fax?: string }; note?: string; desc: string;
-  address?: string; postalCode?: string; codes?: string[];
+  address?: string; postalCode?: string; codes?: string[]; bidUrl?: string;
 };
 
 export const TENDERS: Tender[] = [

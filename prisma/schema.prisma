@@ -178,6 +178,7 @@ model Tender {
   tracked      Boolean @default(false)
   address      String  @default("")
   postalCode   String  @default("")
+  bidUrl       String  @default("") // external bid-room / plan-room link (e.g. SmartBid)
   contactName  String
   contactEmail String
   contactPhone String

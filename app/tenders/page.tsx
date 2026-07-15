@@ -22,7 +22,7 @@ export default async function TendersPage() {
     return {
       id: t.id, ref: t.ref, title: t.title, org: t.org, type: t.type, category: t.category,
       province: t.province, city: t.city, closing: t.closing, status: t.status,
-      address: t.address, postalCode: t.postalCode,
+      address: t.address, postalCode: t.postalCode, bidUrl: t.bidUrl,
       contactName: t.contactName, contactPhone: t.contactPhone, contactFax: t.contactFax,
       codes,
     };

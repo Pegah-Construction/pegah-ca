@@ -19,6 +19,7 @@ export type PublicTender = {
   contactPhone: string;
   contactFax: string;
   codes: string[];
+  bidUrl: string;
 };
 
 const STATUS_STYLE: Record<string, string> = {
@@ -80,9 +81,22 @@ function TenderCard({ t }: { t: PublicTender }) {
         <Detail label="Phone / Fax" value={phoneFax} />
       </div>
 
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="mt-4 flex flex-wrap items-center gap-2">
         <span className="rounded-full bg-brand-50 px-2.5 py-1 font-mono text-[10px] uppercase tracking-label text-brand-700">{t.type}</span>
         <span className="rounded-full bg-concrete-100 px-2.5 py-1 font-mono text-[10px] uppercase tracking-label text-concrete-500">{t.category}</span>
+        {t.bidUrl && (
+          <a
+            href={t.bidUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-auto inline-flex items-center gap-1.5 rounded-md bg-brand-700 px-3 py-1.5 font-display text-xs font-semibold text-white transition-colors hover:bg-brand-800"
+          >
+            View bid package
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><path d="M15 3h6v6" /><path d="M10 14 21 3" />
+            </svg>
+          </a>
+        )}
       </div>
 
       {codes.length > 0 && (
