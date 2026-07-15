@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Wordmark } from "./Brand";
+import { LogoMark } from "./Brand";
 import { nav, company } from "@/lib/site";
 
 export default function Footer() {
@@ -7,7 +7,7 @@ export default function Footer() {
     <footer className="bg-ink text-concrete-200">
       <div className="mx-auto grid max-w-8xl gap-12 px-6 py-16 lg:grid-cols-12 lg:px-10">
         <div className="lg:col-span-5">
-          <Wordmark light />
+          <LogoMark href="/" heightClass="h-16" />
           <p className="mt-5 max-w-xs leading-relaxed text-concrete-300">
             General contracting and project management for {company.region}{" "}
             since {company.established}.

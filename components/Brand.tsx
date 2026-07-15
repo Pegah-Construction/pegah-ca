@@ -7,7 +7,24 @@ export function SiteLogo() {
       <img
         src="/logo.webp"
         alt="Pegah Construction Ltd. — 35+ years"
-        className="h-10 w-auto sm:h-12"
+        className="h-14 w-auto sm:h-16"
+      />
+    </Link>
+  );
+}
+
+/**
+ * The Pegah logo on a white "chip" — for use on dark backgrounds (footer,
+ * admin sidebar, login panel) since the logo artwork is dark-on-white.
+ */
+export function LogoMark({ href = "/", heightClass = "h-9" }: { href?: string; heightClass?: string }) {
+  return (
+    <Link href={href} className="inline-flex shrink-0 items-center">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/logo.webp"
+        alt="Pegah Construction Ltd."
+        className={`${heightClass} w-auto rounded-md bg-white p-1.5`}
       />
     </Link>
   );

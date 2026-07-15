@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { PERMS, ROLES, type NavKey } from "@/lib/admin";
 import { Avatar, RolePill } from "./ui";
+import { LogoMark } from "@/components/Brand";
 import ChangePasswordModal from "./ChangePasswordModal";
 
 const NAV: { key: NavKey; label: string; href: string }[] = [
@@ -94,9 +95,8 @@ export default function AdminShell({
           navOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex items-center gap-2 px-6 py-5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-[7px] bg-white font-display text-lg font-black text-brand-800">P</span>
-          <span className="font-display text-base font-extrabold tracking-tight text-white">PEGAH<span className="text-brand-300"> Admin</span></span>
+        <div className="flex items-center px-4 py-5">
+          <LogoMark href="/admin" heightClass="h-12" />
         </div>
         <nav className="mt-2 min-h-0 flex-1 space-y-1 overflow-y-auto px-3">
           {items.map((n) => {
