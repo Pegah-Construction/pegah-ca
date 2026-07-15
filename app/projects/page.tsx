@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { db } from "@/lib/db";
-import PageShell from "@/components/PageShell";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import ProjectFilter, { type PublicProject } from "@/components/ProjectFilter";
 import { getStorageUrl } from "@/lib/storage-url";
 
@@ -38,12 +39,12 @@ export default async function ProjectsPage() {
   }));
 
   return (
-    <PageShell
-      eyebrow="Our work"
-      title="Projects"
-      intro="A selection of work delivered across Southern Ontario. Filter by category to explore."
-    >
-      <ProjectFilter projects={projects} />
-    </PageShell>
+    <>
+      <Navbar />
+      <main className="flex-1">
+        <ProjectFilter projects={projects} />
+      </main>
+      <Footer />
+    </>
   );
 }
