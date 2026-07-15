@@ -10,7 +10,7 @@ import { company, affiliations } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Tenders — Pegah Construction Ltd.",
   description:
-    "Active bid opportunities where Pegah Construction is seeking qualified subcontractor quotes across Southern Ontario.",
+    "Active bid opportunities where Pegah Construction is seeking qualified subcontractor quotes across Ontario.",
 };
 
 export default async function TendersPage() {
@@ -45,7 +45,7 @@ export default async function TendersPage() {
               Tenders
             </h1>
             <p className="hero-animate mt-5 max-w-xl text-lg leading-relaxed text-brand-100/80" style={{ animationDelay: "260ms" }}>
-              We are currently seeking qualified subcontractor and supplier quotes on the following active bids across Southern Ontario.
+              We are currently seeking qualified subcontractor and supplier quotes on the following active bids across Ontario.
             </p>
           </div>
         </section>
@@ -203,7 +203,7 @@ export default async function TendersPage() {
                     { title: "Free registration", desc: "No fee to join our trade partner directory." },
                     { title: "Direct invitations", desc: "Receive bid packages as relevant projects arise." },
                     { title: "23 trade divisions", desc: "Select exactly which CSI MasterFormat divisions you cover." },
-                    { title: "Southern Ontario focus", desc: "Projects across the GTA and surrounding region." },
+                    { title: "Ontario focus", desc: "Projects across the GTA and surrounding region." },
                   ].map((item) => (
                     <div key={item.title} className="rounded-lg border border-white/10 bg-white/5 p-5">
                       <p className="font-display text-sm font-bold text-white">{item.title}</p>

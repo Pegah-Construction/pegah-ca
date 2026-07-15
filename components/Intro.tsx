@@ -13,7 +13,7 @@ export default function Intro() {
           <h2 className="font-display text-3xl font-bold leading-snug tracking-tight text-ink lg:text-[2.6rem]">
             A general contractor and project-management firm trusted across
             commercial, industrial and institutional work in {""}
-            <span className="text-brand-700">Southern Ontario</span>.
+            <span className="text-brand-700">Ontario</span>.
           </h2>
         </Reveal>
         <Reveal delay={220} direction="up" className="lg:col-span-4">

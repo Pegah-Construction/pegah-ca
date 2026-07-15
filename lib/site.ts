@@ -12,7 +12,7 @@ export const company = {
     line1: "5050 Dufferin Street, Suite 120",
     line2: "Toronto, Ontario M3H 5T5",
   },
-  region: "Southern Ontario",
+  region: "Ontario",
 };
 
 export type NavItem = {

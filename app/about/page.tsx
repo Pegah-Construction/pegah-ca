@@ -18,7 +18,7 @@ export default async function AboutPage() {
     <PageShell
       eyebrow="Our story"
       title="35+ years of quality workmanship."
-      intro="Established in 1988, Pegah Construction Ltd. has built a solid reputation across Southern Ontario as an industrious, reliable team-player."
+      intro="Established in 1988, Pegah Construction Ltd. has built a solid reputation across Ontario as an industrious, reliable team-player."
     >
       <Reveal>
         <p className="max-w-2xl text-lg leading-relaxed text-concrete-500">

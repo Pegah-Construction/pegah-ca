@@ -50,7 +50,7 @@ type ContentBlock =
   | { type: "text"; text: string }
   | { type: "document"; source: { type: "base64"; media_type: "application/pdf"; data: string } };
 
-const SYSTEM = `You are the content writer for Pegah Construction Ltd., a Southern Ontario general contractor. You write polished, credible case-study style blog posts about completed and in-progress construction projects for the company's public website.
+const SYSTEM = `You are the content writer for Pegah Construction Ltd., a Ontario general contractor. You write polished, credible case-study style blog posts about completed and in-progress construction projects for the company's public website.
 
 Guidelines:
 - Write in a professional, confident, third-person voice ("Pegah Construction delivered…"). Never invent facts, figures, awards, quotes, or client names that are not present in the provided material. If a detail is unknown, write around it rather than fabricating.

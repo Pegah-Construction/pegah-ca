@@ -71,7 +71,7 @@ export default async function CareersPage() {
             <div className="grid max-w-5xl gap-8 lg:grid-cols-2">
               <Reveal direction="left">
                 <p className="text-lg leading-relaxed text-concrete-600">
-                  Pegah Construction has been building Southern Ontario since 1988. Our team spans project management, site supervision, estimating, and administration — working together to deliver complex projects on time and on budget.
+                  Pegah Construction has been building Ontario since 1988. Our team spans project management, site supervision, estimating, and administration — working together to deliver complex projects on time and on budget.
                 </p>
               </Reveal>
               <Reveal direction="right" delay={100}>
@@ -215,7 +215,7 @@ export default async function CareersPage() {
               <Reveal direction="right" delay={100}>
                 <div className="grid gap-4 sm:grid-cols-2">
                   {[
-                    { title: "Established 1988", desc: "Over 35 years of sustained growth in Southern Ontario." },
+                    { title: "Established 1988", desc: "Over 35 years of sustained growth in Ontario." },
                     { title: "Mentorship culture", desc: "Senior staff who invest in the next generation of builders." },
                     { title: "Diverse project types", desc: "Commercial, industrial, residential, institutional, and more." },
                     { title: "Safety first", desc: "A culture where every person goes home safe every day." },
