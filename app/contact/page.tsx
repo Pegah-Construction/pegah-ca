@@ -120,6 +120,18 @@ export default function ContactPage() {
           </div>
         </Reveal>
       </div>
+
+      <Reveal>
+        <div className="mt-14 overflow-hidden rounded-2xl border border-concrete-200">
+          <iframe
+            title="Pegah Construction Ltd. office location"
+            src={`https://maps.google.com/maps?q=${encodeURIComponent(`${company.address.line1}, ${company.address.line2}`)}&z=15&output=embed`}
+            className="h-[420px] w-full"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+        </div>
+      </Reveal>
     </PageShell>
   );
 }
