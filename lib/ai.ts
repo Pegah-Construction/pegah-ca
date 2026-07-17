@@ -43,7 +43,6 @@ export type GeneratedArticle = {
   excerpt: string;
   tags: string[];
   bodyHtml: string;
-  linkedinPost: string;
 };
 
 type ContentBlock =
@@ -59,15 +58,8 @@ Guidelines:
 - Output body as clean semantic HTML using ONLY these tags: <p>, <h2>, <h3>, <ul>, <li>, <strong>, <blockquote>. No inline styles, no <html>/<head>/<body>, no images, no links.
 - Tags: 2–4 short topical tags (e.g. "Commercial", "Design-Build", "Markham").
 
-Also write a companion LinkedIn post for the same project, as "linkedinPost" (plain text, NOT HTML):
-- Start with a strong one-line hook. Keep it ~120–200 words / under ~1,300 characters.
-- Use short paragraphs separated by blank lines; a tasteful emoji or two is fine (don't overdo it).
-- Third-person as the company ("Pegah Construction…") or first-person plural ("We're proud to…").
-- End with 3–5 relevant hashtags on their own line (e.g. #Construction #DesignBuild #Ontario).
-- Do NOT invent URLs; if a link is warranted, end with a line like "Read more on our website." Same no-fabrication rule as the article.
-
 Respond with ONLY a single JSON object, no markdown fences, of exactly this shape:
-{"title": string, "excerpt": string (1–2 sentences, max ~200 chars), "tags": string[], "bodyHtml": string, "linkedinPost": string}`;
+{"title": string, "excerpt": string (1–2 sentences, max ~200 chars), "tags": string[], "bodyHtml": string}`;
 
 function factsToText(f: ProjectFacts): string {
   const lines: string[] = [`Project name: ${f.name}`];
@@ -160,6 +152,64 @@ export async function generateProjectArticle(
     excerpt: String(parsed.excerpt ?? "").trim(),
     tags: Array.isArray(parsed.tags) ? parsed.tags.map((t) => String(t).trim()).filter(Boolean).slice(0, 5) : [],
     bodyHtml: String(parsed.bodyHtml).trim(),
-    linkedinPost: String(parsed.linkedinPost ?? "").trim(),
   };
+}
+
+// ── LinkedIn post generation from a published/edited blog article ──────────────
+const LINKEDIN_SYSTEM = `You are the social-media writer for Pegah Construction Ltd., a Ontario general contractor. Write a single LinkedIn post promoting the given blog article.
+
+Guidelines:
+- Start with a strong one-line hook. Keep it ~120–220 words / under ~1,300 characters.
+- Short paragraphs separated by blank lines; a tasteful emoji or two is fine (don't overdo it).
+- Company voice — third person ("Pegah Construction…") or first-person plural ("We're proud to…").
+- Base it ONLY on the article content provided; never invent facts, figures, awards, or names.
+- End with 3–5 relevant hashtags on their own line (e.g. #Construction #DesignBuild #Ontario).
+
+Respond with ONLY the post text — no preamble, no quotes, no markdown code fences.`;
+
+export async function generateLinkedinPost(article: {
+  title: string;
+  excerpt: string;
+  bodyHtml: string;
+}): Promise<string> {
+  const key = process.env.ANTHROPIC_API_KEY;
+  if (!key) throw new AiNotConfiguredError();
+  const model = process.env.ANTHROPIC_MODEL || DEFAULT_MODEL;
+
+  const bodyText = (article.bodyHtml || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+  const userText =
+    `Blog article to promote on LinkedIn:\n\n` +
+    `Title: ${article.title}\n` +
+    (article.excerpt ? `Summary: ${article.excerpt}\n` : "") +
+    `\nArticle body:\n${bodyText.slice(0, 8000)}`;
+
+  const res = await fetch(ANTHROPIC_URL, {
+    method: "POST",
+    headers: {
+      "x-api-key": key,
+      "anthropic-version": "2023-06-01",
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      model,
+      max_tokens: 1000,
+      system: LINKEDIN_SYSTEM,
+      messages: [{ role: "user", content: userText }],
+    }),
+  });
+
+  if (!res.ok) {
+    const detail = await res.text().catch(() => "");
+    throw new Error(`Anthropic API error (${res.status}): ${detail.slice(0, 500)}`);
+  }
+
+  const data = await res.json();
+  const text: string = (data?.content ?? [])
+    .filter((b: { type: string }) => b.type === "text")
+    .map((b: { text: string }) => b.text)
+    .join("")
+    .trim();
+
+  if (!text) throw new Error("The model returned an empty LinkedIn post.");
+  return stripFences(text);
 }

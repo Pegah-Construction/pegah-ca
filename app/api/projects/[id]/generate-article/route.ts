@@ -126,7 +126,6 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       featured: false,
       excerpt: generated.excerpt,
       body: generated.bodyHtml,
-      linkedinPost: generated.linkedinPost,
       coverImage: project.photos[0]?.path ?? "",
       words: countWords(generated.bodyHtml),
     },

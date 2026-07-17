@@ -178,7 +178,7 @@ export default function ProjectDetailView({ id }: { id: string }) {
                 <p className="mt-1 text-sm text-emerald-700">
                   &ldquo;{genResult.title}&rdquo; was saved as a draft
                   {genResult.docsUsed > 0 ? ` (using ${genResult.docsUsed} document${genResult.docsUsed === 1 ? "" : "s"})` : ""}.
-                  Review and publish it in News &amp; Blog — a matching LinkedIn post was generated too (open the article&rsquo;s LinkedIn button there to copy it).
+                  Review and publish it in News &amp; Blog. You can generate a matching LinkedIn post there from the article&rsquo;s LinkedIn button.
                 </p>
                 {genResult.warnings.length > 0 && (
                   <ul className="mt-2 list-disc space-y-0.5 pl-5 text-xs text-emerald-700/80">

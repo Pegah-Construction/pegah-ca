@@ -33,6 +33,7 @@ export default function NewsView() {
   const [linkedinText, setLinkedinText] = useState("");
   const [linkedinSaving, setLinkedinSaving] = useState(false);
   const [linkedinCopied, setLinkedinCopied] = useState(false);
+  const [linkedinGenerating, setLinkedinGenerating] = useState(false);
 
   useEffect(() => {
     fetch("/api/news").then((r) => r.json()).then(setNews);
@@ -160,6 +161,23 @@ export default function NewsView() {
       setLinkedinFor((f) => (f ? { ...f, linkedinPost: linkedinText } : f));
     }
     setLinkedinSaving(false);
+  };
+
+  // Generate a LinkedIn post from this article's own content (title + body).
+  const generateLinkedin = async () => {
+    if (!linkedinFor || linkedinGenerating) return;
+    setLinkedinGenerating(true);
+    const res = await fetch(`/api/news/${linkedinFor.id}/linkedin`, { method: "POST" });
+    setLinkedinGenerating(false);
+    if (res.ok) {
+      const d = await res.json();
+      setLinkedinText(d.linkedinPost);
+      setNews((prev) => prev.map((n) => (n.id === linkedinFor.id ? { ...n, linkedinPost: d.linkedinPost } : n)));
+      setLinkedinFor((f) => (f ? { ...f, linkedinPost: d.linkedinPost } : f));
+    } else {
+      const d = await res.json().catch(() => ({}));
+      alert(d.error ?? "Could not generate the LinkedIn post.");
+    }
   };
 
   return (
@@ -319,10 +337,24 @@ export default function NewsView() {
               </button>
             </div>
             <div className="flex-1 space-y-3 overflow-y-auto p-6">
-              <p className="truncate font-mono text-[11px] text-concrete-500">For: {linkedinFor.title}</p>
+              <div className="flex items-center justify-between gap-3">
+                <p className="min-w-0 truncate font-mono text-[11px] text-concrete-500">For: {linkedinFor.title}</p>
+                <button
+                  type="button"
+                  onClick={generateLinkedin}
+                  disabled={linkedinGenerating}
+                  title="Generate a LinkedIn post from this article's content"
+                  className="flex shrink-0 items-center gap-1.5 rounded-md bg-brand-700 px-3 py-1.5 font-display text-xs font-semibold text-white hover:bg-brand-800 disabled:opacity-60"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={`h-3.5 w-3.5 ${linkedinGenerating ? "animate-spin" : ""}`}>
+                    {linkedinGenerating ? <path d="M21 12a9 9 0 1 1-6.22-8.56" /> : <path d="M12 3a3 3 0 0 1 3 3v1a3 3 0 0 1 3 3 3 3 0 0 1 0 6 3 3 0 0 1-3 3v-1a3 3 0 0 1-6 0v1a3 3 0 0 1-3-3 3 3 0 0 1 0-6 3 3 0 0 1 3-3V6a3 3 0 0 1 3-3z" />}
+                  </svg>
+                  {linkedinGenerating ? "Generating…" : "Generate from article"}
+                </button>
+              </div>
               {!linkedinText.trim() && (
                 <p className="rounded-md bg-amber-50 px-3 py-2 text-xs text-amber-700">
-                  No LinkedIn post yet. Write one below, or use “Generate blog post” on the project page to create one automatically.
+                  No LinkedIn post yet. Click “Generate from article” to create one from this post&rsquo;s content, or write your own below.
                 </p>
               )}
               <textarea
