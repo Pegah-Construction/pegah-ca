@@ -15,7 +15,7 @@ export default function Footer() {
         </div>
 
         <div className="lg:col-span-3">
-          <h3 className="font-mono text-[11px] uppercase tracking-label text-concrete-400">
+          <h3 className="font-mono text-[11px] uppercase tracking-label text-concrete-300">
             Sitemap
           </h3>
           <ul className="mt-4 space-y-2">
@@ -33,7 +33,7 @@ export default function Footer() {
         </div>
 
         <div className="lg:col-span-4">
-          <h3 className="font-mono text-[11px] uppercase tracking-label text-concrete-400">
+          <h3 className="font-mono text-[11px] uppercase tracking-label text-concrete-300">
             Contact
           </h3>
           <address className="mt-4 space-y-1 not-italic leading-relaxed text-concrete-200">
@@ -57,10 +57,10 @@ export default function Footer() {
 
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-8xl flex-wrap items-center justify-between gap-4 px-6 py-6 lg:px-10">
-          <p className="font-mono text-xs text-concrete-400">
+          <p className="font-mono text-xs text-concrete-300">
             © {new Date().getFullYear()} {company.name}
           </p>
-          <p className="font-mono text-xs text-concrete-400">
+          <p className="font-mono text-xs text-concrete-300">
             For our development projects visit{" "}
             <a
               href="https://www.formatgroup.ca"
@@ -73,7 +73,7 @@ export default function Footer() {
           </p>
           <Link
             href="/admin"
-            className="font-mono text-xs text-concrete-400 transition-colors hover:text-white"
+            className="font-mono text-xs text-concrete-300 transition-colors hover:text-white"
           >
             Staff login →
           </Link>
