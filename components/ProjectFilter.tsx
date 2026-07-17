@@ -162,14 +162,14 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
           return (
             <section key={section.key}>
               <Reveal>
-                <div className="flex items-start justify-between gap-6">
+                <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
                   <div className="min-w-0">
                     <h2 className="font-display text-3xl font-black tracking-tight text-ink lg:text-4xl">{section.heading}</h2>
                     <p className="mt-2 max-w-2xl text-lg leading-relaxed text-concrete-500">{section.intro}</p>
                   </div>
                   {section.logo && (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={section.logo} alt="Format Group" className="mt-1 h-16 w-auto shrink-0 object-contain sm:h-20" />
+                    <img src={section.logo} alt="Format Group" className="h-14 w-auto shrink-0 object-contain sm:mt-1 sm:h-20" />
                   )}
                 </div>
               </Reveal>
