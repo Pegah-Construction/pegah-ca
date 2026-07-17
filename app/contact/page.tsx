@@ -121,7 +121,7 @@ export default function ContactPage() {
               <iframe
                 title="Pegah Construction Ltd. office location"
                 src={`https://maps.google.com/maps?q=${encodeURIComponent(`${company.address.line1}, ${company.address.line2}`)}&z=15&output=embed`}
-                className="h-56 w-full"
+                className="h-44 w-full"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
               />

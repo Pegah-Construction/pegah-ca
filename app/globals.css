@@ -5,8 +5,8 @@
 /* Smallest fixed labels use hard-coded px (text-[10px]/[11px]) so they don't
    scale with the larger base font size — nudge them up a bit for legibility.
    !important keeps them winning over the generated utilities regardless of order. */
-.text-\[10px\] { font-size: 12px !important; }
-.text-\[11px\] { font-size: 13px !important; }
+.text-\[10px\] { font-size: 13px !important; }
+.text-\[11px\] { font-size: 14px !important; }
 
 @keyframes hero-up {
   from { opacity: 0; transform: translateY(22px); }
