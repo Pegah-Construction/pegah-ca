@@ -168,8 +168,16 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
                     <p className="mt-2 max-w-2xl text-lg leading-relaxed text-concrete-500">{section.intro}</p>
                   </div>
                   {section.logo && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={section.logo} alt="Format Group" className="h-14 w-auto shrink-0 object-contain sm:mt-1 sm:h-20" />
+                    <a
+                      href="https://www.formatgroup.ca"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Format Group"
+                      className="shrink-0 transition-opacity hover:opacity-80"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={section.logo} alt="Format Group" className="h-14 w-auto object-contain sm:mt-1 sm:h-20" />
+                    </a>
                   )}
                 </div>
               </Reveal>
