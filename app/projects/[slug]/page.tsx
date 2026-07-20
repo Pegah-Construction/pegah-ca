@@ -15,8 +15,8 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const project = await db.project.findUnique({ where: { id: slug }, select: { name: true } });
   return {
     title: project
-      ? `${project.name} — Pegah Construction Ltd.`
-      : "Project — Pegah Construction Ltd.",
+      ? `${project.name} | Pegah Construction Ltd.`
+      : "Project | Pegah Construction Ltd.",
   };
 }
 

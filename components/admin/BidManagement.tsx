@@ -342,7 +342,7 @@ export default function BidManagement({ tenderId }: { tenderId: string }) {
             </Field>
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Division / trade">
-                <input className={inputCls} value={bidForm.division} onChange={(e) => setBidForm((f) => ({ ...f, division: e.target.value }))} placeholder="e.g. 22 — Plumbing" />
+                <input className={inputCls} value={bidForm.division} onChange={(e) => setBidForm((f) => ({ ...f, division: e.target.value }))} placeholder="e.g. 22 - Plumbing" />
               </Field>
               <Field label="Amount ($)">
                 <input required type="number" min="0" step="0.01" className={inputCls} value={bidForm.amount} onChange={(e) => setBidForm((f) => ({ ...f, amount: e.target.value }))} placeholder="e.g. 125000" />

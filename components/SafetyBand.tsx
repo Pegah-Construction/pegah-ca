@@ -8,7 +8,7 @@ export default function SafetyBand() {
         <div className="max-w-2xl">
           <Eyebrow className="text-brand-200">Safety first</Eyebrow>
           <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-white lg:text-4xl">
-            Safety is our number-one priority — every site, every day.
+            Safety is our number-one priority, every site, every day.
           </h2>
           <p className="mt-4 max-w-xl text-lg leading-relaxed text-brand-100/80">
             Quality construction delivered safely is an attainable goal we hold

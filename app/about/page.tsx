@@ -6,13 +6,13 @@ import AboutImage from "@/components/AboutImage";
 import { db } from "@/lib/db";
 import { getStorageUrl } from "@/lib/storage-url";
 
-export const metadata: Metadata = { title: "About Us — Pegah Construction Ltd." };
+export const metadata: Metadata = { title: "About Us | Pegah Construction Ltd." };
 
 const WHAT_WE_DO = [
   "Pegah Construction Ltd. has long recognized the opportunities of the Design-Build process and, through targeted business planning, has been involved in a large number of projects delivered through the Design/Build, Design/Build/Finance/Operate, Design/Build/Maintain mechanisms. Our business strategy has been to accrue experience working both as the Owner's Consultant/Agent and also as the Design/Builder's Consultant.",
-  "Working with our customers from the very start of their investment, we can help develop the initial concept, plan funding, and add value — from the initial concepts through to detailed designs. When it comes to delivering the asset, we can project manage the construction. We will be taking care of procurement and relationships with contractors as well as actual commissioning.",
+  "Working with our customers from the very start of their investment, we can help develop the initial concept, plan funding, and add value, from the initial concepts through to detailed designs. When it comes to delivering the asset, we can project manage the construction. We will be taking care of procurement and relationships with contractors as well as actual commissioning.",
   "Once the asset is commissioned, we offer long-term care and support services, from maintenance to specialist support services. Pegah Construction Ltd. will enhance your concepts, working with your design team to create exceptionally appealing and economical projects.",
-  "Pegah Construction Ltd. is committed to excellence and specializes in custom work — performed to the highest quality workmanship. Pegah Construction Ltd. brings skills in project management, together with knowledge and experience in the processes of controlling and directing construction. Pegah Construction Ltd. will complete your project on time and on budget.",
+  "Pegah Construction Ltd. is committed to excellence and specializes in custom work, performed to the highest quality workmanship. Pegah Construction Ltd. brings skills in project management, together with knowledge and experience in the processes of controlling and directing construction. Pegah Construction Ltd. will complete your project on time and on budget.",
 ];
 
 const PEGAH_WILL = [

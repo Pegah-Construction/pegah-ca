@@ -19,7 +19,7 @@ export default function Intro() {
         <Reveal delay={220} direction="up" className="lg:col-span-4">
           <p className="text-lg leading-relaxed text-concrete-500">
             From the first concept through to long-term care, we manage every
-            stage — on time, on budget, and to the highest standard of
+            stage, on time, on budget, and to the highest standard of
             workmanship.
           </p>
           <Link

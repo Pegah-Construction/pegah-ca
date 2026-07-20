@@ -25,7 +25,7 @@ const mono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Pegah Construction Ltd. — Building Ontario since 1988",
+  title: "Pegah Construction Ltd. | Building Ontario since 1988",
   description:
     "An established general contracting and project-management firm serving Ontario across commercial, industrial, institutional and residential sectors since 1988.",
 };

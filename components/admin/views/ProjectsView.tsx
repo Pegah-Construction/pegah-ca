@@ -408,7 +408,7 @@ export default function ProjectsView() {
                     <polyline points="17 8 12 3 7 8" />
                     <line x1="12" y1="3" x2="12" y2="15" />
                   </svg>
-                  {pendingFiles.length === 0 ? "Click to add photos" : `${pendingFiles.length} photo${pendingFiles.length > 1 ? "s" : ""} selected — add more`}
+                  {pendingFiles.length === 0 ? "Click to add photos" : `${pendingFiles.length} photo${pendingFiles.length > 1 ? "s" : ""} selected, add more`}
                   <input
                     type="file"
                     accept="image/*"

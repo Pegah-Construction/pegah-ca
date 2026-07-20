@@ -14,7 +14,7 @@ const PROVINCES = [
 ];
 
 const CERTS: { key: "isCOR" | "isWSIB" | "isBonded" | "isInsured"; label: string; desc: string }[] = [
-  { key: "isCOR", label: "COR Certified", desc: "Certificate of Recognition — health & safety" },
+  { key: "isCOR", label: "COR Certified", desc: "Certificate of Recognition for health & safety" },
   { key: "isWSIB", label: "WSIB in Good Standing", desc: "Workplace Safety and Insurance Board" },
   { key: "isBonded", label: "Bonded", desc: "Performance and labour & material payment bonds" },
   { key: "isInsured", label: "Liability Insurance ≥ $2M", desc: "General commercial liability coverage" },
@@ -291,7 +291,7 @@ export default function SubcontractorRegisterPage() {
                       />
                       <span className="text-sm">
                         <span className="font-semibold text-ink">{cert.label}</span>
-                        <span className="ml-1 text-concrete-500">— {cert.desc}</span>
+                        <span className="ml-1 text-concrete-500">· {cert.desc}</span>
                       </span>
                     </label>
                   ))}

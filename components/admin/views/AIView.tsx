@@ -17,7 +17,7 @@ function aiRespond(u: User, q: string): Msg {
     return {
       role: "assistant", tool: "getTenders",
       node: (<div>I found {open.length} open opportunities, soonest first:
-        <ul className="mt-1">{open.map((t) => (<li key={t.id} className="mt-1">• <a className="font-semibold text-brand-700 hover:underline" href={`/admin/tenders/${t.id}`}>{t.title}</a> — {money(t.value)}, closes <span className="font-mono">{t.closing}</span> ({t.platform})</li>))}</ul>
+        <ul className="mt-1">{open.map((t) => (<li key={t.id} className="mt-1">• <a className="font-semibold text-brand-700 hover:underline" href={`/admin/tenders/${t.id}`}>{t.title}</a> · {money(t.value)}, closes <span className="font-mono">{t.closing}</span> ({t.platform})</li>))}</ul>
         <div className="mt-2 text-concrete-500">Want me to draft a prequalification for any of these?</div></div>),
     };
   }
@@ -25,7 +25,7 @@ function aiRespond(u: User, q: string): Msg {
     const top = visibleProjects(u).filter((p) => p.status !== "Complete").sort((a, b) => b.progress - a.progress).slice(0, 4);
     return {
       role: "assistant", tool: "getProjects",
-      node: (<div>Here are your active projects by completion:<ul className="mt-1">{top.map((p) => (<li key={p.id} className="mt-1">• <a className="font-semibold text-brand-700 hover:underline" href={`/admin/projects/${p.id}`}>{p.name}</a> — {p.progress}% complete, {p.status}</li>))}</ul></div>),
+      node: (<div>Here are your active projects by completion:<ul className="mt-1">{top.map((p) => (<li key={p.id} className="mt-1">• <a className="font-semibold text-brand-700 hover:underline" href={`/admin/projects/${p.id}`}>{p.name}</a> · {p.progress}% complete, {p.status}</li>))}</ul></div>),
     };
   }
   if (/safety|incident|hazard|near miss/.test(ql)) {
@@ -33,7 +33,7 @@ function aiRespond(u: User, q: string): Msg {
     const inc = INCIDENTS.filter((s) => ids.includes(s.project) && s.status !== "Closed");
     return {
       role: "assistant", tool: "getProjectDetails",
-      node: inc.length ? (<div>There are {inc.length} open safety items:<ul className="mt-1">{inc.map((s) => (<li key={s.id} className="mt-1">• <span className="font-semibold">{s.type}</span> — {s.note} ({getProject(s.project)?.name}, {s.status})</li>))}</ul></div>) : <span>No open safety incidents in your scope — all clear.</span>,
+      node: inc.length ? (<div>There are {inc.length} open safety items:<ul className="mt-1">{inc.map((s) => (<li key={s.id} className="mt-1">• <span className="font-semibold">{s.type}</span> · {s.note} ({getProject(s.project)?.name}, {s.status})</li>))}</ul></div>) : <span>No open safety incidents in your scope. All clear.</span>,
     };
   }
   if (/blog|article|news|write|post|case study/.test(ql)) {
@@ -47,7 +47,7 @@ function aiRespond(u: User, q: string): Msg {
   if (/who|assign|team|member|foreman|manager/.test(ql)) {
     return {
       role: "assistant", tool: "getTeamMembers",
-      node: (<div>Your team:<ul className="mt-1">{USERS.slice(0, 5).map((m) => (<li key={m.id} className="mt-1">• {m.name} — {ROLES[m.role].label}</li>))}</ul></div>),
+      node: (<div>Your team:<ul className="mt-1">{USERS.slice(0, 5).map((m) => (<li key={m.id} className="mt-1">• {m.name} · {ROLES[m.role].label}</li>))}</ul></div>),
     };
   }
   return { role: "assistant", node: <span>I can search across your projects, tenders, tasks, news, docs and company info. Try asking about open tenders, project progress, safety incidents, or ask me to draft a blog post.</span> };
@@ -132,7 +132,7 @@ export default function AIView() {
               <textarea value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(input); } }} rows={1} placeholder="Message the assistant…" className="max-h-32 flex-1 resize-none rounded-lg border border-concrete-300 px-3 py-2.5 text-sm outline-none focus:border-brand-500" />
               <button type="submit" className="rounded-lg bg-brand-700 px-4 py-2.5 font-display text-sm font-semibold text-white hover:bg-brand-800">Send</button>
             </form>
-            <p className="mt-2 px-1 font-mono text-[10px] text-concrete-400">Mock assistant — responses are illustrative, generated from local demo data.</p>
+            <p className="mt-2 px-1 font-mono text-[10px] text-concrete-400">Mock assistant. Responses are illustrative, generated from local demo data.</p>
           </div>
         </div>
       </div>
@@ -141,7 +141,7 @@ export default function AIView() {
         <Card title="Provider">
           <div className="px-5 py-4">
             <div className="flex items-center gap-2"><Pill text={prov.label} tone="blue" /><span className="font-mono text-[11px] text-concrete-400">{prov.model}</span></div>
-            <p className="mt-2 text-[11px] text-concrete-500">Switch providers anytime — Claude, OpenAI, Gemini or Grok. API key is encrypted at rest.</p>
+            <p className="mt-2 text-[11px] text-concrete-500">Switch providers anytime: Claude, OpenAI, Gemini or Grok. API key is encrypted at rest.</p>
           </div>
         </Card>
         <Card title={`Tools (${AI_TOOLS.length})`}>

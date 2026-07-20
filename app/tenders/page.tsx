@@ -8,7 +8,7 @@ import { db } from "@/lib/db";
 import { company, affiliations } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Tenders — Pegah Construction Ltd.",
+  title: "Tenders | Pegah Construction Ltd.",
   description:
     "Active bid opportunities where Pegah Construction is seeking qualified subcontractor quotes across Ontario.",
 };
@@ -110,7 +110,7 @@ export default async function TendersPage() {
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               <Reveal direction="up" delay={80} className="h-full">
                 <div className="h-full rounded-xl border border-concrete-200 bg-paper p-8">
-                  <p className="font-mono text-[11px] uppercase tracking-label text-brand-600">Head Office — Toronto</p>
+                  <p className="font-mono text-[11px] uppercase tracking-label text-brand-600">Head Office, Toronto</p>
                   <h3 className="mt-3 font-display text-xl font-bold text-ink">Pegah Construction Ltd.</h3>
                   <address className="mt-4 space-y-3 not-italic">
                     <p className="text-sm leading-relaxed text-concrete-500">{company.address.line1}<br />{company.address.line2}</p>

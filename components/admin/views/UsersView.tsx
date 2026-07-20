@@ -87,7 +87,7 @@ export default function UsersView() {
           <div>
             <p className="font-display text-sm font-semibold text-emerald-800">User created successfully</p>
             <p className="mt-0.5 text-sm text-emerald-700">
-              Share this temporary password — it won&apos;t be shown again:
+              Share this temporary password. It won&apos;t be shown again:
               <span className="ml-2 rounded bg-white px-2 py-0.5 font-mono text-sm font-semibold text-ink ring-1 ring-emerald-200">
                 {createdPassword}
               </span>
@@ -194,7 +194,7 @@ export default function UsersView() {
               />
               {!editingId && (
                 <p className="mt-1 font-mono text-[11px] text-concrete-400">
-                  Auto-generated if left blank — shown once after saving.
+                  Auto-generated if left blank. Shown once after saving.
                 </p>
               )}
             </Field>

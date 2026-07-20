@@ -8,7 +8,7 @@ import { getStorageUrl } from "@/lib/storage-url";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Blog — Pegah Construction Ltd.",
+  title: "Blog | Pegah Construction Ltd.",
 };
 
 export default async function BlogPage() {

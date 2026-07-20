@@ -8,7 +8,7 @@ import { company } from "@/lib/site";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Careers — Pegah Construction Ltd.",
+  title: "Careers | Pegah Construction Ltd.",
   description:
     "Join Pegah Construction's team of builders and project professionals. View open positions across construction, project management, estimating, and more.",
 };
@@ -60,7 +60,7 @@ export default async function CareersPage() {
               Careers
             </h1>
             <p className="hero-animate mt-5 max-w-xl text-lg leading-relaxed text-brand-100/80" style={{ animationDelay: "260ms" }}>
-              We build careers the same way we build projects — with craft, mentorship, and the expectation that people grow.
+              We build careers the same way we build projects, with craft, mentorship, and the expectation that people grow.
             </p>
           </div>
         </section>
@@ -71,7 +71,7 @@ export default async function CareersPage() {
             <div className="grid max-w-5xl gap-8 lg:grid-cols-2">
               <Reveal direction="left">
                 <p className="text-lg leading-relaxed text-concrete-600">
-                  Pegah Construction has been building Ontario since 1988. Our team spans project management, site supervision, estimating, and administration — working together to deliver complex projects on time and on budget.
+                  Pegah Construction has been building Ontario since 1988. Our team spans project management, site supervision, estimating, and administration, working together to deliver complex projects on time and on budget.
                 </p>
               </Reveal>
               <Reveal direction="right" delay={100}>
@@ -99,7 +99,7 @@ export default async function CareersPage() {
                   We don&rsquo;t have any openings listed at this time, but we&rsquo;re always interested in hearing from talented people. Send your resume and we&rsquo;ll keep you in mind.
                 </p>
                 <a
-                  href={`mailto:${company.email}?subject=General Application — Pegah Construction`}
+                  href={`mailto:${company.email}?subject=General Application to Pegah Construction`}
                   className="mt-8 inline-flex items-center gap-2 rounded-md bg-brand-700 px-6 py-3 font-display text-sm font-semibold text-white transition-colors hover:bg-brand-800"
                 >
                   Send a general application →
@@ -194,11 +194,11 @@ export default async function CareersPage() {
                     Send us your résumé
                   </h2>
                   <p className="mt-5 max-w-lg text-lg leading-relaxed text-brand-100/80">
-                    We keep strong candidates on file and reach out when roles open that match your profile. Construction, estimating, project management, safety — we&rsquo;re always looking for good people.
+                    We keep strong candidates on file and reach out when roles open that match your profile. Construction, estimating, project management, safety. We&rsquo;re always looking for good people.
                   </p>
                   <div className="mt-8 flex flex-wrap gap-4">
                     <a
-                      href={`mailto:${company.email}?subject=General Application — Pegah Construction`}
+                      href={`mailto:${company.email}?subject=General Application to Pegah Construction`}
                       className="inline-flex items-center gap-2 rounded-md bg-white px-6 py-3 font-display text-sm font-semibold text-brand-900 transition-colors hover:bg-brand-50"
                     >
                       Email your résumé →

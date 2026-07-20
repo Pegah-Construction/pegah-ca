@@ -6,7 +6,7 @@ export function SiteLogo() {
       {/* eslint-disable-next-line @next/next/no-img-element -- local SVG, no optimization needed */}
       <img
         src="/logo.webp"
-        alt="Pegah Construction Ltd. — 35+ years"
+        alt="Pegah Construction Ltd., 35+ years"
         className="h-14 w-auto sm:h-16"
       />
     </Link>

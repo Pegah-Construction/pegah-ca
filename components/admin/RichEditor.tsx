@@ -153,7 +153,7 @@ function parseVimeoId(url: string) {
 }
 
 // ─── Main component ──────────────────────────────────────────────────
-const emptyProgress = () => ({ label: "Billing Progress", title: "Progress Draw #1 — Month 2026", barLabel: "Construction Completion", percent: "50" });
+const emptyProgress = () => ({ label: "Billing Progress", title: "Progress Draw #1, Month 2026", barLabel: "Construction Completion", percent: "50" });
 const emptyStats = () => [
   { value: "", label: "" },
   { value: "", label: "" },
@@ -387,7 +387,7 @@ export default function RichEditor({ value, onChange, articleId }: { value: stri
           <div className="grid gap-2 sm:grid-cols-2">
             <input autoFocus placeholder="Label (e.g. Billing Progress)" value={progressForm.label} onChange={(e) => setProgressForm((f) => ({ ...f, label: e.target.value }))}
               className="rounded border border-concrete-200 bg-white px-2 py-1 font-mono text-xs text-ink outline-none focus:border-brand-400 placeholder:text-concrete-400" />
-            <input placeholder="Title (e.g. Progress Draw #29 — May 2026)" value={progressForm.title} onChange={(e) => setProgressForm((f) => ({ ...f, title: e.target.value }))}
+            <input placeholder="Title (e.g. Progress Draw #29, May 2026)" value={progressForm.title} onChange={(e) => setProgressForm((f) => ({ ...f, title: e.target.value }))}
               className="rounded border border-concrete-200 bg-white px-2 py-1 font-mono text-xs text-ink outline-none focus:border-brand-400 placeholder:text-concrete-400" />
             <input placeholder="Bar label (e.g. Construction Completion)" value={progressForm.barLabel} onChange={(e) => setProgressForm((f) => ({ ...f, barLabel: e.target.value }))}
               className="rounded border border-concrete-200 bg-white px-2 py-1 font-mono text-xs text-ink outline-none focus:border-brand-400 placeholder:text-concrete-400" />

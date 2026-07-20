@@ -248,7 +248,7 @@ export default function TenderList({ tenders }: { tenders: PublicTender[] }) {
           </p>
           <p className="mt-2 text-sm text-concrete-400">
             {tenders.length === 0
-              ? "Check back soon — new bid opportunities are posted as they arise."
+              ? "Check back soon. New bid opportunities are posted as they arise."
               : "Try adjusting the status or category filters."}
           </p>
           {tenders.length > 0 && (

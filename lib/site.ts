@@ -68,12 +68,12 @@ export const leadership: Leader[] = [
   {
     name: "Placeholder Name",
     title: "President",
-    bio: "Placeholder bio — outline this leader's background, years with the company, and the areas of the business they oversee. Replace with the real profile and headshot.",
+    bio: "Placeholder bio. Outline this leader's background, years with the company, and the areas of the business they oversee. Replace with the real profile and headshot.",
   },
   {
     name: "Placeholder Name",
     title: "Vice President",
-    bio: "Placeholder bio — outline this leader's background, years with the company, and the areas of the business they oversee. Replace with the real profile and headshot.",
+    bio: "Placeholder bio. Outline this leader's background, years with the company, and the areas of the business they oversee. Replace with the real profile and headshot.",
   },
 ];
 
@@ -102,7 +102,7 @@ export const projects: Project[] = [
     summary:
       "A multi-tenant commercial centre delivered on an accelerated design-build schedule.",
     description: [
-      "Placeholder project narrative. Describe the brief, the client's goals, and the constraints the team worked within — site conditions, schedule, budget and any phasing requirements.",
+      "Placeholder project narrative. Describe the brief, the client's goals, and the constraints the team worked within: site conditions, schedule, budget and any phasing requirements.",
       "Outline how Pegah managed the work: the trades coordinated, the milestones hit, and the result handed over. Replace this copy and the placeholder imagery with the real case study.",
     ],
     gallery: 3,
@@ -118,7 +118,7 @@ export const projects: Project[] = [
     summary:
       "A large-footprint distribution and warehousing facility built to operational spec.",
     description: [
-      "Placeholder project narrative. Summarise the industrial scope — structure, building envelope, loading, and any specialist mechanical or electrical systems.",
+      "Placeholder project narrative. Summarise the industrial scope: structure, building envelope, loading, and any specialist mechanical or electrical systems.",
       "Note the delivery approach and the outcome for the client. Replace with the real project details and photography.",
     ],
     gallery: 3,
@@ -230,7 +230,7 @@ export const services: Service[] = [
   {
     slug: "general-contracting",
     title: "General Contracting",
-    desc: "Responsible for the site as the Constructor — trades, schedule and delivery.",
+    desc: "Responsible for the site as the Constructor: trades, schedule and delivery.",
   },
   {
     slug: "project-management",

@@ -3,7 +3,7 @@ import PageShell from "@/components/PageShell";
 import SafetyImage from "@/components/SafetyImage";
 
 export const metadata: Metadata = {
-  title: "Health & Safety — Pegah Construction Ltd.",
+  title: "Health & Safety | Pegah Construction Ltd.",
 };
 
 const POLICIES = [

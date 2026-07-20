@@ -4,7 +4,7 @@ import Reveal from "@/components/Reveal";
 import { services } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Services — Pegah Construction Ltd.",
+  title: "Services | Pegah Construction Ltd.",
 };
 
 export default function ServicesPage() {

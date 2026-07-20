@@ -263,7 +263,7 @@ export default function TendersView() {
               <tbody>
                 {list.length === 0 && (
                   <tr><td colSpan={7} className="px-5 py-8 text-sm text-concrete-400">
-                    No tenders yet.{perms.manageTenders ? " Click “New tender” to add one — open it to invite subs and manage bids." : ""}
+                    No tenders yet.{perms.manageTenders ? " Click “New tender” to add one. Open it to invite subs and manage bids." : ""}
                   </td></tr>
                 )}
                 {list.map((t) => (
@@ -370,7 +370,7 @@ export default function TendersView() {
                     </button>
                   </div>
                   <div className="divide-y divide-concrete-100 px-5 py-4 text-sm">
-                    <SubFact k="Contact" v={`${selected.firstName} ${selected.lastName}${selected.title ? ` — ${selected.title}` : ""}`} />
+                    <SubFact k="Contact" v={`${selected.firstName} ${selected.lastName}${selected.title ? `, ${selected.title}` : ""}`} />
                     <SubFact k="Email" v={selected.email} />
                     {selected.phone && <SubFact k="Phone" v={selected.phone} />}
                     {selected.mobile && <SubFact k="Mobile" v={selected.mobile} />}
@@ -450,7 +450,7 @@ export default function TendersView() {
         <Modal title="New tender" onClose={() => setCreateOpen(false)}>
           <form onSubmit={handleCreate} className="space-y-4">
             <Field label="Title">
-              <input required className={inputCls} value={form.title} onChange={(e) => setF("title", e.target.value)} placeholder="e.g. New Fire Station — Springwater" />
+              <input required className={inputCls} value={form.title} onChange={(e) => setF("title", e.target.value)} placeholder="e.g. New Fire Station, Springwater" />
             </Field>
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Reference #">
