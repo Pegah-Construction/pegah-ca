@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
 import { PERMS, money, type Project, type ProjectPhoto } from "@/lib/admin";
 import { Card, THead, Table, Pill, PrimaryBtn, Modal, Field, inputCls, SearchInput, Spinner } from "../ui";
@@ -10,6 +10,34 @@ const CATEGORIES = ["", "Commercial", "Residential"];
 const PURPOSE_TYPES = ["", "Education", "Emergency Services", "Retail", "Recreation", "Transportation", "Other"];
 const CONSTRUCTION_TYPES = ["", "New Construction", "Renovation", "Retrofit", "Restoration", "Interior Fit-out", "Addition", "Demolition"];
 const CONTRACT_TYPES = ["", "General Contracting", "Construction Management", "Prime Contractor", "Design-Build", "Cost-Plus", "Project Management", "Private"];
+
+function FilterSelect({ value, onChange, children }: { value: string; onChange: (v: string) => void; children: ReactNode }) {
+  const active = value !== "All";
+  return (
+    <div className="relative">
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className={`max-w-[11rem] cursor-pointer appearance-none truncate rounded-md border py-1.5 pl-3 pr-8 text-sm outline-none transition-colors focus:ring-1 focus:ring-brand-500 ${
+          active
+            ? "border-brand-300 bg-brand-50 font-medium text-brand-800"
+            : "border-concrete-200 bg-white text-ink hover:border-concrete-300"
+        }`}
+      >
+        {children}
+      </select>
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        className={`pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 ${active ? "text-brand-500" : "text-concrete-400"}`}
+      >
+        <path d="m6 9 6 6 6-6" />
+      </svg>
+    </div>
+  );
+}
 
 const empty = () => ({
   name: "", location: "",
@@ -26,6 +54,9 @@ export default function ProjectsView() {
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [q, setQ] = useState("");
+  const [fCategory, setFCategory] = useState("All");
+  const [fYear, setFYear] = useState("All");
+  const [fLocation, setFLocation] = useState("All");
 
   // Staged photos for new-project create flow
   const [pendingFiles, setPendingFiles] = useState<File[]>([]);
@@ -190,12 +221,24 @@ export default function ProjectsView() {
   if (!user) return null;
   const perms = PERMS[user.role];
 
+  const yearOf = (p: Project) => (p.dateCompleted ? p.dateCompleted.slice(0, 4) : "");
+
+  // Filter options derived from the actual data.
+  const categoryOptions = Array.from(new Set(projects.map((p) => p.category).filter(Boolean))).sort() as string[];
+  const yearOptions = Array.from(new Set(projects.map(yearOf).filter(Boolean))).sort((a, b) => b.localeCompare(a));
+  const locationOptions = Array.from(new Set(projects.map((p) => p.location).filter(Boolean))).sort();
+
   const needle = q.trim().toLowerCase();
-  const filtered = needle
-    ? projects.filter((x) =>
-        [x.name, x.location, x.type, x.contractType].some((v) => v.toLowerCase().includes(needle))
-      )
-    : projects;
+  const filtered = projects.filter((x) => {
+    if (needle && ![x.name, x.location, x.type, x.contractType].some((v) => (v ?? "").toLowerCase().includes(needle))) return false;
+    if (fCategory !== "All" && x.category !== fCategory) return false;
+    if (fYear !== "All" && yearOf(x) !== fYear) return false;
+    if (fLocation !== "All" && x.location !== fLocation) return false;
+    return true;
+  });
+
+  const hasFilters = fCategory !== "All" || fYear !== "All" || fLocation !== "All";
+  const clearFilters = () => { setFCategory("All"); setFYear("All"); setFLocation("All"); };
 
   return (
     <>
@@ -205,6 +248,31 @@ export default function ProjectsView() {
           {perms.editProjects && <PrimaryBtn onClick={openCreate}>+ New project</PrimaryBtn>}
         </div>
       }>
+        <div className="flex flex-wrap items-center gap-2.5 border-b border-concrete-100 px-5 py-4">
+          <FilterSelect value={fCategory} onChange={setFCategory}>
+            <option value="All">All categories</option>
+            {categoryOptions.map((c) => <option key={c} value={c}>{c}</option>)}
+          </FilterSelect>
+          <FilterSelect value={fYear} onChange={setFYear}>
+            <option value="All">All years</option>
+            {yearOptions.map((y) => <option key={y} value={y}>{y}</option>)}
+          </FilterSelect>
+          <FilterSelect value={fLocation} onChange={setFLocation}>
+            <option value="All">All locations</option>
+            {locationOptions.map((l) => <option key={l} value={l}>{l}</option>)}
+          </FilterSelect>
+          {hasFilters && (
+            <button
+              onClick={clearFilters}
+              className="font-display text-xs font-semibold text-brand-700 hover:text-brand-800"
+            >
+              Clear
+            </button>
+          )}
+          <span className="ml-auto font-mono text-[11px] text-concrete-500">
+            {filtered.length} of {projects.length}
+          </span>
+        </div>
         <Table>
           <THead cols={["Project", "Type", "Contract", "Value", "Completed", ""]} />
           <tbody>
