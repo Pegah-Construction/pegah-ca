@@ -144,12 +144,12 @@ export default async function BlogPost({ params }: Props) {
 
             <Reveal>
               {/* Excerpt as lead paragraph */}
-              <p className="font-display text-xl font-bold leading-snug tracking-tight text-ink lg:text-2xl">
+              <p className="font-body text-lg font-normal leading-relaxed text-concrete-600 lg:text-xl">
                 {article.excerpt}
               </p>
 
               {/* Divider */}
-              <div className="my-8 h-px bg-concrete-200" />
+              <div className="my-16 h-px bg-concrete-200" />
 
               {/* Rich text body */}
               {article.body ? (
