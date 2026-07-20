@@ -70,6 +70,7 @@ export default function TendersView() {
   const [form, setForm] = useState(emptyTender);
   const [saving, setSaving] = useState(false);
   const [deletingTenderId, setDeletingTenderId] = useState<string | null>(null);
+  const [syncing, setSyncing] = useState(false);
 
   // subcontractors state
   const [subs, setSubs] = useState<Sub[]>([]);
@@ -88,6 +89,25 @@ export default function TendersView() {
 
   if (!user) return null;
   const perms = PERMS[user.role];
+
+  const runSync = async () => {
+    setSyncing(true);
+    try {
+      const res = await fetch("/api/tenders/sync", { method: "POST" });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        alert(data.error || "SmartBid sync failed.");
+        return;
+      }
+      const fresh = await fetch("/api/tenders").then((r) => r.json());
+      setTenders(fresh);
+      alert(`SmartBid sync complete: ${data.created} added, ${data.updated} updated (${data.total} total).`);
+    } catch {
+      alert("SmartBid sync failed. Please try again.");
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   // ── Tenders logic ────────────────────────────────────────────────────────────
   const needle = q.trim().toLowerCase();
@@ -256,7 +276,18 @@ export default function TendersView() {
 
           <Card
             title="Tender opportunities"
-            right={perms.manageTenders && <PrimaryBtn onClick={openCreate}>+ New tender</PrimaryBtn>}
+            right={perms.manageTenders && (
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  onClick={runSync}
+                  disabled={syncing}
+                  className="rounded-md border border-concrete-300 bg-white px-4 py-2 font-display text-sm font-semibold text-ink transition-colors hover:bg-concrete-50 disabled:opacity-60"
+                >
+                  {syncing ? "Syncing…" : "Sync from SmartBid"}
+                </button>
+                <PrimaryBtn onClick={openCreate}>+ New tender</PrimaryBtn>
+              </div>
+            )}
           >
             <Table>
               <THead cols={["Opportunity", "Platform", "Type", "Est. value", "Closing", "Status", ""]} />
