@@ -1,6 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
+
+// Build a tel: href from a display phone string (drops extensions & punctuation).
+function telHref(phone: string): string {
+  const main = phone.split(/x|ext/i)[0];
+  return `tel:${main.replace(/[^\d+]/g, "")}`;
+}
 
 export type PublicTender = {
   id: string;
@@ -49,7 +55,7 @@ function locationLine(t: PublicTender) {
   return [t.address, cityProv, t.postalCode].filter(Boolean).join(" · ") || "—";
 }
 
-function Detail({ label, value }: { label: string; value: string }) {
+function Detail({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="min-w-0">
       <span className="font-mono text-[10px] uppercase tracking-label text-concrete-400">{label}</span>
@@ -62,7 +68,19 @@ function TenderCard({ t }: { t: PublicTender }) {
   const [showAll, setShowAll] = useState(false);
   const codes = t.codes ?? [];
   const shown = showAll ? codes : codes.slice(0, 6);
-  const phoneFax = [t.contactPhone, t.contactFax && `Fax ${t.contactFax}`].filter(Boolean).join(" · ") || "—";
+  const phoneFax: ReactNode = t.contactPhone || t.contactFax ? (
+    <>
+      {t.contactPhone && (
+        <a href={telHref(t.contactPhone)} className="text-brand-700 hover:underline">
+          {t.contactPhone}
+        </a>
+      )}
+      {t.contactPhone && t.contactFax && " · "}
+      {t.contactFax && <>Fax {t.contactFax}</>}
+    </>
+  ) : (
+    "—"
+  );
 
   return (
     <div className="rounded-xl border border-concrete-200 bg-white p-5 transition-shadow hover:shadow-sm sm:p-6">
