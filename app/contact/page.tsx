@@ -117,11 +117,11 @@ export default function ContactPage() {
               <h3 className="font-mono text-[11px] uppercase tracking-label text-concrete-500">Email</h3>
               <a href={`mailto:${company.email}`} className="mt-2 block text-ink hover:text-brand-700">{company.email}</a>
             </div>
-            <div className="overflow-hidden rounded-xl border border-concrete-200">
+            <div className="max-w-[340px] overflow-hidden rounded-xl border border-concrete-200">
               <iframe
                 title="Pegah Construction Ltd. office location"
                 src={`https://maps.google.com/maps?q=${encodeURIComponent(`${company.address.line1}, ${company.address.line2}`)}&z=15&output=embed`}
-                className="h-44 w-full"
+                className="aspect-square w-full"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
               />
