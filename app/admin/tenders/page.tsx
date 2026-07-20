@@ -3,7 +3,7 @@ import TendersView from "@/components/admin/views/TendersView";
 
 export default function AdminTenders() {
   return (
-    <Guard module="tenders" title="Tenders" sub="Aggregated procurement opportunities">
+    <Guard module="tenders" title="Tenders" sub="Bid opportunities synced from SmartBid">
       <TendersView />
     </Guard>
   );
