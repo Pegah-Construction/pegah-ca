@@ -34,9 +34,10 @@ export default function Navbar() {
 
         <ul className="ml-4 hidden items-center gap-7 lg:flex">
           {nav.map((item) => {
+            const onSection = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
             const isActive =
-              pathname === item.href ||
-              item.children?.some((c) => pathname === c.href);
+              onSection(item.href) ||
+              item.children?.some((c) => onSection(c.href));
 
             if (item.children) {
               return (

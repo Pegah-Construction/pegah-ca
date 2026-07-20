@@ -7,7 +7,16 @@ import { useState } from "react";
  * yet (or fails to load), it falls back to a clean text badge so the section
  * never shows a broken image.
  */
-export default function AffiliationLogo({ name, logo }: { name: string; logo: string }) {
+export default function AffiliationLogo({
+  name,
+  logo,
+  grayscale = false,
+}: {
+  name: string;
+  logo: string;
+  /** Show the logo desaturated until hovered (used on the Tenders page). */
+  grayscale?: boolean;
+}) {
   const [failed, setFailed] = useState(false);
 
   if (failed) {
@@ -24,7 +33,11 @@ export default function AffiliationLogo({ name, logo }: { name: string; logo: st
       src={logo}
       alt={name}
       onError={() => setFailed(true)}
-      className="h-10 w-auto max-w-[140px] object-contain opacity-70 grayscale transition-all group-hover:opacity-100 group-hover:grayscale-0"
+      className={
+        grayscale
+          ? "h-10 w-auto max-w-[140px] object-contain opacity-70 grayscale transition-all group-hover:opacity-100 group-hover:grayscale-0"
+          : "h-9 w-auto max-w-[130px] object-contain"
+      }
     />
   );
 }

@@ -13,6 +13,7 @@ export const company = {
     line2: "Toronto, Ontario M3H 5T5",
   },
   region: "Ontario",
+  linkedin: "https://www.linkedin.com/company/pegah-construction-ltd",
 };
 
 export type NavItem = {
@@ -45,11 +46,11 @@ export const nav: NavItem[] = [
 export type Affiliation = { name: string; href: string; logo: string };
 
 export const affiliations: Affiliation[] = [
-  { name: "OGCA", href: "https://ogca.ca/", logo: "/affiliations/ogca.png" },
-  { name: "IHSA · COR", href: "https://www.ihsa.ca/cor-home", logo: "/affiliations/ihsa.png" },
-  { name: "Smartbid", href: "https://smartbid.co/", logo: "/affiliations/smartbid.png" },
-  { name: "Procore", href: "https://www.procore.com/", logo: "/affiliations/procore.png" },
-  { name: "Format Group", href: "http://formatgroup.ca/", logo: "/affiliations/format-group.png" },
+  { name: "OGCA", href: "https://ogca.ca/", logo: "/OGCA%20logo.png" },
+  { name: "IHSA · COR", href: "https://www.ihsa.ca/cor-home", logo: "/IHSA%20logo.png" },
+  { name: "Smartbid", href: "https://smartbid.co/", logo: "/smartbid.png" },
+  { name: "Procore", href: "https://www.procore.com/", logo: "/Procore%20logo.png" },
+  { name: "Format Group", href: "http://formatgroup.ca/", logo: "/Format%20logo.png" },
 ];
 
 export type Stat = { value: string; label: string; href: string };

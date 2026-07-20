@@ -172,7 +172,7 @@ export default async function TendersPage() {
                     title={a.name}
                     className="group inline-flex items-center"
                   >
-                    <AffiliationLogo name={a.name} logo={a.logo} />
+                    <AffiliationLogo name={a.name} logo={a.logo} grayscale />
                   </a>
                 ))}
               </div>
