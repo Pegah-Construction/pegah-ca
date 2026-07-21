@@ -186,39 +186,6 @@ model Tender {
   codes        String  @default("[]") // JSON array of "code - description" strings (CSI divisions needed)
   note         String?
   desc         String
-
-  invitations  BidInvitation[]
-  bids         Bid[]
-}
-
-model BidInvitation {
-  id              String   @id
-  tenderId        String
-  subcontractorId String
-  status          String   @default("Invited") // Invited | Viewed | Submitted | Declined
-  createdAt       DateTime @default(now())
-
-  tender          Tender        @relation(fields: [tenderId], references: [id], onDelete: Cascade)
-  subcontractor   Subcontractor @relation(fields: [subcontractorId], references: [id], onDelete: Cascade)
-
-  @@unique([tenderId, subcontractorId])
-  @@index([tenderId])
-}
-
-model Bid {
-  id              String   @id
-  tenderId        String
-  subcontractorId String
-  division        String   @default("")
-  amount          Float    @default(0)
-  note            String   @default("")
-  status          String   @default("Received") // Received | Shortlisted | Awarded | Rejected
-  createdAt       DateTime @default(now())
-
-  tender          Tender        @relation(fields: [tenderId], references: [id], onDelete: Cascade)
-  subcontractor   Subcontractor @relation(fields: [subcontractorId], references: [id], onDelete: Cascade)
-
-  @@index([tenderId])
 }
 
 model Card {
@@ -274,40 +241,6 @@ model HeroImage {
   order Int    @default(0)
 }
 
-model Subcontractor {
-  id           String   @id
-  createdAt    DateTime @default(now())
-  status       String   @default("New")
-
-  companyName  String
-  phone        String
-  fax          String   @default("")
-  website      String   @default("")
-  address      String   @default("")
-  city         String
-  province     String
-  postalCode   String
-
-  firstName    String
-  lastName     String
-  title        String   @default("")
-  email        String
-  contactPhone String   @default("")
-  mobile       String   @default("")
-
-  trades       String   @default("[]")
-
-  isCOR        Boolean  @default(false)
-  isWSIB       Boolean  @default(false)
-  isBonded     Boolean  @default(false)
-  isInsured    Boolean  @default(false)
-
-  notes        String   @default("")
-
-  invitations  BidInvitation[]
-  bids         Bid[]
-}
-
 model JobPosting {
   id           String   @id
   createdAt    DateTime @default(now())
@@ -353,6 +286,7 @@ model Article {
   body         String   @default("")
   coverImage   String   @default("")
   linkedinPost String   @default("")
+  instagramPost String  @default("")
   words       Int
   project   Project? @relation(fields: [projectId], references: [id])
   author    User     @relation(fields: [authorId], references: [id])
