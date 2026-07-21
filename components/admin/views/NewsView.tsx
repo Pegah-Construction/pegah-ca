@@ -35,6 +35,13 @@ export default function NewsView() {
   const [linkedinCopied, setLinkedinCopied] = useState(false);
   const [linkedinGenerating, setLinkedinGenerating] = useState(false);
 
+  // Instagram caption viewer/editor
+  const [instagramFor, setInstagramFor] = useState<ArticleWithBody | null>(null);
+  const [instagramText, setInstagramText] = useState("");
+  const [instagramSaving, setInstagramSaving] = useState(false);
+  const [instagramCopied, setInstagramCopied] = useState(false);
+  const [instagramGenerating, setInstagramGenerating] = useState(false);
+
   useEffect(() => {
     fetch("/api/news").then((r) => r.json()).then(setNews);
     fetch("/api/users").then((r) => r.json()).then(setUsers);
@@ -180,6 +187,54 @@ export default function NewsView() {
     }
   };
 
+  const openInstagram = (n: ArticleWithBody) => {
+    setInstagramFor(n);
+    setInstagramText(n.instagramPost ?? "");
+    setInstagramCopied(false);
+  };
+
+  const copyInstagram = async () => {
+    try {
+      await navigator.clipboard.writeText(instagramText);
+      setInstagramCopied(true);
+      setTimeout(() => setInstagramCopied(false), 2000);
+    } catch {
+      /* clipboard blocked — user can select manually */
+    }
+  };
+
+  const saveInstagram = async () => {
+    if (!instagramFor) return;
+    setInstagramSaving(true);
+    const res = await fetch(`/api/news/${instagramFor.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ instagramPost: instagramText }),
+    });
+    if (res.ok) {
+      setNews((prev) => prev.map((n) => (n.id === instagramFor.id ? { ...n, instagramPost: instagramText } : n)));
+      setInstagramFor((f) => (f ? { ...f, instagramPost: instagramText } : f));
+    }
+    setInstagramSaving(false);
+  };
+
+  // Generate an Instagram caption from this article's own content (title + body).
+  const generateInstagram = async () => {
+    if (!instagramFor || instagramGenerating) return;
+    setInstagramGenerating(true);
+    const res = await fetch(`/api/news/${instagramFor.id}/instagram`, { method: "POST" });
+    setInstagramGenerating(false);
+    if (res.ok) {
+      const d = await res.json();
+      setInstagramText(d.instagramPost);
+      setNews((prev) => prev.map((n) => (n.id === instagramFor.id ? { ...n, instagramPost: d.instagramPost } : n)));
+      setInstagramFor((f) => (f ? { ...f, instagramPost: d.instagramPost } : f));
+    } else {
+      const d = await res.json().catch(() => ({}));
+      alert(d.error ?? "Could not generate the Instagram caption.");
+    }
+  };
+
   return (
     <>
       <div className="mb-6 grid gap-4 sm:grid-cols-3">
@@ -226,6 +281,13 @@ export default function NewsView() {
                           className="flex items-center gap-1 font-display text-xs font-semibold text-[#0A66C2] hover:opacity-75">
                           <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
                           LinkedIn
+                        </button>
+                      )}
+                      {perms.manageNews && (
+                        <button onClick={() => openInstagram(n)} title="View / copy the Instagram caption"
+                          className="flex items-center gap-1 font-display text-xs font-semibold text-[#C13584] hover:opacity-75">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+                          Instagram
                         </button>
                       )}
                       {perms.manageNews && (
@@ -382,6 +444,72 @@ export default function NewsView() {
                 <button type="button" onClick={() => setLinkedinFor(null)} className="rounded-md px-4 py-2 text-sm font-medium text-concrete-600 hover:text-ink">Close</button>
                 <button type="button" onClick={saveLinkedin} disabled={linkedinSaving} className="rounded-md bg-brand-700 px-4 py-2 font-display text-sm font-semibold text-white hover:bg-brand-800 disabled:opacity-50">
                   {linkedinSaving ? "Saving…" : "Save"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Instagram caption modal */}
+      {instagramFor && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setInstagramFor(null)}>
+          <div className="flex max-h-[90vh] w-full max-w-lg flex-col rounded-xl bg-white shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between border-b border-concrete-200 px-6 py-4">
+              <div className="flex items-center gap-2">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#C13584" strokeWidth="2" className="h-4 w-4"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#C13584" stroke="none"/></svg>
+                <h2 className="font-display text-sm font-bold text-ink">Instagram caption</h2>
+              </div>
+              <button onClick={() => setInstagramFor(null)} className="rounded-md p-1 text-concrete-400 hover:bg-concrete-100 hover:text-ink">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              </button>
+            </div>
+            <div className="flex-1 space-y-3 overflow-y-auto p-6">
+              <div className="flex items-center justify-between gap-3">
+                <p className="min-w-0 truncate font-mono text-[11px] text-concrete-500">For: {instagramFor.title}</p>
+                <button
+                  type="button"
+                  onClick={generateInstagram}
+                  disabled={instagramGenerating}
+                  title="Generate an Instagram caption from this article's content"
+                  className="flex shrink-0 items-center gap-1.5 rounded-md bg-brand-700 px-3 py-1.5 font-display text-xs font-semibold text-white hover:bg-brand-800 disabled:opacity-60"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={`h-3.5 w-3.5 ${instagramGenerating ? "animate-spin" : ""}`}>
+                    {instagramGenerating ? <path d="M21 12a9 9 0 1 1-6.22-8.56" /> : <path d="M12 3a3 3 0 0 1 3 3v1a3 3 0 0 1 3 3 3 3 0 0 1 0 6 3 3 0 0 1-3 3v-1a3 3 0 0 1-6 0v1a3 3 0 0 1-3-3 3 3 0 0 1 0-6 3 3 0 0 1 3-3V6a3 3 0 0 1 3-3z" />}
+                  </svg>
+                  {instagramGenerating ? "Generating…" : "Generate from article"}
+                </button>
+              </div>
+              {!instagramText.trim() && (
+                <p className="rounded-md bg-amber-50 px-3 py-2 text-xs text-amber-700">
+                  No Instagram caption yet. Click “Generate from article” to create one from this post&rsquo;s content, or write your own below.
+                </p>
+              )}
+              <textarea
+                value={instagramText}
+                onChange={(e) => setInstagramText(e.target.value)}
+                rows={12}
+                placeholder="Instagram caption…"
+                className={`${inputCls} font-body leading-relaxed`}
+              />
+              <span className="block text-right font-mono text-[11px] text-concrete-400">{instagramText.length} characters</span>
+            </div>
+            <div className="flex items-center justify-between gap-2 border-t border-concrete-100 px-6 py-4">
+              <button
+                type="button"
+                onClick={copyInstagram}
+                className="flex items-center gap-1.5 rounded-md border border-concrete-200 px-4 py-2 font-display text-sm font-semibold text-ink hover:bg-concrete-50"
+              >
+                {instagramCopied ? (
+                  <><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-3.5 w-3.5 text-emerald-600"><path d="M20 6 9 17l-5-5"/></svg>Copied!</>
+                ) : (
+                  <><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-3.5 w-3.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</>
+                )}
+              </button>
+              <div className="flex gap-2">
+                <button type="button" onClick={() => setInstagramFor(null)} className="rounded-md px-4 py-2 text-sm font-medium text-concrete-600 hover:text-ink">Close</button>
+                <button type="button" onClick={saveInstagram} disabled={instagramSaving} className="rounded-md bg-brand-700 px-4 py-2 font-display text-sm font-semibold text-white hover:bg-brand-800 disabled:opacity-50">
+                  {instagramSaving ? "Saving…" : "Save"}
                 </button>
               </div>
             </div>

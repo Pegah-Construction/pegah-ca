@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     author: article.authorId, status: article.status, date: article.date,
     tags: JSON.parse(article.tags), featured: article.featured,
     excerpt: article.excerpt, body: article.body, coverImage: article.coverImage,
-    linkedinPost: article.linkedinPost, words: article.words,
+    linkedinPost: article.linkedinPost, instagramPost: article.instagramPost, words: article.words,
   }, { status: 201 });
 }
 
@@ -32,7 +32,8 @@ export async function GET() {
       id: a.id, title: a.title, slug: a.slug, project: a.projectId,
       author: a.authorId, status: a.status, date: a.date, tags: JSON.parse(a.tags),
       featured: a.featured, excerpt: a.excerpt, body: a.body ?? "",
-      coverImage: a.coverImage ?? "", linkedinPost: a.linkedinPost ?? "", words: a.words,
+      coverImage: a.coverImage ?? "", linkedinPost: a.linkedinPost ?? "",
+      instagramPost: a.instagramPost ?? "", words: a.words,
     }))
   );
 }

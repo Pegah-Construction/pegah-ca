@@ -213,3 +213,62 @@ export async function generateLinkedinPost(article: {
   if (!text) throw new Error("The model returned an empty LinkedIn post.");
   return stripFences(text);
 }
+
+// ── Instagram caption generation from a published/edited blog article ──────────
+const INSTAGRAM_SYSTEM = `You are the social-media writer for Pegah Construction Ltd., a Ontario general contractor. Write a single Instagram caption promoting the given blog article.
+
+Guidelines:
+- Open with a short, punchy hook line that grabs attention.
+- Keep it concise and scannable: a few short lines/sentences, generous line breaks, and a tasteful sprinkle of emojis (🏗️ 👷 🧱 etc.) — don't overdo it.
+- Warm, proud, community-minded voice ("We're proud to…" / "Pegah Construction…").
+- Base it ONLY on the article content provided; never invent facts, figures, awards, or names.
+- End with a line of 8–15 relevant hashtags (e.g. #Construction #GeneralContractor #Ontario #DesignBuild #BuildingCommunities).
+
+Respond with ONLY the caption text — no preamble, no quotes, no markdown code fences.`;
+
+export async function generateInstagramPost(article: {
+  title: string;
+  excerpt: string;
+  bodyHtml: string;
+}): Promise<string> {
+  const key = process.env.ANTHROPIC_API_KEY;
+  if (!key) throw new AiNotConfiguredError();
+  const model = process.env.ANTHROPIC_MODEL || DEFAULT_MODEL;
+
+  const bodyText = (article.bodyHtml || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+  const userText =
+    `Blog article to promote on Instagram:\n\n` +
+    `Title: ${article.title}\n` +
+    (article.excerpt ? `Summary: ${article.excerpt}\n` : "") +
+    `\nArticle body:\n${bodyText.slice(0, 8000)}`;
+
+  const res = await fetch(ANTHROPIC_URL, {
+    method: "POST",
+    headers: {
+      "x-api-key": key,
+      "anthropic-version": "2023-06-01",
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      model,
+      max_tokens: 1000,
+      system: INSTAGRAM_SYSTEM,
+      messages: [{ role: "user", content: userText }],
+    }),
+  });
+
+  if (!res.ok) {
+    const detail = await res.text().catch(() => "");
+    throw new Error(`Anthropic API error (${res.status}): ${detail.slice(0, 500)}`);
+  }
+
+  const data = await res.json();
+  const text: string = (data?.content ?? [])
+    .filter((b: { type: string }) => b.type === "text")
+    .map((b: { text: string }) => b.text)
+    .join("")
+    .trim();
+
+  if (!text) throw new Error("The model returned an empty Instagram caption.");
+  return stripFences(text);
+}

@@ -203,6 +203,7 @@ export type Article = {
   status: "Published" | "Draft"; date: string; tags: string[]; featured: boolean; excerpt: string; words: number;
   coverImage?: string;
   linkedinPost?: string;
+  instagramPost?: string;
 };
 
 export const NEWS: Article[] = [

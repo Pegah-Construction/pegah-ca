@@ -18,6 +18,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   if ("authorId" in body) data.authorId = body.authorId;
   if ("excerpt" in body) data.excerpt = body.excerpt;
   if ("linkedinPost" in body) data.linkedinPost = body.linkedinPost;
+  if ("instagramPost" in body) data.instagramPost = body.instagramPost;
   if ("tags" in body) data.tags = JSON.stringify(body.tags);
   const updated = await db.article.update({ where: { id }, data });
   if ("status" in body && body.userId) {
@@ -28,6 +29,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     id: updated.id, title: updated.title, slug: updated.slug, project: updated.projectId,
     author: updated.authorId, status: updated.status, date: updated.date, tags: JSON.parse(updated.tags),
     featured: updated.featured, excerpt: updated.excerpt, body: updated.body,
-    coverImage: updated.coverImage ?? "", linkedinPost: updated.linkedinPost ?? "", words: updated.words,
+    coverImage: updated.coverImage ?? "", linkedinPost: updated.linkedinPost ?? "",
+    instagramPost: updated.instagramPost ?? "", words: updated.words,
   });
 }
