@@ -11,15 +11,27 @@ const PURPOSE_TYPES = ["", "Education", "Emergency Services", "Retail", "Recreat
 const CONSTRUCTION_TYPES = ["", "New Construction", "Renovation", "Retrofit", "Restoration", "Interior Fit-out", "Addition", "Demolition"];
 const CONTRACT_TYPES = ["", "General Contracting", "Construction Management", "Prime Contractor", "Design-Build", "Cost-Plus", "Project Management", "Private"];
 
-function FilterSelect({ value, onChange, children }: { value: string; onChange: (v: string) => void; children: ReactNode }) {
-  const active = value !== "All";
+function FilterSelect({
+  value,
+  onChange,
+  children,
+  active,
+  widthCls = "max-w-[11rem]",
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  children: ReactNode;
+  active?: boolean;
+  widthCls?: string;
+}) {
+  const isActive = active ?? value !== "All";
   return (
     <div className="relative">
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={`max-w-[11rem] cursor-pointer appearance-none truncate rounded-md border py-1.5 pl-3 pr-8 text-sm outline-none transition-colors focus:ring-1 focus:ring-brand-500 ${
-          active
+        className={`${widthCls} cursor-pointer appearance-none truncate rounded-md border py-1.5 pl-3 pr-8 text-sm outline-none transition-colors focus:ring-1 focus:ring-brand-500 ${
+          isActive
             ? "border-brand-300 bg-brand-50 font-medium text-brand-800"
             : "border-concrete-200 bg-white text-ink hover:border-concrete-300"
         }`}
@@ -31,7 +43,7 @@ function FilterSelect({ value, onChange, children }: { value: string; onChange: 
         fill="none"
         stroke="currentColor"
         strokeWidth="2.2"
-        className={`pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 ${active ? "text-brand-500" : "text-concrete-400"}`}
+        className={`pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 ${isActive ? "text-brand-500" : "text-concrete-400"}`}
       >
         <path d="m6 9 6 6 6-6" />
       </svg>
@@ -56,7 +68,9 @@ export default function ProjectsView() {
   const [q, setQ] = useState("");
   const [fCategory, setFCategory] = useState("All");
   const [fYear, setFYear] = useState("All");
-  const [fLocation, setFLocation] = useState("All");
+  const [sort, setSort] = useState("completed-desc");
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 10;
 
   // Staged photos for new-project create flow
   const [pendingFiles, setPendingFiles] = useState<File[]>([]);
@@ -70,6 +84,9 @@ export default function ProjectsView() {
     if (!user) return;
     fetch(`/api/projects?userId=${user.id}`).then((r) => r.json()).then(setProjects);
   }, [user]);
+
+  // Reset to the first page whenever the filters, search, or sort change.
+  useEffect(() => { setPage(1); }, [q, fCategory, fYear, sort]);
 
   const resetPhotos = () => {
     previews.forEach((url) => URL.revokeObjectURL(url));
@@ -226,19 +243,38 @@ export default function ProjectsView() {
   // Filter options derived from the actual data.
   const categoryOptions = Array.from(new Set(projects.map((p) => p.category).filter(Boolean))).sort() as string[];
   const yearOptions = Array.from(new Set(projects.map(yearOf).filter(Boolean))).sort((a, b) => b.localeCompare(a));
-  const locationOptions = Array.from(new Set(projects.map((p) => p.location).filter(Boolean))).sort();
 
   const needle = q.trim().toLowerCase();
   const filtered = projects.filter((x) => {
     if (needle && ![x.name, x.location, x.type, x.contractType].some((v) => (v ?? "").toLowerCase().includes(needle))) return false;
     if (fCategory !== "All" && x.category !== fCategory) return false;
     if (fYear !== "All" && yearOf(x) !== fYear) return false;
-    if (fLocation !== "All" && x.location !== fLocation) return false;
     return true;
   });
 
-  const hasFilters = fCategory !== "All" || fYear !== "All" || fLocation !== "All";
-  const clearFilters = () => { setFCategory("All"); setFYear("All"); setFLocation("All"); };
+  const sorted = [...filtered].sort((a, b) => {
+    switch (sort) {
+      case "value-desc": return (b.value || 0) - (a.value || 0);
+      case "value-asc": return (a.value || 0) - (b.value || 0);
+      case "name-asc": return a.name.localeCompare(b.name);
+      case "completed-asc":
+      case "completed-desc": {
+        const av = a.dateCompleted, bv = b.dateCompleted;
+        if (!av && !bv) return 0;
+        if (!av) return 1; // projects with no completion date sort last
+        if (!bv) return -1;
+        return sort === "completed-desc" ? bv.localeCompare(av) : av.localeCompare(bv);
+      }
+      default: return 0;
+    }
+  });
+
+  const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const paged = sorted.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  const hasFilters = fCategory !== "All" || fYear !== "All";
+  const clearFilters = () => { setFCategory("All"); setFYear("All"); };
 
   return (
     <>
@@ -257,10 +293,6 @@ export default function ProjectsView() {
             <option value="All">All years</option>
             {yearOptions.map((y) => <option key={y} value={y}>{y}</option>)}
           </FilterSelect>
-          <FilterSelect value={fLocation} onChange={setFLocation}>
-            <option value="All">All locations</option>
-            {locationOptions.map((l) => <option key={l} value={l}>{l}</option>)}
-          </FilterSelect>
           {hasFilters && (
             <button
               onClick={clearFilters}
@@ -269,14 +301,24 @@ export default function ProjectsView() {
               Clear
             </button>
           )}
-          <span className="ml-auto font-mono text-[11px] text-concrete-500">
-            {filtered.length} of {projects.length}
-          </span>
+          <div className="ml-auto flex items-center gap-2.5">
+            <span className="font-mono text-[11px] uppercase tracking-label text-concrete-400">Sort</span>
+            <FilterSelect value={sort} onChange={setSort} active={false} widthCls="w-auto">
+              <option value="completed-desc">Completion (newest)</option>
+              <option value="completed-asc">Completion (oldest)</option>
+              <option value="value-desc">Value (high → low)</option>
+              <option value="value-asc">Value (low → high)</option>
+              <option value="name-asc">Name (A → Z)</option>
+            </FilterSelect>
+            <span className="font-mono text-[11px] text-concrete-500">
+              {sorted.length} of {projects.length}
+            </span>
+          </div>
         </div>
         <Table>
           <THead cols={["Project", "Type", "Contract", "Value", "Completed", ""]} />
           <tbody>
-            {filtered.map((x) => (
+            {paged.map((x) => (
               <tr key={x.id} className="border-b border-concrete-100 transition-colors last:border-0 hover:bg-brand-50/40">
                 <td
                   className="cursor-pointer px-5 py-3"
@@ -316,6 +358,45 @@ export default function ProjectsView() {
             ))}
           </tbody>
         </Table>
+
+        {sorted.length > 0 && (
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-concrete-100 px-5 py-3">
+            <span className="font-mono text-[11px] text-concrete-500">
+              Showing {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, sorted.length)} of {sorted.length}
+            </span>
+            {totalPages > 1 && (
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="rounded-md border border-concrete-200 px-2.5 py-1 font-display text-xs font-semibold text-concrete-600 transition-colors hover:border-concrete-300 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Prev
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => setPage(p)}
+                    className={`min-w-[2rem] rounded-md px-2.5 py-1 font-display text-xs font-semibold transition-colors ${
+                      p === currentPage
+                        ? "bg-brand-700 text-white"
+                        : "border border-concrete-200 text-concrete-600 hover:border-concrete-300"
+                    }`}
+                  >
+                    {p}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="rounded-md border border-concrete-200 px-2.5 py-1 font-display text-xs font-semibold text-concrete-600 transition-colors hover:border-concrete-300 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </Card>
 
       {open && (
