@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { getStorageUrl } from "@/lib/storage-url";
 import { StatCard, Card, PrimaryBtn, Modal, Field, inputCls, Spinner } from "../ui";
+import type { AboutContent } from "@/lib/about-content";
 
 type Member = { id: string; order: number; name: string; title: string; bio: string; photo: string };
 
@@ -30,6 +31,13 @@ export default function TeamView() {
   const [groupPhoto, setGroupPhoto] = useState("");
   const [groupUploading, setGroupUploading] = useState(false);
 
+  // Editable About-page content
+  const [about, setAbout] = useState<AboutContent | null>(null);
+  const [aboutImage, setAboutImage] = useState("");
+  const [aboutSaving, setAboutSaving] = useState(false);
+  const [aboutImageUploading, setAboutImageUploading] = useState(false);
+  const aboutImageRef = useRef<HTMLInputElement>(null);
+
   const modalPhotoRef = useRef<HTMLInputElement>(null);
   const photoInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
   const groupPhotoRef = useRef<HTMLInputElement>(null);
@@ -38,12 +46,49 @@ export default function TeamView() {
     Promise.all([
       fetch("/api/team").then((r) => r.json()).catch(() => []),
       fetch("/api/team/group-photo").then((r) => r.json()).catch(() => ({ photo: "" })),
-    ]).then(([membersData, groupData]) => {
+      fetch("/api/about").then((r) => r.json()).catch(() => null),
+    ]).then(([membersData, groupData, aboutData]) => {
       setMembers(Array.isArray(membersData) ? membersData : []);
       setGroupPhoto(groupData?.photo ?? "");
+      if (aboutData) {
+        setAbout(aboutData.content);
+        setAboutImage(aboutData.image ?? "");
+      }
       setLoading(false);
     });
   }, []);
+
+  const setAboutField = (k: keyof AboutContent, v: string) =>
+    setAbout((a) => (a ? { ...a, [k]: v } : a));
+
+  const saveAbout = async () => {
+    if (!about) return;
+    setAboutSaving(true);
+    try {
+      await fetch("/api/about", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(about),
+      });
+    } finally {
+      setAboutSaving(false);
+    }
+  };
+
+  const uploadAboutImage = async (file: File) => {
+    setAboutImageUploading(true);
+    const fd = new FormData();
+    fd.append("file", file);
+    const res = await fetch("/api/about/image", { method: "POST", body: fd });
+    const { image } = await res.json();
+    setAboutImage(image);
+    setAboutImageUploading(false);
+  };
+
+  const deleteAboutImage = async () => {
+    await fetch("/api/about/image", { method: "DELETE" });
+    setAboutImage("");
+  };
 
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -161,6 +206,74 @@ export default function TeamView() {
       </div>
 
       <div className="space-y-6">
+        {/* Editable About-page content */}
+        <Card
+          title="About page content"
+          right={<PrimaryBtn onClick={saveAbout}>{aboutSaving ? "Saving…" : "Save content"}</PrimaryBtn>}
+        >
+          <div className="space-y-5 p-6">
+            {!about ? (
+              <div className="flex justify-center py-8"><Spinner className="h-6 w-6" /></div>
+            ) : (
+              <>
+                <Field label="Who we are">
+                  <textarea rows={4} className={inputCls} value={about.whoWeAre} onChange={(e) => setAboutField("whoWeAre", e.target.value)} />
+                </Field>
+                <Field label="Where we are">
+                  <textarea rows={3} className={inputCls} value={about.whereWeAre} onChange={(e) => setAboutField("whereWeAre", e.target.value)} />
+                </Field>
+                <Field label="What we do (leave a blank line between paragraphs)">
+                  <textarea rows={9} className={inputCls} value={about.whatWeDo} onChange={(e) => setAboutField("whatWeDo", e.target.value)} />
+                </Field>
+                <Field label="Pegah Construction Ltd. will (one bullet per line)">
+                  <textarea rows={5} className={inputCls} value={about.pegahWill} onChange={(e) => setAboutField("pegahWill", e.target.value)} />
+                </Field>
+                <Field label="Closing statement">
+                  <textarea rows={3} className={inputCls} value={about.closing} onChange={(e) => setAboutField("closing", e.target.value)} />
+                </Field>
+
+                {/* "What we do" image */}
+                <div>
+                  <span className="mb-1.5 block font-mono text-[11px] font-semibold uppercase tracking-wide text-concrete-500">
+                    "What we do" image
+                  </span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    ref={aboutImageRef}
+                    onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadAboutImage(f); e.target.value = ""; }}
+                  />
+                  <div className="flex items-start gap-4">
+                    <div className="relative h-28 w-40 shrink-0 overflow-hidden rounded-lg border border-concrete-200 bg-concrete-50">
+                      {aboutImage ? (
+                        <img src={getStorageUrl(aboutImage)} alt="About" className="h-full w-full object-cover" />
+                      ) : (
+                        <img src="/about.jpg" alt="About (default)" className="h-full w-full object-cover opacity-70" />
+                      )}
+                      {aboutImageUploading && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-white/60"><Spinner className="h-6 w-6" /></div>
+                      )}
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <PrimaryBtn onClick={() => aboutImageRef.current?.click()}>
+                        {aboutImageUploading ? "Uploading…" : aboutImage ? "Replace image" : "Upload image"}
+                      </PrimaryBtn>
+                      {aboutImage && (
+                        <button type="button" onClick={deleteAboutImage}
+                          className="rounded-md border border-concrete-200 px-3 py-1.5 font-display text-xs font-semibold text-concrete-600 hover:bg-concrete-50">
+                          Reset to default
+                        </button>
+                      )}
+                      <p className="max-w-[16rem] text-xs text-concrete-400">Shown beside the “What we do” text on the About page.</p>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </Card>
+
         <Card title="Leadership" right={<PrimaryBtn onClick={openCreate}>+ Add member</PrimaryBtn>}>
           {loading ? (
             <div className="flex justify-center py-16"><Spinner className="h-6 w-6" /></div>

@@ -22,9 +22,10 @@ export default function PageShell({
     <>
       <Navbar />
       <main className="flex-1">
-        <section className="border-b border-concrete-200 bg-white pt-32">
+        <section className="hero-surface border-b border-concrete-200 pt-32">
           <div className="mx-auto max-w-8xl px-6 pb-16 lg:px-10">
-            <Eyebrow className="hero-animate" style={{ animationDelay: "0ms" }}>{eyebrow}</Eyebrow>
+            <div className="accent-bar hero-animate mb-5" style={{ animationDelay: "0ms" }} />
+            <Eyebrow className="hero-animate" style={{ animationDelay: "60ms" }}>{eyebrow}</Eyebrow>
             <h1 className="hero-animate mt-4 max-w-3xl font-display text-4xl font-black tracking-tight text-ink lg:text-6xl" style={{ animationDelay: "100ms" }}>
               {title}
             </h1>

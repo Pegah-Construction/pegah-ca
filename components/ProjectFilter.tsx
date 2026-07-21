@@ -72,26 +72,63 @@ function ProjectCard({ p, i }: { p: PublicProject; i: number }) {
   );
 }
 
+function ControlSelect({ value, onChange, children }: { value: string; onChange: (v: string) => void; children: React.ReactNode }) {
+  return (
+    <div className="relative">
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="cursor-pointer appearance-none rounded-md border border-concrete-300 bg-white py-2.5 pl-3 pr-9 text-sm text-ink outline-none focus:border-brand-500"
+      >
+        {children}
+      </select>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="pointer-events-none absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-concrete-400">
+        <path d="m6 9 6 6 6-6" />
+      </svg>
+    </div>
+  );
+}
+
+const yearOf = (p: PublicProject) => (p.dateCompleted ? p.dateCompleted.slice(0, 4) : "");
+
 export default function ProjectFilter({ projects }: { projects: PublicProject[] }) {
   const [filter, setFilter] = useState<FilterKey>("All Projects");
   const [subType, setSubType] = useState("All");
   const [q, setQ] = useState("");
+  const [year, setYear] = useState("All");
+  const [sort, setSort] = useState("completed-desc");
 
   // Purpose types present among commercial (non-residential) projects.
   const purposeTypes = Array.from(
     new Set(projects.filter((p) => p.category !== "Residential").map((p) => p.type).filter(Boolean))
   ).sort();
 
+  const yearOptions = Array.from(new Set(projects.map(yearOf).filter(Boolean))).sort((a, b) => b.localeCompare(a));
+
   const needle = q.trim().toLowerCase();
   const matchesSearch = (p: PublicProject) =>
     !needle || [p.name, p.location, p.type, p.category].some((v) => v.toLowerCase().includes(needle));
+  const matchesYear = (p: PublicProject) => year === "All" || yearOf(p) === year;
+  const hasQuery = !!needle || year !== "All";
+
+  const sortItems = (arr: PublicProject[]) =>
+    [...arr].sort((a, b) => {
+      if (sort === "name-asc") return a.name.localeCompare(b.name);
+      const av = yearOf(a);
+      const bv = yearOf(b);
+      if (!av && !bv) return 0;
+      if (!av) return 1; // no completion date sorts last
+      if (!bv) return -1;
+      return sort === "completed-asc" ? av.localeCompare(bv) : bv.localeCompare(av);
+    });
 
   return (
     <>
       {/* Hero: title, intro, category filters */}
-      <section className="border-b border-concrete-200 bg-white pt-32">
+      <section className="hero-surface border-b border-concrete-200 pt-32">
         <div className="mx-auto max-w-8xl px-6 pb-12 lg:px-10">
-          <h1 className="hero-animate font-display text-4xl font-black tracking-tight text-ink lg:text-6xl" style={{ animationDelay: "0ms" }}>
+          <div className="accent-bar hero-animate mb-5" style={{ animationDelay: "0ms" }} />
+          <h1 className="hero-animate font-display text-4xl font-black tracking-tight text-ink lg:text-6xl" style={{ animationDelay: "60ms" }}>
             All Projects
           </h1>
           <p className="hero-animate mt-5 max-w-2xl text-lg leading-relaxed text-concrete-500" style={{ animationDelay: "120ms" }}>
@@ -120,7 +157,7 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
 
       {/* Search band */}
       <div className="border-b border-concrete-200 bg-concrete-100">
-        <div className="mx-auto max-w-8xl px-6 py-6 lg:px-10">
+        <div className="mx-auto flex max-w-8xl flex-col gap-3 px-6 py-6 sm:flex-row sm:items-center sm:justify-between lg:px-10">
           <div className="relative w-full sm:max-w-sm">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"
               className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-concrete-400">
@@ -134,6 +171,17 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
               className="w-full rounded-md border border-concrete-300 bg-white py-2.5 pl-10 pr-4 text-sm outline-none focus:border-brand-500"
             />
           </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <ControlSelect value={year} onChange={setYear}>
+              <option value="All">All years</option>
+              {yearOptions.map((y) => <option key={y} value={y}>{y}</option>)}
+            </ControlSelect>
+            <ControlSelect value={sort} onChange={setSort}>
+              <option value="completed-desc">Newest first</option>
+              <option value="completed-asc">Oldest first</option>
+              <option value="name-asc">Name (A–Z)</option>
+            </ControlSelect>
+          </div>
         </div>
       </div>
 
@@ -141,7 +189,7 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
       <div className="mx-auto max-w-8xl space-y-16 px-6 py-16 lg:px-10">
         {filter === "All Projects" ? (
           (() => {
-            const items = projects.filter(matchesSearch);
+            const items = sortItems(projects.filter(matchesSearch).filter(matchesYear));
             return items.length > 0 ? (
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {items.map((p, i) => (
@@ -150,15 +198,16 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
               </div>
             ) : (
               <p className="font-body text-concrete-400">
-                {needle ? "No projects match your search." : "No projects yet."}
+                {hasQuery ? "No projects match your filters." : "No projects yet."}
               </p>
             );
           })()
         ) : (
           SECTIONS.filter((s) => s.key === filter).map((section) => {
           const isCommercial = section.key === "Commercial";
-          let items = projects.filter(section.match).filter(matchesSearch);
+          let items = projects.filter(section.match).filter(matchesSearch).filter(matchesYear);
           if (isCommercial && subType !== "All") items = items.filter((p) => p.type === subType);
+          items = sortItems(items);
           return (
             <section key={section.key}>
               <Reveal>
@@ -211,7 +260,7 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
                 </div>
               ) : (
                 <p className="mt-6 font-body text-concrete-400">
-                  {needle ? "No projects match your search." : "No projects in this category yet."}
+                  {hasQuery ? "No projects match your filters." : "No projects in this category yet."}
                 </p>
               )}
             </section>

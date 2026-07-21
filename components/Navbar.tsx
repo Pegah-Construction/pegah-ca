@@ -44,8 +44,8 @@ export default function Navbar() {
                 <li key={item.href} className="group relative">
                   <Link
                     href={item.href}
-                    className={`flex items-center gap-1 font-display text-sm font-medium transition-colors ${
-                      isActive ? "text-ink underline underline-offset-8 decoration-2" : "text-ink/70 hover:text-ink"
+                    className={`flex items-center gap-1 font-display text-sm font-semibold transition-colors ${
+                      isActive ? "text-ink underline underline-offset-8 decoration-2 decoration-brand-500" : "text-ink hover:text-brand-700"
                     }`}
                   >
                     {item.label}
@@ -71,10 +71,10 @@ export default function Navbar() {
                           <Link
                             key={child.href}
                             href={child.href}
-                            className={`flex items-center gap-3 px-5 py-3.5 text-sm transition-colors first:pt-4 last:pb-4 ${
+                            className={`flex items-center gap-3 px-5 py-3.5 text-sm font-semibold transition-colors first:pt-4 last:pb-4 ${
                               childActive
-                                ? "bg-brand-50 font-semibold text-brand-700"
-                                : "text-ink/70 hover:bg-brand-50/60 hover:text-brand-700"
+                                ? "bg-brand-50 text-brand-700"
+                                : "text-ink hover:bg-brand-50/60 hover:text-brand-700"
                             }`}
                           >
                             {child.label}
@@ -91,8 +91,8 @@ export default function Navbar() {
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className={`font-display text-sm font-medium transition-colors ${
-                    isActive ? "text-ink underline underline-offset-8 decoration-2" : "text-ink/70 hover:text-ink"
+                  className={`font-display text-sm font-semibold transition-colors ${
+                    isActive ? "text-ink underline underline-offset-8 decoration-2 decoration-brand-500" : "text-ink hover:text-brand-700"
                   }`}
                 >
                   {item.label}
@@ -122,13 +122,6 @@ export default function Navbar() {
               <UserAvatar name={user.name} id={user.id} />
             </Link>
           )}
-          <Link
-            href="/contact"
-            className="hidden whitespace-nowrap rounded-md bg-brand-700 px-4 py-2 font-display text-sm font-semibold text-white transition-colors hover:bg-brand-800 sm:inline-flex"
-          >
-            Start a project
-          </Link>
-
           {/* Mobile menu toggle */}
           <button
             type="button"
@@ -186,9 +179,6 @@ export default function Navbar() {
                   Login
                 </Link>
               )}
-              <Link href="/contact" className="rounded-md bg-brand-700 px-4 py-2 font-display text-sm font-semibold text-white hover:bg-brand-800">
-                Start a project
-              </Link>
               <a href={company.phoneHref} className="ml-auto font-mono text-xs tracking-wide text-concrete-500">
                 {company.phone}
               </a>

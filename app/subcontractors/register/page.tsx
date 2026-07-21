@@ -21,9 +21,10 @@ export default function SubcontractorRegisterPage() {
       <Navbar />
       <main className="flex-1 bg-paper">
         {/* Header */}
-        <section>
+        <section className="hero-surface border-b border-concrete-200">
           <div className="mx-auto max-w-8xl px-6 py-14 lg:px-10">
-            <Eyebrow className="hero-animate" style={{ animationDelay: "0ms" }}>Tenders</Eyebrow>
+            <div className="accent-bar hero-animate mb-5" style={{ animationDelay: "0ms" }} />
+            <Eyebrow className="hero-animate" style={{ animationDelay: "60ms" }}>Tenders</Eyebrow>
             <h1 className="hero-animate mt-3 font-display text-4xl font-black tracking-tight text-ink lg:text-5xl" style={{ animationDelay: "120ms" }}>
               Subcontractor Registration
             </h1>
