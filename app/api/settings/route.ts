@@ -22,5 +22,6 @@ export async function PATCH(req: Request) {
   );
   revalidatePath("/");
   revalidatePath("/contact");
+  revalidatePath("/services");
   return Response.json({ ok: true });
 }

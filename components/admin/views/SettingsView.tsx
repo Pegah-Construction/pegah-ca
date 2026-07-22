@@ -13,6 +13,7 @@ type OrgSettings = {
   contactTitle: string; contactIntro: string;
   heroEyebrow: string; heroTitle: string; heroSubtitle: string;
   introHeading: string; introText: string;
+  servicesIntro: string; servicesList: string;
 };
 type HeroImage = { id: number; path: string; order: number };
 
@@ -209,6 +210,13 @@ export default function SettingsView() {
               className="hidden"
               onChange={handleHeroUpload}
             />
+          </div>
+        </Card>
+
+        <Card title="Services page">
+          <div className="space-y-5 p-5">
+            <Field label="Intro" value={form.servicesIntro} disabled={locked} onChange={set("servicesIntro")} multiline />
+            <Field label="Services — one per line, format: Title | description" value={form.servicesList} disabled={locked} onChange={set("servicesList")} multiline />
           </div>
         </Card>
 

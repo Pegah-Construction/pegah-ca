@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { Eyebrow } from "./Brand";
 import Reveal from "./Reveal";
-import { services } from "@/lib/site";
+import { getSiteSettings } from "@/lib/settings-server";
+import { parseServices } from "@/lib/settings";
 
-export default function ServicesList() {
+export default async function ServicesList() {
+  const settings = await getSiteSettings();
+  const services = parseServices(settings.servicesList);
   return (
     <section className="mx-auto max-w-8xl px-6 py-24 lg:px-10 lg:py-28">
       <Reveal>

@@ -1,18 +1,21 @@
 import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
 import Reveal from "@/components/Reveal";
-import { services } from "@/lib/site";
+import { getSiteSettings } from "@/lib/settings-server";
+import { parseServices } from "@/lib/settings";
 
 export const metadata: Metadata = {
   title: "Services | Pegah Construction Ltd.",
 };
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const s = await getSiteSettings();
+  const services = parseServices(s.servicesList);
   return (
     <PageShell
       eyebrow="What we do"
       title="Services"
-      intro="From initial concept through to long-term care, we manage every stage of delivery."
+      intro={s.servicesIntro}
     >
       <div className="grid gap-px overflow-hidden rounded-xl border border-concrete-200 bg-concrete-200 sm:grid-cols-2">
         {services.map((s, i) => (
