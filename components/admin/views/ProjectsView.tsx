@@ -67,9 +67,8 @@ export default function ProjectsView() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [q, setQ] = useState("");
   const [fCategory, setFCategory] = useState("All");
-  const [fYear, setFYear] = useState("All");
   const [fType, setFType] = useState("All");
-  const [sort, setSort] = useState("completed-desc");
+  const [sort, setSort] = useState("filter");
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 10;
 
@@ -90,7 +89,7 @@ export default function ProjectsView() {
   }, [user]);
 
   // Reset to the first page whenever the filters, search, or sort change.
-  useEffect(() => { setPage(1); }, [q, fCategory, fYear, fType, sort]);
+  useEffect(() => { setPage(1); }, [q, fCategory, fType, sort]);
 
   // The Type filter only applies to Commercial; reset it when leaving Commercial.
   useEffect(() => { if (fCategory !== "Commercial") setFType("All"); }, [fCategory]);
@@ -245,11 +244,8 @@ export default function ProjectsView() {
   if (!user) return null;
   const perms = PERMS[user.role];
 
-  const yearOf = (p: Project) => (p.dateCompleted ? p.dateCompleted.slice(0, 4) : "");
-
   // Filter options derived from the actual data.
   const categoryOptions = Array.from(new Set(projects.map((p) => p.category).filter(Boolean))).sort() as string[];
-  const yearOptions = Array.from(new Set(projects.map(yearOf).filter(Boolean))).sort((a, b) => b.localeCompare(a));
   // Purpose types apply to commercial (non-residential) projects only.
   const typeOptions = Array.from(
     new Set(projects.filter((p) => p.category !== "Residential").map((p) => p.type).filter(Boolean))
@@ -259,14 +255,12 @@ export default function ProjectsView() {
   const filtered = projects.filter((x) => {
     if (needle && ![x.name, x.location, x.type, x.contractType].some((v) => (v ?? "").toLowerCase().includes(needle))) return false;
     if (fCategory !== "All" && x.category !== fCategory) return false;
-    if (fYear !== "All" && yearOf(x) !== fYear) return false;
     if (fType !== "All" && x.type !== fType) return false;
     return true;
   });
 
   const sorted = [...filtered].sort((a, b) => {
     switch (sort) {
-      case "value-desc": return (b.value || 0) - (a.value || 0);
       case "value-asc": return (a.value || 0) - (b.value || 0);
       case "name-asc": return a.name.localeCompare(b.name);
       case "completed-asc":
@@ -285,8 +279,8 @@ export default function ProjectsView() {
   const currentPage = Math.min(page, totalPages);
   const paged = sorted.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
-  const hasFilters = fCategory !== "All" || fYear !== "All" || fType !== "All";
-  const clearFilters = () => { setFCategory("All"); setFYear("All"); setFType("All"); };
+  const hasFilters = fCategory !== "All" || fType !== "All";
+  const clearFilters = () => { setFCategory("All"); setFType("All"); };
 
   return (
     <>
@@ -307,10 +301,6 @@ export default function ProjectsView() {
               {typeOptions.map((t) => <option key={t} value={t}>{t}</option>)}
             </FilterSelect>
           )}
-          <FilterSelect value={fYear} onChange={setFYear}>
-            <option value="All">All years</option>
-            {yearOptions.map((y) => <option key={y} value={y}>{y}</option>)}
-          </FilterSelect>
           {hasFilters && (
             <button
               onClick={clearFilters}
@@ -320,13 +310,12 @@ export default function ProjectsView() {
             </button>
           )}
           <div className="ml-auto flex items-center gap-2.5">
-            <span className="font-mono text-[11px] uppercase tracking-label text-concrete-400">Sort</span>
-            <FilterSelect value={sort} onChange={setSort} active={false} widthCls="w-auto">
-              <option value="completed-desc">Completion (newest)</option>
-              <option value="completed-asc">Completion (oldest)</option>
-              <option value="value-desc">Value (high → low)</option>
-              <option value="value-asc">Value (low → high)</option>
+            <FilterSelect value={sort} onChange={setSort} active={sort !== "filter"} widthCls="w-auto">
+              <option value="filter">Filter</option>
+              <option value="completed-desc">Newest</option>
+              <option value="completed-asc">Oldest</option>
               <option value="name-asc">Name (A → Z)</option>
+              <option value="value-asc">Value (min → max)</option>
             </FilterSelect>
             <span className="font-mono text-[11px] text-concrete-500">
               {sorted.length} of {projects.length}

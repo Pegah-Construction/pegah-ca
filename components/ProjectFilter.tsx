@@ -13,6 +13,7 @@ export type PublicProject = {
   category: string;
   type: string;
   dateCompleted: string;
+  value: number;
   photos: string[];
 };
 
@@ -96,25 +97,23 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
   const [filter, setFilter] = useState<FilterKey>("All Projects");
   const [subType, setSubType] = useState("All");
   const [q, setQ] = useState("");
-  const [year, setYear] = useState("All");
-  const [sort, setSort] = useState("completed-desc");
+  const [sort, setSort] = useState("filter");
 
   // Purpose types present among commercial (non-residential) projects.
   const purposeTypes = Array.from(
     new Set(projects.filter((p) => p.category !== "Residential").map((p) => p.type).filter(Boolean))
   ).sort();
 
-  const yearOptions = Array.from(new Set(projects.map(yearOf).filter(Boolean))).sort((a, b) => b.localeCompare(a));
-
   const needle = q.trim().toLowerCase();
   const matchesSearch = (p: PublicProject) =>
     !needle || [p.name, p.location, p.type, p.category].some((v) => v.toLowerCase().includes(needle));
-  const matchesYear = (p: PublicProject) => year === "All" || yearOf(p) === year;
-  const hasQuery = !!needle || year !== "All";
+  const hasQuery = !!needle;
 
-  const sortItems = (arr: PublicProject[]) =>
-    [...arr].sort((a, b) => {
+  const sortItems = (arr: PublicProject[]) => {
+    if (sort === "filter") return arr;
+    return [...arr].sort((a, b) => {
       if (sort === "name-asc") return a.name.localeCompare(b.name);
+      if (sort === "value-asc") return (a.value || 0) - (b.value || 0);
       const av = yearOf(a);
       const bv = yearOf(b);
       if (!av && !bv) return 0;
@@ -122,6 +121,7 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
       if (!bv) return -1;
       return sort === "completed-asc" ? av.localeCompare(bv) : bv.localeCompare(av);
     });
+  };
 
   return (
     <>
@@ -173,14 +173,12 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
             />
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <ControlSelect value={year} onChange={setYear}>
-              <option value="All">All years</option>
-              {yearOptions.map((y) => <option key={y} value={y}>{y}</option>)}
-            </ControlSelect>
             <ControlSelect value={sort} onChange={setSort}>
-              <option value="completed-desc">Newest first</option>
-              <option value="completed-asc">Oldest first</option>
+              <option value="filter">Filter</option>
+              <option value="completed-desc">Newest</option>
+              <option value="completed-asc">Oldest</option>
               <option value="name-asc">Name (A–Z)</option>
+              <option value="value-asc">Value (min → max)</option>
             </ControlSelect>
           </div>
         </div>
@@ -190,7 +188,7 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
       <div className="mx-auto max-w-8xl space-y-16 px-6 py-16 lg:px-10">
         {filter === "All Projects" ? (
           (() => {
-            const items = sortItems(projects.filter(matchesSearch).filter(matchesYear));
+            const items = sortItems(projects.filter(matchesSearch));
             return items.length > 0 ? (
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {items.map((p, i) => (
@@ -206,7 +204,7 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
         ) : (
           SECTIONS.filter((s) => s.key === filter).map((section) => {
           const isCommercial = section.key === "Commercial";
-          let items = projects.filter(section.match).filter(matchesSearch).filter(matchesYear);
+          let items = projects.filter(section.match).filter(matchesSearch);
           if (isCommercial && subType !== "All") items = items.filter((p) => p.type === subType);
           items = sortItems(items);
           return (

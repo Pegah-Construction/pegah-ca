@@ -126,6 +126,25 @@
     background-size: auto, auto, 46px 46px, 46px 46px;
   }
 
+  /* White surface with the faint blueprint grid (for white content sections). */
+  .grid-surface {
+    background-color: #ffffff;
+    background-image:
+      linear-gradient(rgba(15, 31, 77, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15, 31, 77, 0.04) 1px, transparent 1px);
+    background-size: 46px 46px;
+  }
+
+  /* Brand tint wash with a very faint blueprint grid on top. */
+  .tint-grid-surface {
+    background-color: #ffffff;
+    background-image:
+      linear-gradient(rgba(15, 31, 77, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15, 31, 77, 0.02) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(238, 242, 251, 0.6), transparent 70%);
+    background-size: 46px 46px, 46px 46px, auto;
+  }
+
   /* Reusable elevated card with hover lift. */
   .card-elevated {
     @apply rounded-2xl border border-concrete-200 bg-white shadow-sm;

@@ -8,6 +8,7 @@ export default async function Intro() {
   return (
     <section className="mx-auto max-w-8xl px-6 py-24 lg:px-10 lg:py-28">
       <Reveal>
+        <div className="accent-bar mb-4" />
         <Eyebrow>Who we are</Eyebrow>
       </Reveal>
       <div className="mt-6 grid gap-10 lg:grid-cols-12">

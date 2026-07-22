@@ -20,6 +20,7 @@ export default async function ProjectsPage() {
       category: true,
       type: true,
       dateCompleted: true,
+      value: true,
       photos: {
         orderBy: { order: "asc" },
         select: { path: true },
@@ -35,6 +36,7 @@ export default async function ProjectsPage() {
     category: p.category,
     type: p.type,
     dateCompleted: p.dateCompleted,
+    value: p.value,
     photos: p.photos.map((ph) => getStorageUrl(ph.path)),
   }));
 

@@ -6,9 +6,18 @@ import Reveal from "./Reveal";
 import { getStorageUrl } from "@/lib/storage-url";
 
 export default async function FeaturedProjects() {
+  // Pick 3 random projects that have at least one photo: shuffle their ids, take three.
+  const ids = (
+    await db.project.findMany({ where: { photos: { some: {} } }, select: { id: true } })
+  ).map((p) => p.id);
+  for (let i = ids.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [ids[i], ids[j]] = [ids[j], ids[i]];
+  }
+  const pick = ids.slice(0, 3);
+
   const projects = await db.project.findMany({
-    take: 3,
-    orderBy: { id: "desc" },
+    where: { id: { in: pick } },
     select: {
       id: true,
       name: true,
@@ -22,11 +31,12 @@ export default async function FeaturedProjects() {
   if (projects.length === 0) return null;
 
   return (
-    <section className="border-y border-concrete-200 bg-white">
+    <section className="grid-surface border-y border-concrete-200">
       <div className="mx-auto max-w-8xl px-6 py-24 lg:px-10 lg:py-28">
         <Reveal>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
+              <div className="accent-bar mb-4" />
               <Eyebrow>Featured projects</Eyebrow>
               <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-ink lg:text-4xl">
                 Work we&rsquo;re proud to show.
