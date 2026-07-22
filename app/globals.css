@@ -77,15 +77,20 @@
 /* ── Project image-card elevation ──
    Shared by the home page featured projects and the all-projects grid so
    every project image card lifts with a growing box-shadow on hover. */
+/* Google-Images-style hover: the whole tile (image + box) scales up and
+   pops above its neighbours. */
 .img-card {
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform, box-shadow;
   box-shadow: 0 1px 2px rgba(15, 31, 77, 0.04);
 }
 .img-card:hover {
-  transform: translateY(-12px);
-  box-shadow: 0 30px 55px -12px rgba(15, 31, 77, 0.5);
+  transform: scale(1.14);
+  z-index: 20;
+  box-shadow: 0 30px 55px -12px rgba(15, 31, 77, 0.45);
 }
 
 @layer base {

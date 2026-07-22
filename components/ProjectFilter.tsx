@@ -51,9 +51,9 @@ function ProjectCard({ p, i }: { p: PublicProject; i: number }) {
         {p.photos.length > 1 ? (
           <PhotoCarousel photos={p.photos} imgClassName="aspect-[4/3]" className="img-card" />
         ) : p.photos.length === 1 ? (
-          <Link href={`/projects/${p.id}`} className="block">
+          <Link href={`/projects/${p.id}`} className="img-card block aspect-[4/3] rounded-xl">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={p.photos[0]} alt={p.name} className="img-card aspect-[4/3] w-full rounded-xl object-cover" />
+            <img src={p.photos[0]} alt={p.name} className="h-full w-full object-cover" />
           </Link>
         ) : (
           <Link href={`/projects/${p.id}`} className="block">

@@ -62,12 +62,12 @@ export default async function FeaturedProjects() {
                     {photos.length > 1 ? (
                       <PhotoCarousel photos={photos} imgClassName="aspect-[4/3]" className="img-card" />
                     ) : photos.length === 1 ? (
-                      <Link href={`/projects/${p.id}`} className="block">
+                      <Link href={`/projects/${p.id}`} className="img-card block aspect-[4/3] w-full rounded-xl">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={photos[0]}
                           alt={p.name}
-                          className="img-card aspect-[4/3] w-full rounded-xl object-cover"
+                          className="h-full w-full object-cover"
                         />
                       </Link>
                     ) : (
