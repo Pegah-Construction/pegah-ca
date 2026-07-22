@@ -16,26 +16,26 @@ export default function ServicesList() {
       <div className="mt-12 grid gap-x-12 sm:grid-cols-2">
         {services.map((s, i) => (
           <Reveal key={s.title} delay={i * 80} direction="up">
-            <Link
-              href={`/services#${s.slug}`}
-              className="group flex items-start justify-between gap-6 border-t border-concrete-200 py-7 transition-colors hover:border-brand-300"
-            >
-              <div>
-                <div className="flex items-baseline gap-3">
-                  <span className="font-mono text-xs text-concrete-400">0{i + 1}</span>
-                  <h3 className="font-display text-xl font-bold tracking-tight text-ink group-hover:text-brand-700">
-                    {s.title}
-                  </h3>
-                </div>
-                <p className="mt-2 max-w-sm leading-relaxed text-concrete-500">{s.desc}</p>
+            <div className="border-t border-concrete-200 py-7">
+              <div className="flex items-baseline gap-3">
+                <span className="font-mono text-xs text-concrete-400">0{i + 1}</span>
+                <h3 className="font-display text-xl font-bold tracking-tight text-ink">{s.title}</h3>
               </div>
-              <span className="mt-1 font-display text-xl text-concrete-300 transition-transform group-hover:translate-x-1 group-hover:text-brand-700">
-                →
-              </span>
-            </Link>
+              <p className="mt-2 max-w-sm leading-relaxed text-concrete-500">{s.desc}</p>
+            </div>
           </Reveal>
         ))}
       </div>
+
+      <Reveal>
+        <Link
+          href="/services"
+          className="mt-12 inline-flex items-center gap-2 rounded-md bg-brand-700 px-6 py-3 font-display text-sm font-semibold text-white transition-colors hover:bg-brand-800"
+        >
+          View all services
+          <span aria-hidden="true">→</span>
+        </Link>
+      </Reveal>
     </section>
   );
 }

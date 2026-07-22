@@ -1,12 +1,15 @@
 import HeroCarousel from "./HeroCarousel";
 import Button from "./Button";
 import { Eyebrow } from "./Brand";
-import { company } from "@/lib/site";
 import { db } from "@/lib/db";
 import { getStorageUrl } from "@/lib/storage-url";
+import { getSiteSettings } from "@/lib/settings-server";
 
 export default async function Hero() {
-  const images = await db.heroImage.findMany({ orderBy: { order: "asc" } });
+  const [images, s] = await Promise.all([
+    db.heroImage.findMany({ orderBy: { order: "asc" } }),
+    getSiteSettings(),
+  ]);
   const paths = images.map((img) => getStorageUrl(img.path));
 
   return (
@@ -23,17 +26,13 @@ export default async function Hero() {
 
       <div className="mx-auto w-full max-w-8xl px-6 pb-28 pt-40 lg:px-10">
         <Eyebrow className="hero-animate text-brand-200" style={{ animationDelay: "0ms" }}>
-          General Contracting · Project Management
+          {s.heroEyebrow}
         </Eyebrow>
-        <h1 className="hero-animate mt-5 max-w-4xl font-display text-5xl font-black leading-[1.02] tracking-tight text-white sm:text-6xl lg:text-7xl" style={{ animationDelay: "120ms" }}>
-          Building {company.region}
-          <br />
-          since {company.established}.
+        <h1 className="hero-animate mt-5 max-w-4xl whitespace-pre-line font-display text-5xl font-black leading-[1.02] tracking-tight text-white sm:text-6xl lg:text-7xl" style={{ animationDelay: "120ms" }}>
+          {s.heroTitle}
         </h1>
         <p className="hero-animate mt-6 max-w-xl text-lg leading-relaxed text-white/80" style={{ animationDelay: "260ms" }}>
-          An established general contracting and project-management firm
-          delivering quality workmanship across commercial, industrial and
-          institutional projects.
+          {s.heroSubtitle}
         </p>
         <div className="hero-animate mt-9 flex flex-wrap gap-3" style={{ animationDelay: "380ms" }}>
           <Button href="/projects" variant="solid">

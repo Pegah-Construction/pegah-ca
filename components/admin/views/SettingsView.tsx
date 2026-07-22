@@ -11,21 +11,23 @@ type OrgSettings = {
   companyName: string; phone: string; email: string; estimatingEmail: string;
   addressLine1: string; addressLine2: string;
   contactTitle: string; contactIntro: string;
+  heroEyebrow: string; heroTitle: string; heroSubtitle: string;
+  introHeading: string; introText: string;
 };
 type HeroImage = { id: number; path: string; order: number };
 
 const DEFAULTS = SETTINGS_DEFAULTS as unknown as OrgSettings;
 
-function Field({ label, value, disabled, onChange }: { label: string; value: string; disabled: boolean; onChange?: (v: string) => void }) {
+function Field({ label, value, disabled, onChange, multiline }: { label: string; value: string; disabled: boolean; onChange?: (v: string) => void; multiline?: boolean }) {
+  const cls = "mt-2 w-full rounded-md border border-concrete-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-500 disabled:bg-concrete-100 disabled:text-concrete-400";
   return (
     <div>
       <label className="font-mono text-[11px] uppercase tracking-label text-concrete-500">{label}</label>
-      <input
-        value={value}
-        disabled={disabled}
-        onChange={(e) => onChange?.(e.target.value)}
-        className="mt-2 w-full rounded-md border border-concrete-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-500 disabled:bg-concrete-100 disabled:text-concrete-400"
-      />
+      {multiline ? (
+        <textarea rows={3} value={value} disabled={disabled} onChange={(e) => onChange?.(e.target.value)} className={cls} />
+      ) : (
+        <input value={value} disabled={disabled} onChange={(e) => onChange?.(e.target.value)} className={cls} />
+      )}
     </div>
   );
 }
@@ -114,9 +116,13 @@ export default function SettingsView() {
 
   return (
     <>
-      {locked && (
+      {locked ? (
         <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
           Organization settings are read-only for your role. Contact an administrator to make changes.
+        </div>
+      ) : (
+        <div className="mb-6 rounded-lg border border-brand-100 bg-brand-50 px-4 py-3 text-sm text-brand-800">
+          After editing any field below, scroll to the bottom of the page and click <span className="font-semibold">Save changes</span> to publish.
         </div>
       )}
       <div className="grid gap-6">
@@ -135,6 +141,22 @@ export default function SettingsView() {
             <Field label="Intro" value={form.contactIntro} disabled={locked} onChange={set("contactIntro")} />
             <Field label="Address line 1" value={form.addressLine1} disabled={locked} onChange={set("addressLine1")} />
             <Field label="Address line 2" value={form.addressLine2} disabled={locked} onChange={set("addressLine2")} />
+          </div>
+        </Card>
+
+        <Card title="Home / landing page">
+          <div className="grid gap-5 p-5 sm:grid-cols-2">
+            <Field label="Hero eyebrow" value={form.heroEyebrow} disabled={locked} onChange={set("heroEyebrow")} />
+            <Field label="Hero title (line breaks allowed)" value={form.heroTitle} disabled={locked} onChange={set("heroTitle")} multiline />
+            <div className="sm:col-span-2">
+              <Field label="Hero subtitle" value={form.heroSubtitle} disabled={locked} onChange={set("heroSubtitle")} multiline />
+            </div>
+            <div className="sm:col-span-2">
+              <Field label="Intro heading" value={form.introHeading} disabled={locked} onChange={set("introHeading")} multiline />
+            </div>
+            <div className="sm:col-span-2">
+              <Field label="Intro text" value={form.introText} disabled={locked} onChange={set("introText")} multiline />
+            </div>
           </div>
         </Card>
 

@@ -20,6 +20,7 @@ export async function PATCH(req: Request) {
       })
     )
   );
+  revalidatePath("/");
   revalidatePath("/contact");
   return Response.json({ ok: true });
 }

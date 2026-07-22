@@ -10,6 +10,15 @@ export const SETTINGS_DEFAULTS: Record<string, string> = {
   addressLine2: "Toronto, Ontario M3H 5T5",
   contactTitle: "Let's build something.",
   contactIntro: "Tell us about your project and our team will get back to you.",
+  // Home / landing page
+  heroEyebrow: "General Contracting · Project Management",
+  heroTitle: "Building Ontario\nsince 1988.",
+  heroSubtitle:
+    "An established general contracting and project-management firm delivering quality workmanship across commercial, industrial and institutional projects.",
+  introHeading:
+    "A general contractor and project-management firm trusted across commercial, industrial and institutional work in Ontario.",
+  introText:
+    "From the first concept through to long-term care, we manage every stage, on time, on budget, and to the highest standard of workmanship.",
 };
 
 // Keys editable via /api/settings.
