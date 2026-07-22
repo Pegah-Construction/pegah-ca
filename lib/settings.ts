@@ -11,10 +11,9 @@ export const SETTINGS_DEFAULTS: Record<string, string> = {
   contactTitle: "Let's build something.",
   contactIntro: "Tell us about your project and our team will get back to you.",
   // Home / landing page
-  heroEyebrow: "General Contracting · Project Management",
-  heroTitle: "Building Ontario\nsince 1988.",
-  heroSubtitle:
-    "An established general contracting and project-management firm delivering quality workmanship across commercial, industrial and institutional projects.",
+  heroEyebrow: "Established 1988",
+  heroTitle: "Building Excellence",
+  heroSubtitle: "General Contracting & Project Management serving Ontario since 1988",
   introHeading:
     "A general contractor and project-management firm trusted across commercial, industrial and institutional work in Ontario.",
   introText:

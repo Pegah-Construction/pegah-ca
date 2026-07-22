@@ -6,6 +6,7 @@ import FormatPartner from "@/components/FormatPartner";
 import { db } from "@/lib/db";
 import { getStorageUrl } from "@/lib/storage-url";
 import { mergeAboutContent, toParagraphs, toLines } from "@/lib/about-content";
+import { stats } from "@/lib/site";
 
 export const metadata: Metadata = { title: "About Us | Pegah Construction Ltd." };
 
@@ -22,45 +23,59 @@ export default async function AboutPage() {
 
   return (
     <PageShell eyebrow="Our story" title="About Us">
-      <div className="mx-auto max-w-5xl space-y-12">
-        {/* Who we are */}
+      <div className="mx-auto max-w-5xl space-y-14">
+        {/* Stat strip */}
         <Reveal>
-          <section>
-            <h2 className="font-display text-2xl font-bold tracking-tight text-ink">Who we are</h2>
-            <p className="mt-3 text-lg leading-relaxed text-concrete-500">{content.whoWeAre}</p>
-          </section>
+          <div className="grid grid-cols-2 gap-4 rounded-2xl border border-brand-100 bg-brand-50/50 p-6 sm:grid-cols-4 sm:p-8">
+            {stats.map((st) => (
+              <div key={st.label} className="text-center">
+                <div className="font-display text-3xl font-black tracking-tight text-brand-700 lg:text-4xl">{st.value}</div>
+                <div className="mt-1 font-mono text-[11px] uppercase tracking-label text-concrete-500">{st.label}</div>
+              </div>
+            ))}
+          </div>
         </Reveal>
 
-        {/* Where we are */}
+        {/* Intro text with the image floated beside it (top-aligned; text wraps under it) */}
         <Reveal>
-          <section>
-            <h2 className="font-display text-2xl font-bold tracking-tight text-ink">Where we are</h2>
-            <p className="mt-3 text-lg leading-relaxed text-concrete-500">{content.whereWeAre}</p>
-          </section>
-        </Reveal>
-
-        {/* What we do — rendering + text */}
-        <Reveal>
-          <section className="grid gap-8 lg:grid-cols-2 lg:items-start">
+          <div className="flow-root">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={whatWeDoImg} alt="Pegah Construction project" className="w-full rounded-xl object-cover shadow-lg" />
-            <div>
+            <img
+              src={whatWeDoImg}
+              alt="Pegah Construction project"
+              className="mb-6 w-full rounded-2xl object-cover shadow-xl lg:float-right lg:mb-4 lg:ml-8 lg:w-[44%]"
+            />
+            <section>
+              <div className="accent-bar mb-3" />
+              <h2 className="font-display text-2xl font-bold tracking-tight text-ink">Who we are</h2>
+              <p className="mt-3 text-lg leading-relaxed text-concrete-600">{content.whoWeAre}</p>
+            </section>
+            <section className="mt-8">
+              <div className="accent-bar mb-3" />
+              <h2 className="font-display text-2xl font-bold tracking-tight text-ink">Where we are</h2>
+              <p className="mt-3 text-lg leading-relaxed text-concrete-600">{content.whereWeAre}</p>
+            </section>
+            <section className="mt-8">
+              <div className="accent-bar mb-3" />
               <h2 className="font-display text-2xl font-bold tracking-tight text-ink">What we do</h2>
-              <div className="mt-3 space-y-4 text-lg leading-relaxed text-concrete-500">
+              <div className="mt-3 space-y-4 text-lg leading-relaxed text-concrete-600">
                 {toParagraphs(content.whatWeDo).map((para, i) => <p key={i}>{para}</p>)}
               </div>
-            </div>
-          </section>
+            </section>
+          </div>
         </Reveal>
 
         {/* Pegah Construction Ltd. will */}
         <Reveal>
-          <section>
+          <section className="rounded-2xl border border-concrete-200 bg-white p-7 shadow-sm sm:p-8">
+            <div className="accent-bar mb-3" />
             <h2 className="font-display text-2xl font-bold tracking-tight text-ink">Pegah Construction Ltd. will</h2>
-            <ul className="mt-4 space-y-2.5">
+            <ul className="mt-5 grid gap-4 sm:grid-cols-2">
               {toLines(content.pegahWill).map((item) => (
-                <li key={item} className="flex items-start gap-3 text-lg leading-relaxed text-concrete-500">
-                  <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-500" />
+                <li key={item} className="flex items-start gap-3 leading-relaxed text-concrete-600">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="mt-0.5 h-5 w-5 shrink-0 text-brand-600">
+                    <path d="M20 6 9 17l-5-5" />
+                  </svg>
                   <span>{item}</span>
                 </li>
               ))}
@@ -72,6 +87,7 @@ export default async function AboutPage() {
       {/* Leadership */}
       <section className="mx-auto mt-20 max-w-5xl">
         <Reveal>
+          <div className="accent-bar mb-4" />
           <Eyebrow>Leadership</Eyebrow>
           <h2 className="mt-4 max-w-2xl font-display text-3xl font-bold tracking-tight text-ink lg:text-4xl">
             The people guiding our work.
@@ -125,6 +141,7 @@ export default async function AboutPage() {
       {/* Our team */}
       <section className="mx-auto mt-20 max-w-5xl">
         <Reveal>
+          <div className="accent-bar mb-4" />
           <Eyebrow>Our team</Eyebrow>
           <h2 className="mt-4 max-w-2xl font-display text-3xl font-bold tracking-tight text-ink lg:text-4xl">
             Built by the people behind every project.

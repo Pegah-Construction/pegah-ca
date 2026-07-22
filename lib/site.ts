@@ -23,8 +23,8 @@ export type NavItem = {
 };
 
 export const nav: NavItem[] = [
-  { label: "About", href: "/about" },
-  { label: "Services", href: "/services" },
+  { label: "Home", href: "/" },
+  { label: "About Us", href: "/about" },
   { label: "Projects", href: "/projects" },
   {
     label: "Tenders",
@@ -34,10 +34,9 @@ export const nav: NavItem[] = [
       { label: "Subcontractor Registration", href: "/subcontractors/register" },
     ],
   },
-  { label: "Blog", href: "/blog" },
   { label: "Health & Safety", href: "/safety" },
-  { label: "Careers", href: "/careers" },
-  { label: "Contact", href: "/contact" },
+  { label: "News", href: "/blog" },
+  { label: "Contact Us", href: "/contact" },
 ];
 
 // Memberships / affiliations shown on the Tenders page.
