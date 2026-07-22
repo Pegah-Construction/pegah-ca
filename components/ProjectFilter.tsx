@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import PhotoCarousel from "./PhotoCarousel";
 import Reveal from "./Reveal";
@@ -94,8 +95,16 @@ function ControlSelect({ value, onChange, children }: { value: string; onChange:
 const yearOf = (p: PublicProject) => (p.dateCompleted ? p.dateCompleted.slice(0, 4) : "");
 
 export default function ProjectFilter({ projects }: { projects: PublicProject[] }) {
-  const [filter, setFilter] = useState<FilterKey>("All Projects");
+  const searchParams = useSearchParams();
+  const catParam = searchParams.get("category");
+  const initialFilter: FilterKey =
+    catParam === "Commercial" ? "Commercial" : catParam === "Residential" ? "Residential" : "All Projects";
+
+  const [filter, setFilter] = useState<FilterKey>(initialFilter);
   const [subType, setSubType] = useState("All");
+
+  // Sync the active filter when the ?category= param changes (e.g. via the navbar dropdown).
+  useEffect(() => { setFilter(initialFilter); }, [initialFilter]);
   const [q, setQ] = useState("");
   const [sort, setSort] = useState("filter");
 

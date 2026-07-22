@@ -25,7 +25,14 @@ export type NavItem = {
 export const nav: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
-  { label: "Projects", href: "/projects" },
+  {
+    label: "Projects",
+    href: "/projects",
+    children: [
+      { label: "Commercial", href: "/projects?category=Commercial" },
+      { label: "Residential", href: "/projects?category=Residential" },
+    ],
+  },
   {
     label: "Tenders",
     href: "/tenders",
@@ -46,9 +53,14 @@ export type Affiliation = { name: string; href: string; logo: string };
 
 export const affiliations: Affiliation[] = [
   { name: "OGCA", href: "https://ogca.ca/", logo: "/OGCA%20logo.png" },
+  { name: "Tarion", href: "https://www.tarion.com/", logo: "/Tarion.webp" },
+  { name: "ULI", href: "https://uli.org/", logo: "/ULI.webp" },
+  { name: "BILD", href: "https://bildgta.ca/", logo: "/bild.webp" },
   { name: "IHSA · COR", href: "https://www.ihsa.ca/cor-home", logo: "/IHSA%20logo.png" },
-  { name: "Smartbid", href: "https://smartbid.co/", logo: "/smartbid.png" },
+  { name: "HCRA", href: "https://www.hcraontario.ca/", logo: "/HCRA.webp" },
   { name: "Procore", href: "https://www.procore.com/", logo: "/Procore%20logo.png" },
+  { name: "WSIB", href: "https://www.wsib.ca/", logo: "/WSIB.webp" },
+  { name: "Smartbid", href: "https://smartbid.co/", logo: "/smartbid.png" },
   { name: "Format Group", href: "http://formatgroup.ca/", logo: "/Format%20logo.png" },
 ];
 

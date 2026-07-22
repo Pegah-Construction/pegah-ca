@@ -7,7 +7,7 @@ export function SiteLogo() {
       <img
         src="/logo.webp"
         alt="Pegah Construction Ltd., 35+ years"
-        className="h-14 w-auto sm:h-16"
+        className="h-16 w-auto sm:h-[4.75rem]"
       />
     </Link>
   );

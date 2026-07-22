@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import PartnerStrip from "@/components/PartnerStrip";
 import StatBand from "@/components/StatBand";
 import Intro from "@/components/Intro";
 import FeaturedProjects from "@/components/FeaturedProjects";
@@ -16,6 +17,7 @@ export default function Home() {
       <Navbar />
       <main className="flex-1">
         <Hero />
+        <PartnerStrip />
         <StatBand />
         <Intro />
         <FeaturedProjects />

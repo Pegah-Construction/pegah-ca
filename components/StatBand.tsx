@@ -4,7 +4,7 @@ import Reveal from "./Reveal";
 
 export default function StatBand() {
   return (
-    <section className="relative z-20 mx-auto -mt-16 max-w-8xl px-6 lg:px-10">
+    <section className="relative z-20 mx-auto mt-14 max-w-8xl px-6 lg:px-10">
       <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-concrete-200 bg-concrete-200 shadow-xl shadow-brand-900/10 md:grid-cols-4">
         {stats.map((s, i) => (
           <Reveal key={s.label} delay={i * 80} direction="up" className="h-full">
