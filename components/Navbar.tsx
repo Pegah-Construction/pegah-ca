@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { nav, company } from "@/lib/site";
+import { nav } from "@/lib/site";
 import { SiteLogo } from "./Brand";
 import { useAuth } from "@/lib/auth";
+import { useSiteSettings } from "@/lib/use-settings";
+import { telHref } from "@/lib/settings";
 
 const PALETTE = ["bg-brand-700", "bg-brand-500", "bg-brand-800", "bg-concrete-500", "bg-brand-600"];
 
@@ -22,6 +24,7 @@ function UserAvatar({ name, id }: { name: string; id: string }) {
 export default function Navbar() {
   const pathname = usePathname();
   const { user } = useAuth();
+  const s = useSiteSettings();
   const [menuOpen, setMenuOpen] = useState(false);
 
   // Close the mobile menu whenever the route changes.
@@ -104,16 +107,16 @@ export default function Navbar() {
 
         <div className="ml-auto flex items-center gap-4 sm:gap-5">
           <a
-            href={company.phoneHref}
+            href={telHref(s.phone)}
             className="hidden items-center gap-2 font-display text-sm font-semibold text-ink transition-colors hover:text-brand-700 lg:inline-flex"
           >
             <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
               <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.24.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
             </svg>
-            TEL: {company.phone}
+            TEL: {s.phone}
           </a>
           <a
-            href={`mailto:${company.estimatingEmail}`}
+            href={`mailto:${s.estimatingEmail}`}
             className="hidden whitespace-nowrap rounded-md bg-ink px-4 py-2 font-display text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-ink/90 sm:inline-flex"
           >
             Email Estimating
@@ -176,16 +179,16 @@ export default function Navbar() {
 
             <li className="!mt-3 flex flex-col gap-3 border-t border-concrete-200 pt-4">
               <a
-                href={`mailto:${company.estimatingEmail}`}
+                href={`mailto:${s.estimatingEmail}`}
                 className="rounded-md bg-ink px-4 py-2 text-center font-display text-sm font-bold uppercase tracking-wide text-white hover:bg-ink/90"
               >
                 Email Estimating
               </a>
-              <a href={company.phoneHref} className="flex items-center justify-center gap-2 font-display text-sm font-semibold text-ink">
+              <a href={telHref(s.phone)} className="flex items-center justify-center gap-2 font-display text-sm font-semibold text-ink">
                 <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
                   <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.24.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
                 </svg>
-                TEL: {company.phone}
+                TEL: {s.phone}
               </a>
             </li>
           </ul>

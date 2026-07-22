@@ -1,7 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import { LogoMark } from "./Brand";
 import AffiliationLogo from "./AffiliationLogo";
 import { nav, company, affiliations } from "@/lib/site";
+import { useSiteSettings } from "@/lib/use-settings";
+import { telHref } from "@/lib/settings";
 
 // Partners shown in the footer strip (Smartbid lives on the Tenders page only).
 const footerPartners = [
@@ -12,6 +16,7 @@ const footerPartners = [
 ].filter(Boolean) as typeof affiliations;
 
 export default function Footer() {
+  const s = useSiteSettings();
   return (
     <footer className="bg-ink text-concrete-200">
       <div className="mx-auto grid max-w-8xl gap-12 px-6 py-16 lg:grid-cols-12 lg:px-10">
@@ -46,19 +51,19 @@ export default function Footer() {
             Contact
           </h3>
           <address className="mt-4 space-y-1 not-italic leading-relaxed text-concrete-200">
-            <div>{company.address.line1}</div>
-            <div>{company.address.line2}</div>
+            <div>{s.addressLine1}</div>
+            <div>{s.addressLine2}</div>
             <a
-              href={company.phoneHref}
+              href={telHref(s.phone)}
               className="mt-3 block transition-colors hover:text-white"
             >
-              {company.phone}
+              {s.phone}
             </a>
             <a
-              href={`mailto:${company.email}`}
+              href={`mailto:${s.email}`}
               className="block transition-colors hover:text-white"
             >
-              {company.email}
+              {s.email}
             </a>
           </address>
         </div>
@@ -96,7 +101,7 @@ export default function Footer() {
       <div className="border-t border-white/10">
         <div className="mx-auto grid max-w-8xl grid-cols-1 items-center gap-3 px-6 py-6 sm:grid-cols-3 lg:px-10">
           <p className="text-center font-mono text-xs text-concrete-300 sm:text-left">
-            © {new Date().getFullYear()} {company.name}
+            © {new Date().getFullYear()} {s.companyName}
           </p>
           <p className="text-center font-mono text-xs text-concrete-300">
             For our development projects visit{" "}

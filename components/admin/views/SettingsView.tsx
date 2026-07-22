@@ -5,16 +5,16 @@ import { useAuth } from "@/lib/auth";
 import { PERMS } from "@/lib/admin";
 import { Card, Spinner } from "../ui";
 import { getStorageUrl } from "@/lib/storage-url";
+import { SETTINGS_DEFAULTS } from "@/lib/settings";
 
-type OrgSettings = { companyName: string; phone: string; email: string; address: string };
+type OrgSettings = {
+  companyName: string; phone: string; email: string; estimatingEmail: string;
+  addressLine1: string; addressLine2: string;
+  contactTitle: string; contactIntro: string;
+};
 type HeroImage = { id: number; path: string; order: number };
 
-const DEFAULTS: OrgSettings = {
-  companyName: "Pegah Construction Ltd.",
-  phone: "416 739 9300",
-  email: "info@pegah.ca",
-  address: "5050 Dufferin Street, Toronto",
-};
+const DEFAULTS = SETTINGS_DEFAULTS as unknown as OrgSettings;
 
 function Field({ label, value, disabled, onChange }: { label: string; value: string; disabled: boolean; onChange?: (v: string) => void }) {
   return (
@@ -125,7 +125,16 @@ export default function SettingsView() {
             <Field label="Company name" value={form.companyName} disabled={locked} onChange={set("companyName")} />
             <Field label="Main phone" value={form.phone} disabled={locked} onChange={set("phone")} />
             <Field label="Email" value={form.email} disabled={locked} onChange={set("email")} />
-            <Field label="Head office" value={form.address} disabled={locked} onChange={set("address")} />
+            <Field label="Estimating email" value={form.estimatingEmail} disabled={locked} onChange={set("estimatingEmail")} />
+          </div>
+        </Card>
+
+        <Card title="Contact page">
+          <div className="grid gap-5 p-5 sm:grid-cols-2">
+            <Field label="Heading" value={form.contactTitle} disabled={locked} onChange={set("contactTitle")} />
+            <Field label="Intro" value={form.contactIntro} disabled={locked} onChange={set("contactIntro")} />
+            <Field label="Address line 1" value={form.addressLine1} disabled={locked} onChange={set("addressLine1")} />
+            <Field label="Address line 2" value={form.addressLine2} disabled={locked} onChange={set("addressLine2")} />
           </div>
         </Card>
 

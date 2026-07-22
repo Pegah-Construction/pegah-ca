@@ -1,15 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PageShell from "@/components/PageShell";
 import Reveal from "@/components/Reveal";
-import { company } from "@/lib/site";
+import { SETTINGS_DEFAULTS, telHref } from "@/lib/settings";
 
 type Status = "idle" | "sending" | "sent" | "error";
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: "", email: "", company: "", message: "" });
   const [status, setStatus] = useState<Status>("idle");
+  const [s, setS] = useState<Record<string, string>>(SETTINGS_DEFAULTS);
+
+  useEffect(() => {
+    fetch("/api/settings")
+      .then((r) => r.json())
+      .then((data) => setS({ ...SETTINGS_DEFAULTS, ...data }))
+      .catch(() => {});
+  }, []);
 
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -29,11 +37,7 @@ export default function ContactPage() {
   };
 
   return (
-    <PageShell
-      eyebrow="Get in touch"
-      title="Let's build something."
-      intro="Tell us about your project and our team will get back to you."
-    >
+    <PageShell eyebrow="Get in touch" title={s.contactTitle} intro={s.contactIntro}>
       <div className="grid gap-12 lg:grid-cols-2">
         <Reveal direction="left">
           {status === "sent" ? (
@@ -106,21 +110,21 @@ export default function ContactPage() {
             <div>
               <h3 className="font-mono text-[11px] uppercase tracking-label text-concrete-500">Office</h3>
               <p className="mt-2 leading-relaxed text-ink">
-                {company.address.line1}<br />{company.address.line2}
+                {s.addressLine1}<br />{s.addressLine2}
               </p>
             </div>
             <div>
               <h3 className="font-mono text-[11px] uppercase tracking-label text-concrete-500">Phone</h3>
-              <a href={company.phoneHref} className="mt-2 block text-ink hover:text-brand-700">{company.phone}</a>
+              <a href={telHref(s.phone)} className="mt-2 block text-ink hover:text-brand-700">{s.phone}</a>
             </div>
             <div>
               <h3 className="font-mono text-[11px] uppercase tracking-label text-concrete-500">Email</h3>
-              <a href={`mailto:${company.email}`} className="mt-2 block text-ink hover:text-brand-700">{company.email}</a>
+              <a href={`mailto:${s.email}`} className="mt-2 block text-ink hover:text-brand-700">{s.email}</a>
             </div>
             <div className="max-w-[340px] overflow-hidden rounded-xl border border-concrete-200">
               <iframe
                 title="Pegah Construction Ltd. office location"
-                src={`https://maps.google.com/maps?q=${encodeURIComponent(`${company.address.line1}, ${company.address.line2}`)}&z=15&output=embed`}
+                src={`https://maps.google.com/maps?q=${encodeURIComponent(`${s.addressLine1}, ${s.addressLine2}`)}&z=15&output=embed`}
                 className="aspect-square w-full"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
