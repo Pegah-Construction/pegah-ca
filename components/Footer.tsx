@@ -94,11 +94,11 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-white/10">
-        <div className="mx-auto flex max-w-8xl flex-wrap items-center justify-between gap-4 px-6 py-6 lg:px-10">
-          <p className="font-mono text-xs text-concrete-300">
+        <div className="mx-auto grid max-w-8xl grid-cols-1 items-center gap-3 px-6 py-6 sm:grid-cols-3 lg:px-10">
+          <p className="text-center font-mono text-xs text-concrete-300 sm:text-left">
             © {new Date().getFullYear()} {company.name}
           </p>
-          <p className="font-mono text-xs text-concrete-300">
+          <p className="text-center font-mono text-xs text-concrete-300">
             For our development projects visit{" "}
             <a
               href="https://www.formatgroup.ca"
@@ -109,12 +109,7 @@ export default function Footer() {
               www.formatgroup.ca
             </a>
           </p>
-          <Link
-            href="/admin"
-            className="font-mono text-xs text-concrete-300 transition-colors hover:text-white"
-          >
-            Staff login →
-          </Link>
+          <span className="hidden sm:block" />
         </div>
       </div>
     </footer>

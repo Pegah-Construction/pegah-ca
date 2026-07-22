@@ -4,7 +4,7 @@ export const company = {
   name: "Pegah Construction Ltd.",
   shortName: "Pegah",
   established: "1988",
-  phone: "416 739 9300",
+  phone: "(416) 739-9300",
   phoneHref: "tel:+14167399300",
   email: "info@pegah.ca",
   estimatingEmail: "estimating@pegah.ca",

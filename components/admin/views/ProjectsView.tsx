@@ -68,6 +68,7 @@ export default function ProjectsView() {
   const [q, setQ] = useState("");
   const [fCategory, setFCategory] = useState("All");
   const [fYear, setFYear] = useState("All");
+  const [fType, setFType] = useState("All");
   const [sort, setSort] = useState("completed-desc");
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 10;
@@ -82,11 +83,17 @@ export default function ProjectsView() {
 
   useEffect(() => {
     if (!user) return;
-    fetch(`/api/projects?userId=${user.id}`).then((r) => r.json()).then(setProjects);
+    fetch(`/api/projects?userId=${user.id}`)
+      .then((r) => r.json())
+      .then((d) => setProjects(Array.isArray(d) ? d : []))
+      .catch(() => setProjects([]));
   }, [user]);
 
   // Reset to the first page whenever the filters, search, or sort change.
-  useEffect(() => { setPage(1); }, [q, fCategory, fYear, sort]);
+  useEffect(() => { setPage(1); }, [q, fCategory, fYear, fType, sort]);
+
+  // The Type filter only applies to Commercial; reset it when leaving Commercial.
+  useEffect(() => { if (fCategory !== "Commercial") setFType("All"); }, [fCategory]);
 
   const resetPhotos = () => {
     previews.forEach((url) => URL.revokeObjectURL(url));
@@ -243,12 +250,17 @@ export default function ProjectsView() {
   // Filter options derived from the actual data.
   const categoryOptions = Array.from(new Set(projects.map((p) => p.category).filter(Boolean))).sort() as string[];
   const yearOptions = Array.from(new Set(projects.map(yearOf).filter(Boolean))).sort((a, b) => b.localeCompare(a));
+  // Purpose types apply to commercial (non-residential) projects only.
+  const typeOptions = Array.from(
+    new Set(projects.filter((p) => p.category !== "Residential").map((p) => p.type).filter(Boolean))
+  ).sort() as string[];
 
   const needle = q.trim().toLowerCase();
   const filtered = projects.filter((x) => {
     if (needle && ![x.name, x.location, x.type, x.contractType].some((v) => (v ?? "").toLowerCase().includes(needle))) return false;
     if (fCategory !== "All" && x.category !== fCategory) return false;
     if (fYear !== "All" && yearOf(x) !== fYear) return false;
+    if (fType !== "All" && x.type !== fType) return false;
     return true;
   });
 
@@ -273,8 +285,8 @@ export default function ProjectsView() {
   const currentPage = Math.min(page, totalPages);
   const paged = sorted.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
-  const hasFilters = fCategory !== "All" || fYear !== "All";
-  const clearFilters = () => { setFCategory("All"); setFYear("All"); };
+  const hasFilters = fCategory !== "All" || fYear !== "All" || fType !== "All";
+  const clearFilters = () => { setFCategory("All"); setFYear("All"); setFType("All"); };
 
   return (
     <>
@@ -289,6 +301,12 @@ export default function ProjectsView() {
             <option value="All">All categories</option>
             {categoryOptions.map((c) => <option key={c} value={c}>{c}</option>)}
           </FilterSelect>
+          {fCategory === "Commercial" && (
+            <FilterSelect value={fType} onChange={setFType}>
+              <option value="All">All types</option>
+              {typeOptions.map((t) => <option key={t} value={t}>{t}</option>)}
+            </FilterSelect>
+          )}
           <FilterSelect value={fYear} onChange={setFYear}>
             <option value="All">All years</option>
             {yearOptions.map((y) => <option key={y} value={y}>{y}</option>)}

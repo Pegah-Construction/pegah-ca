@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import PhotoCarousel from "./PhotoCarousel";
 import Reveal from "./Reveal";
+import FormatPartner from "./FormatPartner";
 
 export type PublicProject = {
   id: string;
@@ -37,7 +38,7 @@ const SECTIONS: {
     key: "Residential",
     heading: "Residential Projects",
     intro: "Discover our residential construction and development projects, built with quality workmanship and attention to detail.",
-    logo: "/format-logo.svg",
+    logo: "/format-group.svg",
     match: (p) => p.category === "Residential",
   },
 ];
@@ -216,18 +217,7 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
                     <h2 className="font-display text-3xl font-black tracking-tight text-ink lg:text-4xl">{section.heading}</h2>
                     <p className="mt-2 max-w-2xl text-lg leading-relaxed text-concrete-500">{section.intro}</p>
                   </div>
-                  {section.logo && (
-                    <a
-                      href="https://www.formatgroup.ca"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      title="Format Group"
-                      className="shrink-0 transition-opacity hover:opacity-80"
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={section.logo} alt="Format Group" className="h-14 w-auto object-contain sm:mt-1 sm:h-20" />
-                    </a>
-                  )}
+                  {section.logo && <FormatPartner className="shrink-0 sm:mt-1" />}
                 </div>
               </Reveal>
 

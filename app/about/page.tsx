@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
 import { Eyebrow } from "@/components/Brand";
 import Reveal from "@/components/Reveal";
+import FormatPartner from "@/components/FormatPartner";
 import { db } from "@/lib/db";
 import { getStorageUrl } from "@/lib/storage-url";
 import { mergeAboutContent, toParagraphs, toLines } from "@/lib/about-content";
@@ -151,14 +152,7 @@ export default async function AboutPage() {
       <section className="mx-auto mt-20 max-w-5xl space-y-4 border-t border-concrete-200 pt-8">
         <Reveal>
           <p className="text-lg leading-relaxed text-concrete-500">{content.closing}</p>
-          <p className="mt-4 text-lg leading-relaxed text-concrete-500">For our development projects please visit:</p>
-          <a href="https://www.formatgroup.ca" target="_blank" rel="noopener noreferrer" className="mt-4 inline-block">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/Format%20logo.png" alt="Format Group" className="h-16 w-auto" />
-          </a>
-          <a href="https://www.formatgroup.ca" target="_blank" rel="noopener noreferrer" className="mt-2 block font-mono text-sm text-brand-700 underline underline-offset-2 hover:text-brand-800">
-            www.formatgroup.ca
-          </a>
+          <FormatPartner className="mt-6" />
         </Reveal>
       </section>
     </PageShell>

@@ -21,7 +21,7 @@ function UserAvatar({ name, id }: { name: string; id: string }) {
 
 export default function Navbar() {
   const pathname = usePathname();
-  const { user, ready } = useAuth();
+  const { user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
 
   // Close the mobile menu whenever the route changes.
@@ -102,21 +102,22 @@ export default function Navbar() {
           })}
         </ul>
 
-        <div className="ml-auto flex items-center gap-3 sm:gap-5">
+        <div className="ml-auto flex items-center gap-4 sm:gap-5">
           <a
             href={company.phoneHref}
-            className="hidden font-mono text-xs tracking-wide text-concrete-500 lg:inline"
+            className="hidden items-center gap-2 font-display text-sm font-semibold text-ink transition-colors hover:text-brand-700 lg:inline-flex"
           >
-            {company.phone}
+            <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
+              <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.24.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+            </svg>
+            TEL: {company.phone}
           </a>
-          {ready && !user && (
-            <Link
-              href="/admin"
-              className="hidden whitespace-nowrap rounded-md border border-concrete-200 px-4 py-2 font-display text-sm font-semibold text-ink transition-colors hover:bg-concrete-50 sm:inline-flex"
-            >
-              Login
-            </Link>
-          )}
+          <a
+            href={`mailto:${company.estimatingEmail}`}
+            className="hidden whitespace-nowrap rounded-md bg-ink px-4 py-2 font-display text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-ink/90 sm:inline-flex"
+          >
+            Email Estimating
+          </a>
           {user && (
             <Link href="/admin" title="Go to dashboard">
               <UserAvatar name={user.name} id={user.id} />
@@ -173,14 +174,18 @@ export default function Navbar() {
               );
             })}
 
-            <li className="!mt-3 flex flex-wrap items-center gap-3 border-t border-concrete-200 pt-4">
-              {ready && !user && (
-                <Link href="/admin" className="rounded-md border border-concrete-200 px-4 py-2 font-display text-sm font-semibold text-ink hover:bg-concrete-50">
-                  Login
-                </Link>
-              )}
-              <a href={company.phoneHref} className="ml-auto font-mono text-xs tracking-wide text-concrete-500">
-                {company.phone}
+            <li className="!mt-3 flex flex-col gap-3 border-t border-concrete-200 pt-4">
+              <a
+                href={`mailto:${company.estimatingEmail}`}
+                className="rounded-md bg-ink px-4 py-2 text-center font-display text-sm font-bold uppercase tracking-wide text-white hover:bg-ink/90"
+              >
+                Email Estimating
+              </a>
+              <a href={company.phoneHref} className="flex items-center justify-center gap-2 font-display text-sm font-semibold text-ink">
+                <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
+                  <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.24.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+                </svg>
+                TEL: {company.phone}
               </a>
             </li>
           </ul>
