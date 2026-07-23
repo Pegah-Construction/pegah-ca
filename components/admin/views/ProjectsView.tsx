@@ -279,8 +279,7 @@ export default function ProjectsView() {
   const currentPage = Math.min(page, totalPages);
   const paged = sorted.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
-  const hasFilters = fCategory !== "All" || fType !== "All";
-  const clearFilters = () => { setFCategory("All"); setFType("All"); };
+  const clearFilters = () => { setFCategory("All"); setFType("All"); setSort("filter"); setQ(""); };
 
   return (
     <>
@@ -301,14 +300,12 @@ export default function ProjectsView() {
               {typeOptions.map((t) => <option key={t} value={t}>{t}</option>)}
             </FilterSelect>
           )}
-          {hasFilters && (
-            <button
-              onClick={clearFilters}
-              className="font-display text-xs font-semibold text-brand-700 hover:text-brand-800"
-            >
-              Clear
-            </button>
-          )}
+          <button
+            onClick={clearFilters}
+            className="font-display text-xs font-medium text-concrete-500 transition-colors hover:text-ink hover:underline"
+          >
+            Clear filters
+          </button>
           <div className="ml-auto flex items-center gap-2.5">
             <FilterSelect value={sort} onChange={setSort} active={sort !== "filter"} widthCls="w-auto">
               <option value="filter">Filter</option>
