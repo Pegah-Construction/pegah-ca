@@ -30,7 +30,7 @@ export default async function AboutPage() {
             {stats.map((st) => (
               <div key={st.label} className="text-center">
                 <div className="font-display text-3xl font-black tracking-tight text-brand-700 lg:text-4xl">{st.value}</div>
-                <div className="mt-1 font-mono text-[11px] uppercase tracking-label text-concrete-500">{st.label}</div>
+                <div className="mt-1 font-mono text-[11px] uppercase tracking-label text-accent-700">{st.label}</div>
               </div>
             ))}
           </div>
@@ -113,7 +113,7 @@ export default async function AboutPage() {
                     </div>
                   )}
                   <h3 className="mt-3 font-display text-lg font-bold tracking-tight text-ink">{person.name}</h3>
-                  <p className="font-mono text-[11px] uppercase tracking-label text-brand-700">{person.title}</p>
+                  <p className="font-mono text-[11px] font-bold uppercase tracking-label text-accent-700">{person.title}</p>
                   {person.bio && <p className="mt-2 text-sm leading-relaxed text-concrete-500">{person.bio}</p>}
                 </div>
               </Reveal>
@@ -130,7 +130,7 @@ export default async function AboutPage() {
                     </svg>
                   </div>
                   <h3 className="mt-3 font-display text-lg font-bold tracking-tight text-concrete-300">—</h3>
-                  <p className="font-mono text-[11px] uppercase tracking-label text-concrete-400">{title}</p>
+                  <p className="font-mono text-[11px] font-bold uppercase tracking-label text-accent-700">{title}</p>
                 </div>
               </Reveal>
             ))}

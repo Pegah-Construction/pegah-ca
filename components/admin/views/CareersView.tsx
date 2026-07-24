@@ -140,7 +140,7 @@ export default function CareersView() {
                 <td className="px-5 py-3 text-sm text-concrete-600">{j.department || "—"}</td>
                 <td className="px-5 py-3 text-sm text-concrete-600">{j.location}</td>
                 <td className="px-5 py-3">
-                  <span className="rounded-full bg-brand-50 px-2.5 py-1 font-mono text-[10px] uppercase tracking-label text-brand-700">{j.type}</span>
+                  <span className="rounded-full bg-brand-50 px-2.5 py-1 font-mono text-[10px] uppercase tracking-label text-accent-700">{j.type}</span>
                 </td>
                 <td className="px-5 py-3">
                   <Pill text={j.status} tone={statusTone(j.status)} />

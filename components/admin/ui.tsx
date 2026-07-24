@@ -60,7 +60,7 @@ export function Avatar({ name, id, size = "h-9 w-9 text-xs" }: { name: string; i
 export function StatCard({ label, value, hint }: { label: string; value: React.ReactNode; hint?: React.ReactNode }) {
   return (
     <div className="rounded-xl border border-concrete-200 bg-white p-5">
-      <div className="font-mono text-[11px] uppercase tracking-label text-concrete-500">{label}</div>
+      <div className="font-mono text-[11px] uppercase tracking-label text-accent-700">{label}</div>
       <div className="mt-2 font-display text-3xl font-black tracking-tight text-ink">{value}</div>
       {hint ? <div className="mt-1 text-sm text-concrete-500">{hint}</div> : null}
     </div>

@@ -67,7 +67,7 @@ export default function ContactPage() {
                 { label: "Company", key: "company", type: "text", required: false },
               ].map(({ label, key, type, required }) => (
                 <div key={key}>
-                  <label className="font-mono text-xs uppercase tracking-label text-concrete-500">
+                  <label className="font-mono text-xs uppercase tracking-label text-accent-700">
                     {label}{required && <span className="ml-0.5 text-red-500">*</span>}
                   </label>
                   <input
@@ -80,7 +80,7 @@ export default function ContactPage() {
                 </div>
               ))}
               <div>
-                <label className="font-mono text-xs uppercase tracking-label text-concrete-500">
+                <label className="font-mono text-xs uppercase tracking-label text-accent-700">
                   Project details<span className="ml-0.5 text-red-500">*</span>
                 </label>
                 <textarea
@@ -108,17 +108,17 @@ export default function ContactPage() {
         <Reveal direction="right" delay={100}>
           <div className="space-y-6">
             <div>
-              <h3 className="font-mono text-[11px] uppercase tracking-label text-concrete-500">Office</h3>
+              <h3 className="font-mono text-[11px] uppercase tracking-label text-accent-700">Office</h3>
               <p className="mt-2 leading-relaxed text-ink">
                 {s.addressLine1}<br />{s.addressLine2}
               </p>
             </div>
             <div>
-              <h3 className="font-mono text-[11px] uppercase tracking-label text-concrete-500">Phone</h3>
+              <h3 className="font-mono text-[11px] uppercase tracking-label text-accent-700">Phone</h3>
               <a href={telHref(s.phone)} className="mt-2 block text-ink hover:text-brand-700">{s.phone}</a>
             </div>
             <div>
-              <h3 className="font-mono text-[11px] uppercase tracking-label text-concrete-500">Email</h3>
+              <h3 className="font-mono text-[11px] uppercase tracking-label text-accent-700">Email</h3>
               <a href={`mailto:${s.email}`} className="mt-2 block text-ink hover:text-brand-700">{s.email}</a>
             </div>
             <div className="max-w-[340px] overflow-hidden rounded-xl border border-concrete-200">

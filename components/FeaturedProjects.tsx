@@ -78,7 +78,7 @@ export default async function FeaturedProjects() {
                   </div>
                   <div className={flipped ? "lg:order-1" : "lg:order-2"}>
                     {p.type && (
-                      <span className="inline-flex rounded-full bg-brand-50 px-3 py-1 font-mono text-[11px] uppercase tracking-label text-brand-700">
+                      <span className="inline-flex rounded-full bg-brand-50 px-3 py-1 font-mono text-[11px] uppercase tracking-label text-accent-700">
                         {p.type}
                       </span>
                     )}

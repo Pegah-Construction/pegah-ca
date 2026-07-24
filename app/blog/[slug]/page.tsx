@@ -180,7 +180,7 @@ export default async function BlogPost({ params }: Props) {
           <section className="border-t border-concrete-200 bg-white">
             <Reveal className="mx-auto flex max-w-4xl flex-col gap-4 px-6 py-14 sm:flex-row sm:items-center sm:justify-between lg:px-10">
               <div>
-                <p className="font-mono text-[11px] uppercase tracking-label text-concrete-500">
+                <p className="font-mono text-[11px] uppercase tracking-label text-accent-700">
                   Next article
                 </p>
                 <Link

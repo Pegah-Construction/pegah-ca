@@ -63,30 +63,22 @@
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
     box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform, box-shadow;
-  box-shadow: 0 1px 2px rgba(15, 31, 77, 0.055);
+  /* Crisp hairline edge + a soft resting shadow for a calmer, more refined look. */
+  box-shadow: 0 0 0 1px rgba(15, 31, 77, 0.16), 0 12px 30px -8px rgba(15, 31, 77, 0.24);
 }
 
-/* Zoom the cover image slowly while its section is hovered */
+/* Zoom the cover image slowly while the card is hovered */
 .blog-card-media > * {
   transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.blog-card-media:hover > * {
+.blog-card:hover .blog-card-media > * {
   transform: scale(1.06);
 }
 
-/* Entering the image section elevates the whole card: the box-shadow
-   grows and the card lifts, so it clearly reads as rising off the page. */
-.blog-card:has(.blog-card-media:hover) {
+/* Hovering anywhere on the card lifts it off the page with a growing shadow. */
+.blog-card:hover {
   transform: translateY(-12px);
   box-shadow: 0 30px 55px -12px rgba(15, 31, 77, 0.5);
-}
-
-/* Fallback for engines without :has() — elevate on whole-card hover */
-@supports not selector(:has(*)) {
-  .blog-card:hover {
-    transform: translateY(-12px);
-    box-shadow: 0 30px 55px -12px rgba(15, 31, 77, 0.5);
-  }
 }
 
 /* ── Project image-card elevation ──
@@ -100,7 +92,8 @@
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
     box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform, box-shadow;
-  box-shadow: 0 1px 2px rgba(15, 31, 77, 0.055);
+  /* Crisp hairline edge + a soft resting shadow for a calmer, more refined look. */
+  box-shadow: 0 0 0 1px rgba(15, 31, 77, 0.16), 0 12px 30px -8px rgba(15, 31, 77, 0.24);
 }
 .img-card:hover {
   transform: scale(1.14);
@@ -132,7 +125,7 @@
 @layer components {
   /* Tracked uppercase eyebrow label */
   .eyebrow {
-    @apply font-display text-sm font-bold uppercase tracking-label text-brand-700;
+    @apply font-display text-sm font-bold uppercase tracking-label text-accent-700;
   }
 
   /* Soft brand-tinted glow + blueprint grid for page heroes. */
@@ -167,7 +160,9 @@
 
   /* Reusable elevated card with hover lift. */
   .card-elevated {
-    @apply rounded-2xl border border-concrete-200 bg-white shadow-sm;
+    @apply rounded-2xl border border-concrete-200 bg-white;
+    /* Crisp hairline + soft resting shadow — a calmer, more refined card. */
+    box-shadow: 0 0 0 1px rgba(15, 31, 77, 0.14), 0 12px 30px -8px rgba(15, 31, 77, 0.24);
     transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .card-elevated:hover {
@@ -175,10 +170,10 @@
     box-shadow: 0 24px 45px -18px rgba(15, 31, 77, 0.35);
   }
 
-  /* Small brand gradient accent bar for section/hero headings. */
+  /* Small safety-amber gradient accent bar for section/hero headings. */
   .accent-bar {
     @apply h-1.5 w-14 rounded-full;
-    background-image: linear-gradient(90deg, #1f3a93, #5c7ccd);
+    background-image: linear-gradient(90deg, #c0730f, #e08a1e);
   }
 
   /* Striped placeholder used by <ImageSlot /> */

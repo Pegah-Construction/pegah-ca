@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { stats } from "@/lib/site";
 import Reveal from "./Reveal";
 
@@ -15,7 +15,7 @@ export default function StatBand() {
               <span className="font-display text-4xl font-black tracking-tight text-brand-800 lg:text-5xl">
                 {s.value}
               </span>
-              <span className="mt-2 font-mono text-[11px] uppercase tracking-label text-concrete-500">
+              <span className="mt-2 font-mono text-[11px] uppercase tracking-label text-accent-700">
                 {s.label}
               </span>
             </Link>

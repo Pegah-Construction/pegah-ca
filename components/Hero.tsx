@@ -20,7 +20,8 @@ export default async function Hero() {
       )}
 
       <div className="mx-auto w-full max-w-8xl px-6 py-20 lg:px-10">
-        <div className="hero-animate max-w-lg bg-white p-8 shadow-2xl sm:p-10" style={{ animationDelay: "80ms" }}>
+        <div className="hero-animate max-w-lg bg-white/95 p-8 shadow-xl ring-1 ring-black/5 backdrop-blur-sm sm:p-10" style={{ animationDelay: "80ms" }}>
+          <div className="accent-bar mb-6" />
           <p className="font-display text-xs font-bold uppercase tracking-[0.25em] text-concrete-500">
             {s.heroEyebrow}
           </p>

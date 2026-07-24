@@ -38,7 +38,7 @@ export default async function TendersPage() {
           <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 90% 80% at 70% 30%, #1f3a93, #0f1f4d)" }} />
           <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%)", backgroundSize: "24px 24px" }} />
           <div className="relative mx-auto w-full max-w-8xl px-6 pb-16 pt-40 lg:px-10">
-            <p className="hero-animate font-mono text-[11px] uppercase tracking-label text-brand-300" style={{ animationDelay: "0ms" }}>
+            <p className="hero-animate font-mono text-[11px] uppercase tracking-label text-accent-400" style={{ animationDelay: "0ms" }}>
               Bid Opportunities
             </p>
             <h1 className="hero-animate mt-3 font-display text-5xl font-black tracking-tight text-white lg:text-7xl" style={{ animationDelay: "120ms" }}>
@@ -73,7 +73,7 @@ export default async function TendersPage() {
           <Reveal>
             <div className="mb-10 flex items-end justify-between">
               <div>
-                <p className="font-mono text-[11px] uppercase tracking-label text-concrete-500">Current opportunities</p>
+                <p className="font-mono text-[11px] uppercase tracking-label text-accent-700">Current opportunities</p>
                 <h2 className="mt-2 font-display text-3xl font-black tracking-tight text-ink lg:text-4xl">Active Bids</h2>
               </div>
               <a href="/subcontractors/register" className="hidden shrink-0 rounded-md bg-brand-700 px-5 py-2.5 font-display text-sm font-semibold text-white transition-colors hover:bg-brand-800 sm:inline-flex">
@@ -103,14 +103,14 @@ export default async function TendersPage() {
           <div className="mx-auto max-w-8xl px-6 py-20 lg:px-10">
             <Reveal>
               <div className="mb-10">
-                <p className="font-mono text-[11px] uppercase tracking-label text-concrete-500">Get in touch</p>
+                <p className="font-mono text-[11px] uppercase tracking-label text-accent-700">Get in touch</p>
                 <h2 className="mt-2 font-display text-3xl font-black tracking-tight text-ink lg:text-4xl">Estimating Team</h2>
               </div>
             </Reveal>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               <Reveal direction="up" delay={80} className="h-full">
                 <div className="h-full rounded-xl border border-concrete-200 bg-paper p-8">
-                  <p className="font-mono text-[11px] uppercase tracking-label text-brand-600">Head Office, Toronto</p>
+                  <p className="font-mono text-[11px] uppercase tracking-label text-accent-700">Head Office, Toronto</p>
                   <h3 className="mt-3 font-display text-xl font-bold text-ink">Pegah Construction Ltd.</h3>
                   <address className="mt-4 space-y-3 not-italic">
                     <p className="text-sm leading-relaxed text-concrete-500">{company.address.line1}<br />{company.address.line2}</p>
@@ -133,7 +133,7 @@ export default async function TendersPage() {
               </Reveal>
               <Reveal direction="up" delay={160} className="sm:col-span-2 lg:col-span-2">
                 <div className="h-full rounded-xl border border-brand-200 bg-brand-50 p-8">
-                  <p className="font-mono text-[11px] uppercase tracking-label text-brand-600">Submit a quote</p>
+                  <p className="font-mono text-[11px] uppercase tracking-label text-accent-700">Submit a quote</p>
                   <h3 className="mt-3 font-display text-xl font-bold text-ink">Ready to bid on a project?</h3>
                   <p className="mt-3 max-w-xl text-sm leading-relaxed text-concrete-600">
                     Contact our estimating team to receive bid packages, RFQ documentation, and site visit information for any active tender listed above. Please have your company name and trade division ready when you call.
@@ -156,7 +156,7 @@ export default async function TendersPage() {
         <section className="grid-surface border-t border-concrete-200">
           <div className="mx-auto max-w-8xl px-6 py-16 lg:px-10">
             <Reveal>
-              <p className="text-center font-mono text-[11px] uppercase tracking-label text-concrete-500">Memberships &amp; Affiliations</p>
+              <p className="text-center font-mono text-[11px] uppercase tracking-label text-accent-700">Memberships &amp; Affiliations</p>
               <h2 className="mt-2 text-center font-display text-2xl font-bold tracking-tight text-ink lg:text-3xl">
                 Trusted partners &amp; certifications
               </h2>
@@ -194,7 +194,7 @@ export default async function TendersPage() {
             <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
               <Reveal direction="left">
                 <div>
-                  <p className="font-mono text-[11px] uppercase tracking-label text-brand-300">Subcontractors &amp; Suppliers</p>
+                  <p className="font-mono text-[11px] uppercase tracking-label text-accent-400">Subcontractors &amp; Suppliers</p>
                   <h2 className="mt-3 font-display text-4xl font-black tracking-tight text-white lg:text-5xl">Become a<br />Trade Partner</h2>
                   <p className="mt-5 max-w-lg text-lg leading-relaxed text-brand-100/80">
                     Register in our subcontractor directory and receive project invitations directly from our estimating team. Registration is free and takes less than five minutes.

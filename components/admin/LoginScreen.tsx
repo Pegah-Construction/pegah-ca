@@ -44,7 +44,7 @@ export default function LoginScreen() {
           <p className="mt-1 text-sm text-concrete-500">Welcome back. Sign in to your console.</p>
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <div>
-              <label className="font-mono text-[11px] uppercase tracking-label text-concrete-500">Email</label>
+              <label className="font-mono text-[11px] uppercase tracking-label text-accent-700">Email</label>
               <input
                 required
                 type="email"
@@ -57,7 +57,7 @@ export default function LoginScreen() {
             </div>
             <div>
               <div className="flex items-center justify-between">
-                <label className="font-mono text-[11px] uppercase tracking-label text-concrete-500">Password</label>
+                <label className="font-mono text-[11px] uppercase tracking-label text-accent-700">Password</label>
                 <Link href="/admin/forgot-password" className="font-mono text-[11px] text-brand-700 hover:text-brand-800 hover:underline">
                   Forgot password?
                 </Link>

@@ -53,7 +53,7 @@ export default async function CareersPage() {
             }}
           />
           <div className="relative mx-auto w-full max-w-8xl px-6 pb-16 pt-36 lg:px-10">
-            <p className="hero-animate font-mono text-[11px] uppercase tracking-label text-brand-300" style={{ animationDelay: "0ms" }}>
+            <p className="hero-animate font-mono text-[11px] uppercase tracking-label text-accent-400" style={{ animationDelay: "0ms" }}>
               Join our team
             </p>
             <h1 className="hero-animate mt-3 font-display text-5xl font-black tracking-tight text-white lg:text-7xl" style={{ animationDelay: "120ms" }}>
@@ -111,7 +111,7 @@ export default async function CareersPage() {
               <Reveal>
                 <div className="mb-12 flex items-end justify-between">
                   <div>
-                    <p className="font-mono text-[11px] uppercase tracking-label text-concrete-500">Open positions</p>
+                    <p className="font-mono text-[11px] uppercase tracking-label text-accent-700">Open positions</p>
                     <h2 className="mt-2 font-display text-3xl font-black tracking-tight text-ink lg:text-4xl">
                       {jobs.length} {jobs.length === 1 ? "opening" : "openings"}
                     </h2>
@@ -123,7 +123,7 @@ export default async function CareersPage() {
                 {depts.map((dept, di) => (
                   <Reveal key={dept} delay={di * 80}>
                     <div>
-                      <h3 className="mb-4 font-mono text-[11px] uppercase tracking-label text-concrete-500">
+                      <h3 className="mb-4 font-mono text-[11px] uppercase tracking-label text-accent-700">
                         {dept}
                       </h3>
                       <div className="divide-y divide-concrete-100 overflow-hidden rounded-xl border border-concrete-200 bg-white">
@@ -161,7 +161,7 @@ export default async function CareersPage() {
 
                             {job.requirements && (
                               <div className="mt-4">
-                                <p className="mb-2 font-mono text-[11px] uppercase tracking-label text-concrete-500">Requirements</p>
+                                <p className="mb-2 font-mono text-[11px] uppercase tracking-label text-accent-700">Requirements</p>
                                 <ul className="space-y-1">
                                   {job.requirements.split("\n").filter(Boolean).map((r, i) => (
                                     <li key={i} className="flex items-start gap-2 text-sm text-concrete-600">
@@ -189,7 +189,7 @@ export default async function CareersPage() {
             <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
               <Reveal direction="left">
                 <div>
-                  <p className="font-mono text-[11px] uppercase tracking-label text-brand-300">Don&rsquo;t see a fit?</p>
+                  <p className="font-mono text-[11px] uppercase tracking-label text-accent-400">Don&rsquo;t see a fit?</p>
                   <h2 className="mt-3 font-display text-4xl font-black tracking-tight text-white lg:text-5xl">
                     Send us your résumé
                   </h2>

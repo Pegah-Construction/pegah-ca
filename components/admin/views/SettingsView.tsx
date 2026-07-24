@@ -7,55 +7,69 @@ import { Card, Spinner } from "../ui";
 import { getStorageUrl } from "@/lib/storage-url";
 import { SETTINGS_DEFAULTS } from "@/lib/settings";
 
-type OrgSettings = {
-  companyName: string; phone: string; email: string; estimatingEmail: string;
-  addressLine1: string; addressLine2: string;
-  contactTitle: string; contactIntro: string;
-  heroEyebrow: string; heroTitle: string; heroSubtitle: string;
-  introHeading: string; introText: string;
-  servicesIntro: string; servicesList: string;
-};
+type Settings = Record<string, string>;
 type HeroImage = { id: number; path: string; order: number };
 
-const DEFAULTS = SETTINGS_DEFAULTS as unknown as OrgSettings;
-
-function Field({ label, value, disabled, onChange, multiline }: { label: string; value: string; disabled: boolean; onChange?: (v: string) => void; multiline?: boolean }) {
-  const cls = "mt-2 w-full rounded-md border border-concrete-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-500 disabled:bg-concrete-100 disabled:text-concrete-400";
+function Field({
+  label,
+  value,
+  disabled,
+  onChange,
+  hint,
+}: {
+  label: string;
+  value: string;
+  disabled: boolean;
+  onChange?: (v: string) => void;
+  hint?: string;
+}) {
   return (
     <div>
-      <label className="font-mono text-[11px] uppercase tracking-label text-concrete-500">{label}</label>
-      {multiline ? (
-        <textarea rows={3} value={value} disabled={disabled} onChange={(e) => onChange?.(e.target.value)} className={cls} />
-      ) : (
-        <input value={value} disabled={disabled} onChange={(e) => onChange?.(e.target.value)} className={cls} />
-      )}
+      <label className="font-mono text-[11px] uppercase tracking-label text-accent-700">{label}</label>
+      <input
+        value={value}
+        disabled={disabled}
+        onChange={(e) => onChange?.(e.target.value)}
+        className="mt-2 w-full rounded-md border border-concrete-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-500 disabled:bg-concrete-100 disabled:text-concrete-400"
+      />
+      {hint && <p className="mt-1.5 text-xs text-concrete-400">{hint}</p>}
     </div>
   );
 }
 
-// function ToggleRow({ t, s, defaultOn, locked }: { t: string; s: string; defaultOn: boolean; locked: boolean }) {
-//   const [on, setOn] = useState(defaultOn);
-//   return (
-//     <div className="flex items-center justify-between rounded-lg px-3 py-3">
-//       <div>
-//         <div className="font-display text-sm font-semibold text-ink">{t}</div>
-//         <div className="text-sm text-concrete-500">{s}</div>
-//       </div>
-//       <button
-//         type="button"
-//         disabled={locked}
-//         onClick={() => setOn((v) => !v)}
-//         className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${on ? "bg-brand-600" : "bg-concrete-300"} ${locked ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
-//       >
-//         <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition ${on ? "translate-x-5" : "translate-x-1"}`} />
-//       </button>
-//     </div>
-//   );
-// }
+function TextareaField({
+  label,
+  value,
+  disabled,
+  onChange,
+  rows = 3,
+  hint,
+}: {
+  label: string;
+  value: string;
+  disabled: boolean;
+  onChange?: (v: string) => void;
+  rows?: number;
+  hint?: string;
+}) {
+  return (
+    <div>
+      <label className="font-mono text-[11px] uppercase tracking-label text-accent-700">{label}</label>
+      <textarea
+        value={value}
+        disabled={disabled}
+        rows={rows}
+        onChange={(e) => onChange?.(e.target.value)}
+        className="mt-2 w-full rounded-md border border-concrete-300 bg-white px-4 py-2.5 text-sm leading-relaxed outline-none focus:border-brand-500 disabled:bg-concrete-100 disabled:text-concrete-400"
+      />
+      {hint && <p className="mt-1.5 text-xs text-concrete-400">{hint}</p>}
+    </div>
+  );
+}
 
 export default function SettingsView() {
   const { user } = useAuth();
-  const [form, setForm] = useState<OrgSettings>(DEFAULTS);
+  const [form, setForm] = useState<Settings>({ ...SETTINGS_DEFAULTS });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
@@ -65,14 +79,20 @@ export default function SettingsView() {
   const heroInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    fetch("/api/settings").then((r) => r.json()).then((data) => setForm({ ...DEFAULTS, ...data }));
-    fetch("/api/hero-images").then((r) => r.json()).then(setHeroImages);
+    fetch("/api/settings")
+      .then((r) => r.json())
+      .then((data) => setForm({ ...SETTINGS_DEFAULTS, ...data }))
+      .catch(() => {});
+    fetch("/api/hero-images")
+      .then((r) => r.json())
+      .then((d) => setHeroImages(Array.isArray(d) ? d : []))
+      .catch(() => setHeroImages([]));
   }, []);
 
   if (!user) return null;
   const locked = !PERMS[user.role].editSettings;
 
-  const set = (k: keyof OrgSettings) => (v: string) => setForm((f) => ({ ...f, [k]: v }));
+  const set = (k: string) => (v: string) => setForm((f) => ({ ...f, [k]: v }));
 
   const handleSave = async () => {
     setSaving(true);
@@ -119,45 +139,56 @@ export default function SettingsView() {
     <>
       {locked ? (
         <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          Organization settings are read-only for your role. Contact an administrator to make changes.
+          Site content is read-only for your role. Contact an administrator to make changes.
         </div>
       ) : (
         <div className="mb-6 rounded-lg border border-brand-100 bg-brand-50 px-4 py-3 text-sm text-brand-800">
-          After editing any field below, scroll to the bottom of the page and click <span className="font-semibold">Save changes</span> to publish.
+          Edit any of the content below, then scroll to the bottom of the page and click <strong>Save changes</strong> to publish.
         </div>
       )}
+
       <div className="grid gap-6">
-        <Card title="Organization">
+        <Card title="Organization &amp; contact details">
           <div className="grid gap-5 p-5 sm:grid-cols-2">
             <Field label="Company name" value={form.companyName} disabled={locked} onChange={set("companyName")} />
             <Field label="Main phone" value={form.phone} disabled={locked} onChange={set("phone")} />
             <Field label="Email" value={form.email} disabled={locked} onChange={set("email")} />
             <Field label="Estimating email" value={form.estimatingEmail} disabled={locked} onChange={set("estimatingEmail")} />
-          </div>
-        </Card>
-
-        <Card title="Contact page">
-          <div className="grid gap-5 p-5 sm:grid-cols-2">
-            <Field label="Heading" value={form.contactTitle} disabled={locked} onChange={set("contactTitle")} />
-            <Field label="Intro" value={form.contactIntro} disabled={locked} onChange={set("contactIntro")} />
             <Field label="Address line 1" value={form.addressLine1} disabled={locked} onChange={set("addressLine1")} />
             <Field label="Address line 2" value={form.addressLine2} disabled={locked} onChange={set("addressLine2")} />
           </div>
         </Card>
 
-        <Card title="Home / landing page">
-          <div className="grid gap-5 p-5 sm:grid-cols-2">
-            <Field label="Hero eyebrow" value={form.heroEyebrow} disabled={locked} onChange={set("heroEyebrow")} />
-            <Field label="Hero title (line breaks allowed)" value={form.heroTitle} disabled={locked} onChange={set("heroTitle")} multiline />
-            <div className="sm:col-span-2">
-              <Field label="Hero subtitle" value={form.heroSubtitle} disabled={locked} onChange={set("heroSubtitle")} multiline />
+        <Card title="Home page">
+          <div className="grid gap-5 p-5">
+            <div className="grid gap-5 sm:grid-cols-2">
+              <Field label="Hero eyebrow" value={form.heroEyebrow} disabled={locked} onChange={set("heroEyebrow")} />
+              <Field label="Hero title" value={form.heroTitle} disabled={locked} onChange={set("heroTitle")} hint="Line breaks are preserved." />
             </div>
-            <div className="sm:col-span-2">
-              <Field label="Intro heading" value={form.introHeading} disabled={locked} onChange={set("introHeading")} multiline />
-            </div>
-            <div className="sm:col-span-2">
-              <Field label="Intro text" value={form.introText} disabled={locked} onChange={set("introText")} multiline />
-            </div>
+            <TextareaField label="Hero subtitle" value={form.heroSubtitle} disabled={locked} onChange={set("heroSubtitle")} rows={2} />
+            <TextareaField label="Intro heading" value={form.introHeading} disabled={locked} onChange={set("introHeading")} rows={2} />
+            <TextareaField label="Intro text" value={form.introText} disabled={locked} onChange={set("introText")} rows={3} />
+          </div>
+        </Card>
+
+        <Card title="Services page">
+          <div className="grid gap-5 p-5">
+            <TextareaField label="Services intro" value={form.servicesIntro} disabled={locked} onChange={set("servicesIntro")} rows={2} />
+            <TextareaField
+              label="Services list"
+              value={form.servicesList}
+              disabled={locked}
+              onChange={set("servicesList")}
+              rows={6}
+              hint={'One service per line, written as "Title | description".'}
+            />
+          </div>
+        </Card>
+
+        <Card title="Contact page">
+          <div className="grid gap-5 p-5">
+            <Field label="Contact title" value={form.contactTitle} disabled={locked} onChange={set("contactTitle")} />
+            <TextareaField label="Contact intro" value={form.contactIntro} disabled={locked} onChange={set("contactIntro")} rows={2} />
           </div>
         </Card>
 
@@ -202,33 +233,9 @@ export default function SettingsView() {
                 </button>
               )}
             </div>
-            <input
-              ref={heroInputRef}
-              type="file"
-              accept="image/*"
-              multiple
-              className="hidden"
-              onChange={handleHeroUpload}
-            />
+            <input ref={heroInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handleHeroUpload} />
           </div>
         </Card>
-
-        <Card title="Services page">
-          <div className="space-y-5 p-5">
-            <Field label="Intro" value={form.servicesIntro} disabled={locked} onChange={set("servicesIntro")} multiline />
-            <Field label="Services — one per line, format: Title | description" value={form.servicesList} disabled={locked} onChange={set("servicesList")} multiline />
-          </div>
-        </Card>
-
-        {/* Preferences — commented out until backend is wired up
-        <Card title="Preferences">
-          <div className="space-y-1 p-2">
-            <ToggleRow t="Email notifications" s="New incidents and task assignments" defaultOn locked={locked} />
-            <ToggleRow t="Weekly project digest" s="Monday morning summary of all projects" defaultOn locked={locked} />
-            <ToggleRow t="Two-factor authentication" s="Require a second factor at sign-in" defaultOn={false} locked={locked} />
-          </div>
-        </Card>
-        */}
       </div>
 
       {!locked && (

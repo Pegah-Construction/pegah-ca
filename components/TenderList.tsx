@@ -137,7 +137,7 @@ export default function TenderList({ tenders }: { tenders: PublicTender[] }) {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <span className="font-mono text-[11px] uppercase tracking-label text-concrete-500">
+          <span className="font-mono text-[11px] uppercase tracking-label text-accent-700">
             Status
           </span>
           {STATUSES.map((s) => {
@@ -160,7 +160,7 @@ export default function TenderList({ tenders }: { tenders: PublicTender[] }) {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <span className="font-mono text-[11px] uppercase tracking-label text-concrete-500">
+          <span className="font-mono text-[11px] uppercase tracking-label text-accent-700">
             Category
           </span>
           {categories.map((c) => {
@@ -204,7 +204,7 @@ export default function TenderList({ tenders }: { tenders: PublicTender[] }) {
             <button
               type="button"
               onClick={() => { setQ(""); setStatus("Active"); setCategory("All"); }}
-              className="mt-5 rounded-md border border-concrete-300 px-4 py-2 font-mono text-xs uppercase tracking-label text-concrete-500 transition-colors hover:border-brand-400 hover:text-brand-700"
+              className="mt-5 rounded-md border border-concrete-300 px-4 py-2 font-mono text-xs uppercase tracking-label text-accent-700 transition-colors hover:border-brand-400 hover:text-brand-700"
             >
               Clear filters
             </button>

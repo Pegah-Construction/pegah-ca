@@ -83,7 +83,7 @@ export default function ResetPasswordPage() {
           <p className="mt-1 text-sm text-concrete-500">Enter a new password for your account.</p>
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <div>
-              <label className="font-mono text-[11px] uppercase tracking-label text-concrete-500">New password</label>
+              <label className="font-mono text-[11px] uppercase tracking-label text-accent-700">New password</label>
               <input
                 required
                 type="password"
@@ -95,7 +95,7 @@ export default function ResetPasswordPage() {
               />
             </div>
             <div>
-              <label className="font-mono text-[11px] uppercase tracking-label text-concrete-500">Confirm password</label>
+              <label className="font-mono text-[11px] uppercase tracking-label text-accent-700">Confirm password</label>
               <input
                 required
                 type="password"

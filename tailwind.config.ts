@@ -8,9 +8,10 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        paper: "#f6f5f2",
-        ink: "#1b1e24",
-        // Deep corporate blue brand scale
+        // "Blueprint & Ironwork" palette
+        paper: "#fafbfd",
+        ink: "#12224f", // blueprint navy — primary text & headings
+        // Deep corporate blue brand scale (centres on brand blue #1f3a93)
         brand: {
           50: "#eef2fb",
           100: "#dbe3f6",
@@ -21,15 +22,31 @@ const config: Config = {
           600: "#2a45a6",
           700: "#1f3a93",
           800: "#172c70",
-          900: "#0f1f4d",
+          900: "#12224f",
         },
+        // Safety amber — the single decisive accent
+        accent: {
+          50: "#fdf4e6",
+          100: "#f9e2be",
+          200: "#f3c883",
+          300: "#ecad4e",
+          400: "#e79a2f",
+          500: "#e08a1e",
+          600: "#c0730f",
+          700: "#985a0d",
+          800: "#6f4209",
+          900: "#4b2c06",
+        },
+        // Cool steel / concrete neutrals
         concrete: {
-          100: "#ece9e3",
-          200: "#dcd8cf",
-          300: "#bfbab0",
-          // Darkened for strong, accessible contrast on secondary/muted text
-          400: "#4f4a43",
-          500: "#332f2a",
+          50: "#f4f6f9",
+          100: "#eef1f5",
+          200: "#dde2ea",
+          300: "#c1c8d4",
+          // Steel gray — muted secondary text, icons, borders
+          400: "#5b6472",
+          // Dark steel-navy — strong secondary text (accessible on light)
+          500: "#33405c",
         },
       },
       fontFamily: {

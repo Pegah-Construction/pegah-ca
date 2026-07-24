@@ -118,7 +118,7 @@ function CardDrawer({ card, onClose, onToggleSub }: { card: TCard; onClose: () =
             <PriorityPill p={card.priority} /><Pill text={card.col} />{pr && <Pill text={pr.name} tone="blue" />}
             {a && <span className="ml-auto flex items-center gap-2 text-sm text-concrete-500"><Avatar name={a.name} id={a.id} size="h-6 w-6 text-[9px]" />{a.name}</span>}
           </div>
-          <div className="mb-1 font-mono text-[11px] uppercase tracking-label text-concrete-500">Subtasks</div>
+          <div className="mb-1 font-mono text-[11px] uppercase tracking-label text-accent-700">Subtasks</div>
           <div className="mb-5">
             {card.subtasks.length ? card.subtasks.map((s, i) => (
               <label key={i} className="flex items-center gap-2 py-1.5 text-sm">
@@ -127,7 +127,7 @@ function CardDrawer({ card, onClose, onToggleSub }: { card: TCard; onClose: () =
               </label>
             )) : <p className="text-sm text-concrete-400">No subtasks.</p>}
           </div>
-          <div className="mb-1 font-mono text-[11px] uppercase tracking-label text-concrete-500">Comments</div>
+          <div className="mb-1 font-mono text-[11px] uppercase tracking-label text-accent-700">Comments</div>
           <div className="divide-y divide-concrete-100">
             {card.comments.length ? card.comments.map((cm, i) => {
               const w = getUser(cm.who);

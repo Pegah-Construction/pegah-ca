@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
 import Reveal from "@/components/Reveal";
 import { db } from "@/lib/db";
@@ -32,7 +32,7 @@ export default async function SafetyPage() {
             {stats.map((s, i) => (
               <div key={i} className="text-center">
                 <div className="font-display text-3xl font-black tracking-tight text-brand-700 lg:text-4xl">{s.a}</div>
-                <div className="mt-1 font-mono text-[11px] uppercase tracking-label text-concrete-500">{s.b}</div>
+                <div className="mt-1 font-mono text-[11px] uppercase tracking-label text-accent-700">{s.b}</div>
               </div>
             ))}
           </div>

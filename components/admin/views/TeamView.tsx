@@ -328,7 +328,7 @@ export default function TeamView() {
                   {/* Info */}
                   <div className="p-4">
                     <div className="font-display text-base font-bold text-ink">{m.name || <span className="text-concrete-300">No name</span>}</div>
-                    <div className="mt-0.5 font-mono text-[11px] uppercase tracking-label text-brand-700">{m.title}</div>
+                    <div className="mt-0.5 font-mono text-[11px] uppercase tracking-label text-accent-700">{m.title}</div>
                     {m.bio && <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-concrete-500">{m.bio}</p>}
                     <div className="mt-4 flex items-center gap-2 border-t border-concrete-100 pt-3">
                       {/* Priority arrows */}

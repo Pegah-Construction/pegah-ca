@@ -66,7 +66,7 @@ function ProjectCard({ p, i }: { p: PublicProject; i: number }) {
             <Link href={`/projects/${p.id}`} className="hover:text-brand-700">{p.name}</Link>
           </h3>
           {p.type && (
-            <span className="mt-1 shrink-0 font-mono text-[11px] uppercase tracking-label text-brand-700">{p.type}</span>
+            <span className="mt-1 shrink-0 font-mono text-[11px] uppercase tracking-label text-accent-700">{p.type}</span>
           )}
         </div>
         {p.location && <p className="mt-0.5 font-mono text-[11px] text-concrete-400">{p.location}</p>}
