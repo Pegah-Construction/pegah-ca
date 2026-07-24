@@ -50,7 +50,7 @@ function ProjectCard({ p, i }: { p: PublicProject; i: number }) {
     <Reveal delay={(i % 3) * 80} direction="up">
       <div className="group">
         {p.photos.length > 1 ? (
-          <PhotoCarousel photos={p.photos} imgClassName="aspect-[4/3]" className="img-card" />
+          <PhotoCarousel photos={p.photos} imgClassName="aspect-[4/3]" className="img-card" href={`/projects/${p.id}`} />
         ) : p.photos.length === 1 ? (
           <Link href={`/projects/${p.id}`} className="img-card block aspect-[4/3] rounded-xl">
             {/* eslint-disable-next-line @next/next/no-img-element */}

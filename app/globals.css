@@ -63,7 +63,7 @@
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
     box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform, box-shadow;
-  box-shadow: 0 1px 2px rgba(15, 31, 77, 0.04);
+  box-shadow: 0 1px 2px rgba(15, 31, 77, 0.055);
 }
 
 /* Zoom the cover image slowly while its section is hovered */
@@ -100,7 +100,7 @@
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
     box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform, box-shadow;
-  box-shadow: 0 1px 2px rgba(15, 31, 77, 0.04);
+  box-shadow: 0 1px 2px rgba(15, 31, 77, 0.055);
 }
 .img-card:hover {
   transform: scale(1.14);
@@ -118,8 +118,8 @@
     @apply bg-paper text-ink font-body antialiased;
     /* Faint blueprint grid — subtle construction-themed texture site-wide. */
     background-image:
-      linear-gradient(rgba(15, 31, 77, 0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(15, 31, 77, 0.025) 1px, transparent 1px);
+      linear-gradient(rgba(15, 31, 77, 0.042) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15, 31, 77, 0.042) 1px, transparent 1px);
     background-size: 46px 46px;
   }
   /* Gentle default transitions on interactive elements. */
@@ -141,8 +141,8 @@
     background-image:
       radial-gradient(48rem 22rem at 12% -25%, rgba(31, 58, 147, 0.18), transparent 60%),
       radial-gradient(40rem 20rem at 96% -10%, rgba(58, 90, 191, 0.12), transparent 55%),
-      linear-gradient(rgba(15, 31, 77, 0.045) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(15, 31, 77, 0.045) 1px, transparent 1px);
+      linear-gradient(rgba(15, 31, 77, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15, 31, 77, 0.06) 1px, transparent 1px);
     background-size: auto, auto, 46px 46px, 46px 46px;
   }
 
@@ -150,8 +150,8 @@
   .grid-surface {
     background-color: #ffffff;
     background-image:
-      linear-gradient(rgba(15, 31, 77, 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(15, 31, 77, 0.04) 1px, transparent 1px);
+      linear-gradient(rgba(15, 31, 77, 0.055) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15, 31, 77, 0.055) 1px, transparent 1px);
     background-size: 46px 46px;
   }
 
@@ -159,8 +159,8 @@
   .tint-grid-surface {
     background-color: #ffffff;
     background-image:
-      linear-gradient(rgba(15, 31, 77, 0.02) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(15, 31, 77, 0.02) 1px, transparent 1px),
+      linear-gradient(rgba(15, 31, 77, 0.032) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15, 31, 77, 0.032) 1px, transparent 1px),
       linear-gradient(to bottom, rgba(238, 242, 251, 0.6), transparent 70%);
     background-size: 46px 46px, 46px 46px, auto;
   }

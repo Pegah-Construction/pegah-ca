@@ -60,7 +60,7 @@ export default async function FeaturedProjects() {
                 <article className="grid items-center gap-8 lg:grid-cols-2 lg:gap-14">
                   <div className={flipped ? "lg:order-2" : ""}>
                     {photos.length > 1 ? (
-                      <PhotoCarousel photos={photos} imgClassName="aspect-[4/3]" className="img-card" />
+                      <PhotoCarousel photos={photos} imgClassName="aspect-[4/3]" className="img-card" href={`/projects/${p.id}`} />
                     ) : photos.length === 1 ? (
                       <Link href={`/projects/${p.id}`} className="img-card block aspect-[4/3] w-full rounded-xl">
                         {/* eslint-disable-next-line @next/next/no-img-element */}

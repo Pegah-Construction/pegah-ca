@@ -51,7 +51,7 @@ export default async function TendersPage() {
         </section>
 
         {/* Intro */}
-        <section className="border-b border-concrete-200 bg-white">
+        <section className="grid-surface border-b border-concrete-200">
           <div className="mx-auto max-w-8xl px-6 py-14 lg:px-10">
             <div className="grid max-w-5xl gap-8 lg:grid-cols-2">
               <Reveal direction="left">
@@ -99,7 +99,7 @@ export default async function TendersPage() {
         </section>
 
         {/* Estimating Contact */}
-        <section className="border-t border-concrete-200 bg-white">
+        <section className="grid-surface border-t border-concrete-200">
           <div className="mx-auto max-w-8xl px-6 py-20 lg:px-10">
             <Reveal>
               <div className="mb-10">
@@ -153,7 +153,7 @@ export default async function TendersPage() {
         </section>
 
         {/* Memberships & affiliations */}
-        <section className="border-t border-concrete-200 bg-paper">
+        <section className="grid-surface border-t border-concrete-200">
           <div className="mx-auto max-w-8xl px-6 py-16 lg:px-10">
             <Reveal>
               <p className="text-center font-mono text-[11px] uppercase tracking-label text-concrete-500">Memberships &amp; Affiliations</p>
@@ -181,8 +181,16 @@ export default async function TendersPage() {
         </section>
 
         {/* Subcontractor registration CTA */}
-        <section className="bg-brand-900">
-          <div className="mx-auto max-w-8xl px-6 py-20 lg:px-10">
+        <section className="relative overflow-hidden bg-brand-900">
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)",
+              backgroundSize: "46px 46px",
+            }}
+          />
+          <div className="relative mx-auto max-w-8xl px-6 py-20 lg:px-10">
             <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
               <Reveal direction="left">
                 <div>
