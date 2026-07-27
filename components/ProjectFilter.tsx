@@ -61,14 +61,14 @@ function ProjectCard({ p, i }: { p: PublicProject; i: number }) {
             <div className="img-card aspect-[4/3] rounded-xl bg-concrete-100" />
           </Link>
         )}
-        <div className="mt-3 flex items-start justify-between gap-2">
-          <h3 className="font-display text-lg font-bold tracking-tight text-ink group-hover:text-brand-700">
-            <Link href={`/projects/${p.id}`} className="hover:text-brand-700">{p.name}</Link>
-          </h3>
-          {p.type && (
-            <span className="mt-1 shrink-0 font-mono text-[11px] uppercase tracking-label text-accent-700">{p.type}</span>
-          )}
-        </div>
+        {(p.type || p.category) && (
+          <span className="mt-3 inline-flex rounded-full bg-brand-50 px-3 py-1 font-mono text-[11px] uppercase tracking-label text-accent-700">
+            {p.type || p.category}
+          </span>
+        )}
+        <h3 className="mt-2 font-display text-lg font-bold tracking-tight text-ink group-hover:text-brand-700">
+          <Link href={`/projects/${p.id}`} className="hover:text-brand-700">{p.name}</Link>
+        </h3>
         {p.location && <p className="mt-0.5 font-mono text-[11px] text-concrete-400">{p.location}</p>}
       </div>
     </Reveal>

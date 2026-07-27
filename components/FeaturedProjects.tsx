@@ -22,6 +22,7 @@ export default async function FeaturedProjects() {
       id: true,
       name: true,
       type: true,
+      category: true,
       location: true,
       description: true,
       photos: { orderBy: { order: "asc" }, select: { path: true } },
@@ -77,9 +78,9 @@ export default async function FeaturedProjects() {
                     )}
                   </div>
                   <div className={flipped ? "lg:order-1" : "lg:order-2"}>
-                    {p.type && (
+                    {(p.type || p.category) && (
                       <span className="inline-flex rounded-full bg-brand-50 px-3 py-1 font-mono text-[11px] uppercase tracking-label text-accent-700">
-                        {p.type}
+                        {p.type || p.category}
                       </span>
                     )}
                     <h3 className="mt-4 font-display text-2xl font-bold tracking-tight text-ink lg:text-3xl">
