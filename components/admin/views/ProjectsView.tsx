@@ -6,7 +6,7 @@ import { PERMS, money, type Project, type ProjectPhoto } from "@/lib/admin";
 import { Card, THead, Table, Pill, PrimaryBtn, Modal, Field, inputCls, SearchInput, Spinner } from "../ui";
 import { getStorageUrl } from "@/lib/storage-url";
 
-const CATEGORIES = ["", "Commercial", "Residential"];
+const CATEGORIES = ["", "ICI", "Residential"];
 const PURPOSE_TYPES = ["", "Education", "Emergency Services", "Retail", "Recreation", "Transportation", "Other"];
 const CONSTRUCTION_TYPES = ["", "New Construction", "Renovation", "Retrofit", "Restoration", "Interior Fit-out", "Addition", "Demolition"];
 const CONTRACT_TYPES = ["", "General Contracting", "Construction Management", "Prime Contractor", "Design-Build", "Cost-Plus", "Project Management", "Private"];
@@ -91,8 +91,8 @@ export default function ProjectsView() {
   // Reset to the first page whenever the filters, search, or sort change.
   useEffect(() => { setPage(1); }, [q, fCategory, fType, sort]);
 
-  // The Type filter only applies to Commercial; reset it when leaving Commercial.
-  useEffect(() => { if (fCategory !== "Commercial") setFType("All"); }, [fCategory]);
+  // The Type filter only applies to ICI; reset it when leaving ICI.
+  useEffect(() => { if (fCategory !== "ICI") setFType("All"); }, [fCategory]);
 
   const resetPhotos = () => {
     previews.forEach((url) => URL.revokeObjectURL(url));
@@ -294,7 +294,7 @@ export default function ProjectsView() {
             <option value="All">All categories</option>
             {categoryOptions.map((c) => <option key={c} value={c}>{c}</option>)}
           </FilterSelect>
-          {fCategory === "Commercial" && (
+          {fCategory === "ICI" && (
             <FilterSelect value={fType} onChange={setFType}>
               <option value="All">All types</option>
               {typeOptions.map((t) => <option key={t} value={t}>{t}</option>)}
@@ -429,7 +429,7 @@ export default function ProjectsView() {
                   {CATEGORIES.map((c) => <option key={c} value={c}>{c || "Select category…"}</option>)}
                 </select>
               </Field>
-              {form.category === "Commercial" && (
+              {form.category === "ICI" && (
                 <Field label="Purpose type">
                   <select className={inputCls} value={form.type} onChange={(e) => set("type", e.target.value)}>
                     {PURPOSE_TYPES.map((t) => <option key={t} value={t}>{t || "Select purpose…"}</option>)}

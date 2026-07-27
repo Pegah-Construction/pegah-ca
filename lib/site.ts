@@ -29,7 +29,7 @@ export const nav: NavItem[] = [
     label: "Projects",
     href: "/projects",
     children: [
-      { label: "Commercial", href: "/projects?category=Commercial" },
+      { label: "ICI", href: "/projects?category=ICI" },
       { label: "Residential", href: "/projects?category=Residential" },
     ],
   },

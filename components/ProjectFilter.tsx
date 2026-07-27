@@ -18,11 +18,11 @@ export type PublicProject = {
   photos: string[];
 };
 
-type FilterKey = "All Projects" | "Commercial" | "Residential";
-const FILTERS: FilterKey[] = ["All Projects", "Commercial", "Residential"];
+type FilterKey = "All Projects" | "ICI" | "Residential";
+const FILTERS: FilterKey[] = ["All Projects", "ICI", "Residential"];
 
-// The two portfolio groups. "Commercial" covers commercial / industrial /
-// institutional work (everything that isn't residential).
+// The two portfolio groups. "ICI" (Institutional, Commercial & Industrial)
+// covers everything that isn't residential.
 const SECTIONS: {
   key: Exclude<FilterKey, "All Projects">;
   heading: string;
@@ -31,9 +31,9 @@ const SECTIONS: {
   match: (p: PublicProject) => boolean;
 }[] = [
   {
-    key: "Commercial",
-    heading: "Commercial Projects",
-    intro: "Explore our commercial, industrial, and institutional construction projects, delivered to the highest standards across Ontario.",
+    key: "ICI",
+    heading: "ICI Projects",
+    intro: "Explore our institutional, commercial, and industrial construction projects, delivered to the highest standards across Ontario.",
     match: (p) => p.category !== "Residential",
   },
   {
@@ -98,7 +98,7 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
   const searchParams = useSearchParams();
   const catParam = searchParams.get("category");
   const initialFilter: FilterKey =
-    catParam === "Commercial" ? "Commercial" : catParam === "Residential" ? "Residential" : "All Projects";
+    catParam === "ICI" ? "ICI" : catParam === "Residential" ? "Residential" : "All Projects";
 
   const [filter, setFilter] = useState<FilterKey>(initialFilter);
   const [subType, setSubType] = useState("All");
@@ -212,7 +212,7 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
           })()
         ) : (
           SECTIONS.filter((s) => s.key === filter).map((section) => {
-          const isCommercial = section.key === "Commercial";
+          const isCommercial = section.key === "ICI";
           let items = projects.filter(section.match).filter(matchesSearch);
           if (isCommercial && subType !== "All") items = items.filter((p) => p.type === subType);
           items = sortItems(items);
@@ -242,7 +242,7 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
                           on ? "bg-brand-700 text-white" : "border border-concrete-300 text-concrete-500 hover:border-brand-400 hover:text-brand-700"
                         }`}
                       >
-                        {t === "All" ? "All Commercial" : t}
+                        {t === "All" ? "All ICI" : t}
                       </button>
                     );
                   })}
