@@ -17,8 +17,10 @@ use this to learn the system yourself and to show others how to keep the site up
 | **admin dashboard** | the private control panel where staff edit content. | logged-in staff only |
 
 most day-to-day content (projects, blog posts, job postings, team members) is edited in the
-**admin dashboard**. a handful of fixed marketing pages (about, services, health & safety, the
-home page) are part of the site's code and are changed by a developer — see [§13](#13-what-lives-in-code).
+**admin dashboard**. the site-wide marketing copy — the **home**, **about**, **services**,
+**health & safety** and **contact** pages, plus the **navbar** and **footer** details — is now
+editable too, through the **about / team**, **health & safety**, and **settings** screens. only the
+page layouts, styling and navigation structure remain in code — see [§14](#14-what-lives-in-code).
 
 ---
 
@@ -56,7 +58,7 @@ for it. an administrator can adjust roles under **users & roles**.
 
 the landing page after login. it shows a quick overview of projects and recent activity. use the
 **left sidebar** to move between modules: dashboard, projects, tenders, news & blog, careers,
-inquiries, about / team, users & roles, settings.
+inquiries, about / team, health & safety, users & roles, settings.
 
 ![description](images/dashboard.PNG)
 
@@ -66,11 +68,16 @@ inquiries, about / team, users & roles, settings.
 
 **where:** sidebar → **projects**. this is the portfolio shown on the public **projects** page.
 
+projects are grouped into two **categories**: **ICI** and **Residential**. **ICI** stands for
+**Institutional, Commercial & Industrial** — it covers every non-residential project. ICI projects
+can also carry a **purpose type** (education, emergency services, retail, recreation,
+transportation, other), which is what shows on the little badge on each project card.
+
 ### add a project
 1. click **+ new project**.
-2. fill in the fields: name, location, category (commercial / residential), purpose type,
-   construction type, owner, architect, contract type, value, gross floor area, year completed,
-   and a description.
+2. fill in the fields: name, location, **category (ICI / residential)**, **purpose type** (shown for
+   ICI projects), construction type, owner, architect, contract type, value, gross floor area, year
+   completed, and a description.
 3. add photos (you can select several at once).
 4. click **create project**.
 
@@ -83,8 +90,10 @@ save immediately (the ✕ on a photo deletes it).
 ### find and organise projects
 above the table you have:
 - **search** — matches name, location, type, or contract.
-- **category** and **year** filters.
-- **sort by** — completion date (newest/oldest), value (high/low), or name.
+- **category** filter (ICI / residential); when **ICI** is selected, a second **type** filter
+  appears for the purpose types.
+- **sort** — newest or oldest by completion date, value (low → high), or name (A–Z).
+- **clear filters** — a plain text link that resets the search, filters, and sort.
 - **pagination** — 10 projects per page, with prev / next at the bottom.
 
 ![description](images/filter-and-sort-projects.PNG)
@@ -92,7 +101,7 @@ above the table you have:
 ### generate a blog post from a project
 on a project's detail page, **generate blog post** drafts an article from the project's details
 (and attached documents) using ai. it's saved as a **draft** in news & blog for you to review and
-publish. *(requires the ai key to be configured — see [§14](#14-ai-features).)*
+publish. *(requires the ai key to be configured — see [§15](#15-ai-features).)*
 
 ### delete a project
 click **delete** on a row and confirm. this also removes its photos and related data.
@@ -113,10 +122,15 @@ click **delete** on a row and confirm. this also removes its photos and related 
 
 ![description](images/article-editor.PNG)
 
-### generate a linkedin post
-inside the article editor, use **generate linkedin post** to create a linkedin-ready caption based
-on that article's content. you can edit it and copy it to paste into linkedin. *(requires the ai
-key — see [§14](#14-ai-features).)*
+### generate social posts
+inside the article editor there are two ai helpers that turn the article into ready-to-post
+captions:
+
+- **generate linkedin post** — a linkedin-ready caption.
+- **generate instagram post** — an instagram-style caption for the same article.
+
+edit the result and copy it to paste into the network. *(both require the ai key — see
+[§15](#15-ai-features).)*
 
 ---
 
@@ -131,6 +145,9 @@ tenders are **synced from smartbid** — smartbid is the source of truth, so thi
   added / updated.
 - use the **search** and **status** filter to find a tender.
 - a tender's **title links out to its smartbid bid room**, where invitations and bids are managed.
+
+on the public tenders page, subcontractors register through the embedded **smartbid subcontractor
+registration form** — those registrations go straight to smartbid, not to this dashboard.
 
 ![description](images/tenders-list.PNG)
 
@@ -156,14 +173,34 @@ here. you can read each message and mark it **read / unread** to track what stil
 
 ## 10. about / team
 
-**where:** sidebar → **about / team**. manage the **leadership** and **team members** shown on the
-public **about** page — names, titles, bios, and photos.
+**where:** sidebar → **about / team**. this screen edits the whole public **about** page.
+
+### about page text & image
+edit the story copy shown on the about page — **who we are**, **where we are**, **what we do**, the
+**"Pegah will"** checklist, and the **closing** statement — and upload the **about image** that sits
+beside the text. after editing, use the screen's **save** to publish.
+
+### leadership & team
+manage the **leadership** (president, vice president) and **team members** shown lower on the page —
+names, **titles**, bios, and photos. titles show in the amber accent colour on the public page.
 
 ![description](images/team-manager-page.PNG)
 
 ---
 
-## 11. users & roles
+## 11. health & safety
+
+**where:** sidebar → **health & safety**. edits the content of the public **health & safety** page.
+
+you can update the **commitment statement** and its **image**, the **policy statements**, the **key
+duties**, the **program / certification** details, and the **resource links**. edit the fields and
+save to publish.
+
+> 📸 _add screenshot: health & safety editor_
+
+---
+
+## 12. users & roles
 
 **where:** sidebar → **users & roles** *(administrators only)*.
 
@@ -176,37 +213,60 @@ public **about** page — names, titles, bios, and photos.
 
 ---
 
-## 12. settings
+## 13. settings
 
-**where:** sidebar → **settings** *(administrators only)*. company-level details (company name,
-main phone, email, address).
+**where:** sidebar → **settings** *(administrators only)*. this is where the site-wide copy lives.
+**edit any field, then scroll to the bottom of the page and click _save changes_** to publish.
+
+the settings are grouped:
+
+- **organization & contact details** — company name, main phone, email, estimating email, and
+  address lines 1 & 2. these feed the **navbar**, the **footer**, and the **contact** page.
+- **home page** — the hero **eyebrow**, **title**, and **subtitle**, plus the **intro heading** and
+  **intro text** below the hero.
+- **home page hero images** — upload or remove the full-bleed background image(s). if you add more
+  than one, they cycle as a carousel. the ✕ on an image removes it.
+- **services page** — the services **intro**, and the **services list** (one service per line,
+  written as `Title | description`).
+- **contact page** — the contact **title** and **intro** shown above the form.
+
+> 📸 _add screenshot: settings page_
 
 ---
 
-## 13. what lives in code
+## 14. what lives in code
 
-some fixed marketing content isn't edited in the dashboard — it's part of the website's code and is
-updated by a developer:
+thanks to the editors above, the **home, about, services, health & safety and contact** page copy —
+and the navbar/footer contact details — are all editable in the dashboard. what still lives in the
+website's code and needs a **developer** to change:
 
-- the **home**, **about**, **services**, and **health & safety** page copy.
-- the **navigation menu**, **footer**, company contact details and partner logos.
-- site-wide wording and styling.
+- **page layouts and overall styling** — fonts, the navy + amber colour palette, the
+  blueprint-grid background texture, spacing and card treatments.
+- the **navigation menu structure** and which items appear.
+- **partner / affiliation logo images** and where they're displayed.
+- anything not exposed as a field in **settings** or the **about / team** and **health & safety**
+  editors.
 
 if you need one of these changed, note exactly what should change (and provide any new images) and
 pass it to whoever maintains the code.
 
 ---
 
-## 14. ai features
+## 15. ai features
 
-two buttons use ai: **generate blog post** (projects) and **generate linkedin post** (news & blog).
+three buttons use ai:
+
+- **generate blog post** (projects) — drafts an article from a project.
+- **generate linkedin post** (news & blog) — a linkedin caption for an article.
+- **generate instagram post** (news & blog) — an instagram caption for an article.
+
 they only work when an **ai key** is configured in the site's environment. if it isn't set, the
 buttons show a "not configured" message instead of failing. ask your developer to set the
 `anthropic_api_key` to enable them.
 
 ---
 
-## 15. quick reference — "how do i…?"
+## 16. quick reference — "how do i…?"
 
 | i want to… | go to |
 |---|---|
@@ -215,10 +275,18 @@ buttons show a "not configured" message instead of failing. ask your developer t
 | publish a blog post | **news & blog → new/edit → set status to published** |
 | turn a project into a blog draft | **projects → open project → generate blog post** |
 | get a linkedin caption for a post | **news & blog → edit → generate linkedin post** |
+| get an instagram caption for a post | **news & blog → edit → generate instagram post** |
 | refresh the tenders list | **tenders → sync from smartbid** |
 | reply-track a contact message | **inquiries → mark read/unread** |
 | post a job opening | **careers → add posting** |
+| edit the about page story text or image | **about / team** |
 | update a leader's bio/photo | **about / team** |
+| update the health & safety page | **health & safety** |
+| change the home page hero wording | **settings → home page** |
+| swap the home hero background images | **settings → home page hero images** |
+| edit the services list | **settings → services page** |
+| change the contact page intro | **settings → contact page** |
+| change company phone/address (navbar, footer, contact) | **settings → organization & contact details** |
 | add a staff login | **users & roles → add user** |
 | change my own password | **sidebar account menu → change password** |
 
