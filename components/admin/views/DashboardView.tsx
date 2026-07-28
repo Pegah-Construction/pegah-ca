@@ -98,7 +98,7 @@ export default function DashboardView() {
               {feed.length === 0 && (
                 <li className="px-5 py-6 text-sm text-concrete-400">No recent activity. Actions like creating projects, uploading photos, and publishing articles will appear here.</li>
               )}
-              {feed.map((a, i) => (
+              {feed.slice(0, 3).map((a, i) => (
                 <li key={i} className="flex items-start gap-3 border-b border-concrete-100 px-5 py-3 last:border-b-0">
                   <Avatar name={a.whoName} id={a.who} size="h-7 w-7 text-[10px]" />
                   <div className="min-w-0 text-sm text-concrete-600">
