@@ -86,15 +86,32 @@ function TenderCard({ t }: { t: PublicTender }) {
 
 const STATUSES = ["Active", "Open", "Closing soon", "Closed", "All"] as const;
 
+// Two portfolio groups. "ICI" (Institutional, Commercial & Industrial) is
+// everything that isn't residential.
+const GROUPS = ["All", "ICI", "Residential"] as const;
+const groupOf = (t: PublicTender) => (t.category === "Residential" ? "Residential" : "ICI");
+
+function TenderGroup({ title, items }: { title: string; items: PublicTender[] }) {
+  if (items.length === 0) return null;
+  return (
+    <div>
+      <h3 className="mb-4 flex items-baseline gap-3 font-display text-xl font-bold tracking-tight text-ink">
+        {title}
+        <span className="font-mono text-[11px] font-normal text-concrete-400">{items.length}</span>
+      </h3>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {items.map((t) => (
+          <TenderCard key={t.id} t={t} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function TenderList({ tenders }: { tenders: PublicTender[] }) {
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("Active");
-  const [category, setCategory] = useState("All");
-
-  const categories = [
-    "All",
-    ...Array.from(new Set(tenders.map((t) => t.category))).sort(),
-  ];
+  const [group, setGroup] = useState("All");
 
   const needle = q.trim().toLowerCase();
   const visible = tenders
@@ -103,7 +120,7 @@ export default function TenderList({ tenders }: { tenders: PublicTender[] }) {
       if (status === "All") return true;
       return t.status === status;
     })
-    .filter((t) => category === "All" || t.category === category)
+    .filter((t) => group === "All" || groupOf(t) === group)
     .filter(
       (t) =>
         !needle ||
@@ -163,13 +180,13 @@ export default function TenderList({ tenders }: { tenders: PublicTender[] }) {
           <span className="font-mono text-[11px] uppercase tracking-label text-accent-700">
             Category
           </span>
-          {categories.map((c) => {
-            const on = c === category;
+          {GROUPS.map((c) => {
+            const on = c === group;
             return (
               <button
                 key={c}
                 type="button"
-                onClick={() => setCategory(c)}
+                onClick={() => setGroup(c)}
                 className={`rounded-full px-3 py-1.5 font-mono text-[11px] uppercase tracking-label transition-colors ${
                   on
                     ? "bg-ink text-white"
@@ -203,7 +220,7 @@ export default function TenderList({ tenders }: { tenders: PublicTender[] }) {
           {tenders.length > 0 && (
             <button
               type="button"
-              onClick={() => { setQ(""); setStatus("Active"); setCategory("All"); }}
+              onClick={() => { setQ(""); setStatus("Active"); setGroup("All"); }}
               className="mt-5 rounded-md border border-concrete-300 px-4 py-2 font-mono text-xs uppercase tracking-label text-accent-700 transition-colors hover:border-brand-400 hover:text-brand-700"
             >
               Clear filters
@@ -211,10 +228,9 @@ export default function TenderList({ tenders }: { tenders: PublicTender[] }) {
           )}
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {visible.map((t) => (
-            <TenderCard key={t.id} t={t} />
-          ))}
+        <div className="space-y-10">
+          <TenderGroup title="ICI Projects" items={visible.filter((t) => groupOf(t) === "ICI")} />
+          <TenderGroup title="Residential Projects" items={visible.filter((t) => groupOf(t) === "Residential")} />
         </div>
       )}
 
