@@ -2,8 +2,10 @@
 // Uses the Anthropic Messages API directly via fetch (no SDK dependency).
 //
 // Env:
-//   ANTHROPIC_API_KEY  — required for generation
+//   ANTHROPIC_API_KEY  — required for real generation
 //   ANTHROPIC_MODEL    — optional model override (default: claude-sonnet-4-6)
+//   AI_MOCK            — set to 1/true to return canned, input-derived drafts
+//                        WITHOUT calling Anthropic (test the flow at zero cost)
 
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
 const DEFAULT_MODEL = "claude-sonnet-4-6";
@@ -15,8 +17,14 @@ export class AiNotConfiguredError extends Error {
   }
 }
 
+// Mock mode lets you exercise the generate → edit → publish flow without spending
+// any tokens. Enabled with AI_MOCK=1 (or true/yes).
+export function isAiMock(): boolean {
+  return /^(1|true|yes)$/i.test(process.env.AI_MOCK || "");
+}
+
 export function isAiConfigured(): boolean {
-  return !!process.env.ANTHROPIC_API_KEY;
+  return isAiMock() || !!process.env.ANTHROPIC_API_KEY;
 }
 
 export type ProjectFacts = {
@@ -80,10 +88,32 @@ function stripFences(s: string): string {
   return s.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
 }
 
+// ── Mock drafts (AI_MOCK) — no API call ────────────────────────────────────
+function mockArticle(facts: ProjectFacts, docs: SourceDoc[]): GeneratedArticle {
+  const loc = facts.location ? ` in ${facts.location}` : "";
+  const kind = facts.type || facts.category || "construction";
+  const docNote = docs.length ? ` (${docs.length} attached document${docs.length > 1 ? "s" : ""} would inform the real draft)` : "";
+  return {
+    title: `Inside the ${facts.name} Project`,
+    excerpt: `A sample case study for ${facts.name}${loc}. Generated in AI mock mode — no API call was made.`,
+    tags: [facts.category, facts.type, facts.location].filter(Boolean).map(String).slice(0, 4),
+    bodyHtml:
+      `<p><strong>Sample draft (AI mock mode).</strong> This placeholder shows how a generated article renders${docNote}. Turn off AI_MOCK to produce a real, source-grounded post.</p>` +
+      `<h2>Project overview</h2>` +
+      `<p>Pegah Construction delivered the ${kind.toLowerCase()} project known as ${facts.name}${loc}. This section would summarise the brief, scope, and the client's goals.</p>` +
+      `<h2>Delivery</h2>` +
+      `<p>${facts.description ? String(facts.description).slice(0, 400) : "This section would describe how the team coordinated trades, managed the schedule, and handed the project over."}</p>` +
+      `<h2>Outcome</h2>` +
+      `<ul><li>Completed to specification</li><li>Delivered by the Pegah team</li><li>Replace this sample with a real generation</li></ul>`,
+  };
+}
+
 export async function generateProjectArticle(
   facts: ProjectFacts,
   docs: SourceDoc[]
 ): Promise<GeneratedArticle> {
+  if (isAiMock()) return mockArticle(facts, docs);
+
   const key = process.env.ANTHROPIC_API_KEY;
   if (!key) throw new AiNotConfiguredError();
   const model = process.env.ANTHROPIC_MODEL || DEFAULT_MODEL;
@@ -172,6 +202,16 @@ export async function generateLinkedinPost(article: {
   excerpt: string;
   bodyHtml: string;
 }): Promise<string> {
+  if (isAiMock()) {
+    return (
+      `🏗️ Sample LinkedIn post (AI mock mode — no API call).\n\n` +
+      `${article.title}\n\n` +
+      `${article.excerpt || "A short, professional summary of this project would appear here."}\n\n` +
+      `Turn off AI_MOCK to generate a real caption from the article.\n\n` +
+      `#Construction #DesignBuild #Ontario #Pegah`
+    );
+  }
+
   const key = process.env.ANTHROPIC_API_KEY;
   if (!key) throw new AiNotConfiguredError();
   const model = process.env.ANTHROPIC_MODEL || DEFAULT_MODEL;
@@ -231,6 +271,16 @@ export async function generateInstagramPost(article: {
   excerpt: string;
   bodyHtml: string;
 }): Promise<string> {
+  if (isAiMock()) {
+    return (
+      `🏗️ Sample Instagram caption (AI mock mode — no API call)\n\n` +
+      `${article.title} 👷\n\n` +
+      `${article.excerpt || "A warm, proud summary of this project would appear here."}\n\n` +
+      `Turn off AI_MOCK to generate a real caption.\n\n` +
+      `#Construction #GeneralContractor #Ontario #DesignBuild #BuildingCommunities #Pegah`
+    );
+  }
+
   const key = process.env.ANTHROPIC_API_KEY;
   if (!key) throw new AiNotConfiguredError();
   const model = process.env.ANTHROPIC_MODEL || DEFAULT_MODEL;
