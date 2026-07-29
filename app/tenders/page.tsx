@@ -4,8 +4,11 @@ import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
 import AffiliationLogo from "@/components/AffiliationLogo";
 import TenderList, { type PublicTender } from "@/components/TenderList";
-import { db } from "@/lib/db";
+import { fetchLiveTenders } from "@/lib/smartbid";
 import { company, affiliations } from "@/lib/site";
+
+// Tenders are read live from SmartBid on each request — nothing is stored.
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Tenders | Pegah Construction Ltd.",
@@ -14,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 export default async function TendersPage() {
-  const rows = await db.tender.findMany({ orderBy: { closing: "asc" } });
+  const rows = await fetchLiveTenders();
 
   const tenders: PublicTender[] = rows.map((t) => {
     let codes: string[] = [];

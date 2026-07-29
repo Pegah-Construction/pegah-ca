@@ -1,21 +1,30 @@
 // SmartBid (ConstructConnect) tender integration.
 //
-// SmartBid's API is account-gated — there is no public/open API. Fill these in
-// .env from your ConstructConnect / SmartBid API credentials:
+// The tender sync uses SmartBid's public-projects endpoint, which authenticates
+// with a ClientKey query param — no header credential needed:
 //
-//   SMARTBID_API_BASE        Base URL of the API, e.g. https://api.smartbidnet.com
-//   SMARTBID_AUTH            "apikey" (default) or "oauth"
-//   SMARTBID_API_KEY         Static API key / bearer token        (when SMARTBID_AUTH=apikey)
-//   SMARTBID_AUTH_HEADER     Header to send the key in            (default: "Authorization")
-//   SMARTBID_AUTH_SCHEME     Prefix for the key value             (default: "Bearer ")
-//   SMARTBID_TOKEN_URL       OAuth2 token endpoint                (when SMARTBID_AUTH=oauth)
-//   SMARTBID_CLIENT_ID       OAuth2 client id                     (when SMARTBID_AUTH=oauth)
-//   SMARTBID_CLIENT_SECRET   OAuth2 client secret                 (when SMARTBID_AUTH=oauth)
-//   SMARTBID_PROJECTS_PATH   Endpoint listing bid projects, e.g. /v1/bidprojects
+//   GET {SMARTBID_API_BASE}/project/publicProjects?ClientKey=…&OpenToBid=true&…
+//   → { "publicProject": [ { link, title, address, city, state, zip,
+//                            bidDueDate, projectType, bidManager, … } ] }
 //
-// The two functions marked "CONFIRM" below (fetchSmartBidProjects, mapProjectToTender)
-// need to be matched to your account's actual endpoint + response fields — see the
-// checklist in the sync route. Everything else (auth, upsert, dedupe) is ready.
+// Required:
+//   SMARTBID_API_BASE          Base URL of the API (host from the API explorer)
+//   SMARTBID_CLIENT_KEY        The "ClientKey" (key for the user client URL)
+//
+// Optional:
+//   SMARTBID_PROJECTS_PATH        Override the path (default: /project/publicProjects)
+//   SMARTBID_OFFICE_KEY           Restrict to one office
+//   SMARTBID_STATUSES             Comma-separated status flags to include
+//                                 (default: "OpenToBid,Upcoming"; others: PastBidDueDate,
+//                                 ClosedToBid, InNegotiation, Awarded, Construction, Completed)
+//   SMARTBID_PROJECT_URL_TEMPLATE URL template for a project, with {link}
+//                                 (used for the tender's outbound bid link)
+//
+// Header auth (SMARTBID_AUTH = apikey|passport|oauth and its keys) is only needed
+// for other, account-protected endpoints — the public-projects sync ignores it.
+//
+// mapProjectToTender maps the confirmed publicProject fields; it keeps alias
+// fallbacks for fields cut off in the API docs (email/phone/description/status).
 
 import { db } from "@/lib/db";
 
@@ -26,11 +35,10 @@ export class SmartBidNotConfiguredError extends Error {
   }
 }
 
+// The public-projects endpoint authenticates with a ClientKey query param, so a
+// base URL + ClientKey is all that's required to sync.
 export function isSmartBidConfigured(): boolean {
-  const base = process.env.SMARTBID_API_BASE;
-  const hasApiKey = !!process.env.SMARTBID_API_KEY;
-  const hasOAuth = !!(process.env.SMARTBID_CLIENT_ID && process.env.SMARTBID_CLIENT_SECRET && process.env.SMARTBID_TOKEN_URL);
-  return !!base && (hasApiKey || hasOAuth);
+  return !!process.env.SMARTBID_API_BASE && !!process.env.SMARTBID_CLIENT_KEY;
 }
 
 // ── Authentication ────────────────────────────────────────────────────────────
@@ -57,31 +65,62 @@ async function getOAuthToken(): Promise<string> {
   return value;
 }
 
+// Optional auth header. The public-projects endpoint needs none (it uses the
+// ClientKey query param), so this returns {} unless a credential is explicitly
+// configured — for other, account-protected endpoints.
 async function authHeaders(): Promise<Record<string, string>> {
-  const mode = (process.env.SMARTBID_AUTH || "apikey").toLowerCase();
-  if (mode === "oauth") {
+  const mode = (process.env.SMARTBID_AUTH || "").toLowerCase();
+  // OAuth: Authorization: Bearer {OAuthToken}
+  if (mode === "oauth" && process.env.SMARTBID_TOKEN_URL) {
     return { Authorization: `Bearer ${await getOAuthToken()}` };
   }
-  const header = process.env.SMARTBID_AUTH_HEADER || "Authorization";
-  const scheme = process.env.SMARTBID_AUTH_SCHEME ?? "Bearer ";
-  return { [header]: `${scheme}${process.env.SMARTBID_API_KEY}` };
+  // Passport: a session token from a SmartBid user login (expires on logout).
+  if (mode === "passport" && process.env.SMARTBID_PASSPORT_KEY) {
+    return { PassportKey: process.env.SMARTBID_PASSPORT_KEY };
+  }
+  if (process.env.SMARTBID_API_KEY) {
+    const header = process.env.SMARTBID_AUTH_HEADER || "Authorization";
+    const scheme = process.env.SMARTBID_AUTH_SCHEME ?? "Bearer ";
+    return { [header]: `${scheme}${process.env.SMARTBID_API_KEY}` };
+  }
+  return {};
 }
 
 // ── Fetch ───────────────────────────────────────────────────────────────────
-// CONFIRM: the path (SMARTBID_PROJECTS_PATH) and how the list is wrapped in the
-// response. This handles a bare array or the common { data | items | results }.
+// GET project/publicProjects?ClientKey=…&<status>=true&SortBy=BidDueDate&ResultType=json
+// Returns { publicProject: [ … ] }. At least one status flag is required — by
+// default we pull the live opportunities (OpenToBid + Upcoming). Override which
+// statuses via SMARTBID_STATUSES (comma-separated, e.g. "OpenToBid,InNegotiation").
 export type SmartBidProject = Record<string, unknown>;
+
+const STATUS_FLAGS = [
+  "Upcoming", "OpenToBid", "PastBidDueDate", "ClosedToBid",
+  "InNegotiation", "Awarded", "Construction", "Completed",
+];
 
 export async function fetchSmartBidProjects(): Promise<SmartBidProject[]> {
   if (!isSmartBidConfigured()) throw new SmartBidNotConfiguredError();
 
   const base = process.env.SMARTBID_API_BASE!.replace(/\/$/, "");
-  const path = process.env.SMARTBID_PROJECTS_PATH || "/bidprojects";
-  const url = `${base}${path.startsWith("/") ? path : `/${path}`}`;
+  const rawPath = process.env.SMARTBID_PROJECTS_PATH || "/project/publicProjects";
+  const path = rawPath.startsWith("/") ? rawPath : `/${rawPath}`;
 
+  const params = new URLSearchParams({
+    ClientKey: process.env.SMARTBID_CLIENT_KEY!,
+    SortBy: "BidDueDate",
+    ResultType: "json",
+  });
+  if (process.env.SMARTBID_OFFICE_KEY) params.set("OfficeKey", process.env.SMARTBID_OFFICE_KEY);
+
+  const requested = (process.env.SMARTBID_STATUSES || "OpenToBid,Upcoming")
+    .split(",").map((s) => s.trim()).filter((s) => STATUS_FLAGS.includes(s));
+  for (const flag of requested.length ? requested : ["OpenToBid", "Upcoming"]) params.set(flag, "true");
+
+  const url = `${base}${path}?${params.toString()}`;
   const res = await fetch(url, {
     headers: { Accept: "application/json", ...(await authHeaders()) },
     signal: AbortSignal.timeout(30_000),
+    cache: "no-store", // always read live from SmartBid
   });
   if (!res.ok) {
     const text = await res.text().catch(() => "");
@@ -89,7 +128,7 @@ export async function fetchSmartBidProjects(): Promise<SmartBidProject[]> {
   }
   const json = await res.json();
   if (Array.isArray(json)) return json;
-  for (const key of ["data", "items", "results", "projects", "bidProjects"]) {
+  for (const key of ["publicProject", "publicProjects", "data", "items", "results", "projects"]) {
     if (Array.isArray((json as Record<string, unknown>)[key])) {
       return (json as Record<string, SmartBidProject[]>)[key];
     }
@@ -109,39 +148,70 @@ function pick(o: SmartBidProject, ...keys: string[]): string {
 }
 
 export function mapProjectToTender(p: SmartBidProject) {
-  const sbId = pick(p, "id", "projectId", "bidProjectId", "publicId");
-  const bidUrl =
-    pick(p, "publicUrl", "bidUrl", "url") ||
-    (sbId ? `https://securecc.smartinsight.co/#/PublicBidProject/${sbId}` : "");
-  const codesRaw = (p.codes ?? p.divisions ?? p.tradeCodes) as unknown;
-  const codes = Array.isArray(codesRaw) ? codesRaw.map(String) : [];
+  // "link" is the public-project identifier (also used to build its public URL).
+  const link = pick(p, "link", "id", "projectId", "projectKey", "publicId");
+  const bidUrl = /^https?:\/\//.test(link)
+    ? link
+    : process.env.SMARTBID_PROJECT_URL_TEMPLATE
+      ? process.env.SMARTBID_PROJECT_URL_TEMPLATE.replace("{link}", link)
+      : "";
+
+  // "code" is a comma-separated string of "CSI - description" entries; older
+  // shapes used an array under codes/divisions/tradeCodes.
+  const codeRaw = (p.code ?? p.codes ?? p.divisions ?? p.tradeCodes) as unknown;
+  const codes = Array.isArray(codeRaw)
+    ? codeRaw.map(String)
+    : typeof codeRaw === "string"
+      ? codeRaw.split(",").map((s) => s.trim()).filter(Boolean)
+      : [];
+
+  // The public feed prints "No Due Date" when a project has no bid deadline.
+  const dueRaw = pick(p, "bidDueDate", "dueDate", "closingDate");
+  const closing = /no due date/i.test(dueRaw) ? "" : dueRaw;
+
+  const projectType = pick(p, "projectType", "type", "bidType");
 
   return {
-    id: `sb_${sbId}`,
-    ref: pick(p, "number", "projectNumber", "ref", "referenceNumber") || sbId,
-    title: pick(p, "name", "title", "projectName") || "Untitled bid project",
-    org: pick(p, "companyName", "organization", "owner", "gcName"),
+    id: `sb_${link}`,
+    ref: pick(p, "projectNumber", "number", "ref") || link,
+    title: pick(p, "title", "name", "projectName") || "Untitled bid project",
+    org: pick(p, "officeName", "companyName", "organization", "owner", "gcName"),
     platform: "SmartBid",
-    type: pick(p, "bidType", "type") || "RFQ",
-    category: pick(p, "category", "sector", "market") || "Commercial",
-    value: Number(p.estimatedValue ?? p.value ?? p.budget ?? 0) || 0,
-    province: pick(p, "province", "state", "region"),
+    type: projectType || "RFQ",
+    category: projectType || pick(p, "category", "sector", "market") || "Commercial",
+    value: Number(p.estimatedValue ?? p.value ?? p.budget ?? p.squareFootage ?? 0) || 0,
+    province: pick(p, "state", "province", "region"),
     city: pick(p, "city", "town"),
     published: pick(p, "publishedDate", "createdDate", "postedDate"),
-    closing: pick(p, "bidDueDate", "dueDate", "closingDate", "bidDate"),
-    status: pick(p, "status") || "Open",
+    closing,
+    status: pick(p, "status", "projectStatus") || "Open",
     tracked: false,
     address: pick(p, "address", "addressLine1", "street"),
-    postalCode: pick(p, "postalCode", "zip", "zipCode"),
+    postalCode: pick(p, "zip", "postalCode", "zipCode"),
     bidUrl,
-    contactName: pick(p, "contactName", "estimatorName", "primaryContact"),
-    contactEmail: pick(p, "contactEmail", "estimatorEmail", "email"),
-    contactPhone: pick(p, "contactPhone", "estimatorPhone", "phone"),
+    contactName: pick(p, "bidManager", "contactName", "estimatorName", "primaryContact"),
+    contactEmail: pick(p, "bidManagerEmail", "contactEmail", "estimatorEmail", "email"),
+    contactPhone: pick(p, "bidManagerPhone", "contactPhone", "estimatorPhone", "phone"),
     contactFax: pick(p, "contactFax", "fax"),
     codes: JSON.stringify(codes),
     note: null as string | null,
     desc: pick(p, "description", "scope", "summary"),
   };
+}
+
+// ── Live read-through ──────────────────────────────────────────────────────
+// Fetch + map SmartBid opportunities on demand. Read-only: does NOT write to the
+// database. Returns [] (never throws) so the page degrades gracefully if SmartBid
+// is unreachable or not configured.
+export async function fetchLiveTenders(): Promise<ReturnType<typeof mapProjectToTender>[]> {
+  if (!isSmartBidConfigured()) return [];
+  try {
+    const projects = await fetchSmartBidProjects();
+    return projects.map(mapProjectToTender).filter((t) => t.id !== "sb_");
+  } catch (err) {
+    console.error("SmartBid live fetch failed:", err);
+    return [];
+  }
 }
 
 // ── Sync ──────────────────────────────────────────────────────────────────────
