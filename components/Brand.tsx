@@ -3,11 +3,18 @@ import Link from "next/link";
 export function SiteLogo() {
   return (
     <Link href="/" className="inline-flex shrink-0 items-center">
-      {/* eslint-disable-next-line @next/next/no-img-element -- local SVG, no optimization needed */}
+      {/* eslint-disable-next-line @next/next/no-img-element -- local image, no optimization needed */}
       <img
         src="/logo.webp"
         alt="Pegah Construction Ltd., 35+ years"
-        className="h-16 w-auto sm:h-[4.75rem]"
+        className="h-16 w-auto sm:h-[4.75rem] dark:hidden"
+      />
+      {/* White version for dark mode */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/logo-dark.webp"
+        alt="Pegah Construction Ltd., 35+ years"
+        className="hidden h-16 w-auto sm:h-[4.75rem] dark:block"
       />
     </Link>
   );

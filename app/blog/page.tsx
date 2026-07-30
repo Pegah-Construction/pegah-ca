@@ -34,7 +34,7 @@ export default async function BlogPage() {
               <Reveal key={a.id} delay={(i % 3) * 80} direction="up">
                 <Link
                   href={`/blog/${a.slug}`}
-                  className="blog-card group flex h-full flex-col overflow-hidden rounded-2xl border-2 border-concrete-200 bg-white"
+                  className="blog-card group flex h-full flex-col overflow-hidden rounded-2xl border-2 border-concrete-200 bg-surface"
                 >
                   <div className="blog-card-media aspect-[16/9] w-full overflow-hidden">
                     {a.coverImage ? (

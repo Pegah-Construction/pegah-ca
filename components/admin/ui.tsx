@@ -59,7 +59,7 @@ export function Avatar({ name, id, size = "h-9 w-9 text-xs" }: { name: string; i
 
 export function StatCard({ label, value, hint }: { label: string; value: React.ReactNode; hint?: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-concrete-200 bg-white p-5">
+    <div className="rounded-xl border border-concrete-200 bg-surface p-5">
       <div className="font-mono text-[11px] uppercase tracking-label text-accent-700">{label}</div>
       <div className="mt-2 font-display text-3xl font-black tracking-tight text-ink">{value}</div>
       {hint ? <div className="mt-1 text-sm text-concrete-500">{hint}</div> : null}
@@ -69,7 +69,7 @@ export function StatCard({ label, value, hint }: { label: string; value: React.R
 
 export function Card({ title, right, children }: { title: string; right?: React.ReactNode; children: React.ReactNode }) {
   return (
-    <section className="rounded-xl border border-concrete-200 bg-white">
+    <section className="rounded-xl border border-concrete-200 bg-surface">
       <div className="flex flex-col gap-3 border-b border-concrete-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="font-display text-sm font-bold tracking-tight text-ink">{title}</h2>
         {right}
@@ -97,7 +97,7 @@ export const Table = ({ children }: { children: React.ReactNode }) => (
 
 export function AccessDenied({ msg }: { msg?: string }) {
   return (
-    <div className="mx-auto max-w-md rounded-xl border border-concrete-200 bg-white p-10 text-center">
+    <div className="mx-auto max-w-md rounded-xl border border-concrete-200 bg-surface p-10 text-center">
       <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 text-amber-600">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-6 w-6"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
       </div>
@@ -134,13 +134,13 @@ export function SearchInput({ value, onChange, placeholder = "Search…" }: { va
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full rounded-md border border-concrete-200 bg-white py-1.5 pl-8 pr-3 text-sm text-ink placeholder:text-concrete-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:w-56"
+        className="w-full rounded-md border border-concrete-200 bg-surface py-1.5 pl-8 pr-3 text-sm text-ink placeholder:text-concrete-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 sm:w-56"
       />
     </div>
   );
 }
 
-export const inputCls = "w-full rounded-md border border-concrete-200 bg-white px-3 py-2 text-sm text-ink placeholder:text-concrete-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500";
+export const inputCls = "w-full rounded-md border border-concrete-200 bg-surface px-3 py-2 text-sm text-ink placeholder:text-concrete-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500";
 
 export function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -154,7 +154,7 @@ export function Field({ label, children }: { label: string; children: React.Reac
 export function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
-      <div className="w-full max-w-lg rounded-xl bg-white shadow-2xl" onClick={(e) => e.stopPropagation()}>
+      <div className="w-full max-w-lg rounded-xl bg-surface shadow-2xl" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between border-b border-concrete-200 px-6 py-4">
           <h2 className="font-display text-sm font-bold text-ink">{title}</h2>
           <button onClick={onClose} className="rounded-md p-1 text-concrete-400 hover:bg-concrete-100 hover:text-ink">

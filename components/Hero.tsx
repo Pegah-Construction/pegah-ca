@@ -20,7 +20,7 @@ export default async function Hero() {
       )}
 
       <div className="mx-auto w-full max-w-8xl px-6 py-20 lg:px-10">
-        <div className="hero-animate max-w-lg bg-white/95 p-8 shadow-xl ring-1 ring-black/5 backdrop-blur-sm sm:p-10" style={{ animationDelay: "80ms" }}>
+        <div className="hero-animate max-w-lg bg-surface/95 p-8 shadow-xl ring-1 ring-black/5 backdrop-blur-sm dark:ring-white/10 sm:p-10" style={{ animationDelay: "80ms" }}>
           <div className="accent-bar mb-6" />
           <p className="font-display text-xs font-bold uppercase tracking-[0.25em] text-concrete-500">
             {s.heroEyebrow}
@@ -28,7 +28,7 @@ export default async function Hero() {
           <h1 className="mt-4 whitespace-pre-line font-display text-5xl font-black leading-[1.03] tracking-tight text-ink sm:text-6xl">
             {s.heroTitle}
           </h1>
-          <p className="mt-5 text-lg leading-relaxed text-concrete-600">
+          <p className="mt-5 text-lg leading-relaxed text-concrete-500">
             {s.heroSubtitle}
           </p>
         </div>

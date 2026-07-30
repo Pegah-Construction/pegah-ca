@@ -51,7 +51,7 @@ export default function LoginScreen() {
                 autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-2 w-full rounded-md border border-concrete-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-500"
+                className="mt-2 w-full rounded-md border border-concrete-300 bg-surface px-4 py-2.5 text-sm outline-none focus:border-brand-500"
                 placeholder="you@pegah.ca"
               />
             </div>
@@ -68,7 +68,7 @@ export default function LoginScreen() {
                 autoComplete="current-password"
                 value={pw}
                 onChange={(e) => setPw(e.target.value)}
-                className="mt-2 w-full rounded-md border border-concrete-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-500"
+                className="mt-2 w-full rounded-md border border-concrete-300 bg-surface px-4 py-2.5 text-sm outline-none focus:border-brand-500"
               />
             </div>
             {error && (

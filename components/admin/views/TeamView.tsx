@@ -284,7 +284,7 @@ export default function TeamView() {
           ) : (
             <div className="grid gap-6 p-6 sm:grid-cols-2 xl:grid-cols-3">
               {members.map((m) => (
-                <div key={m.id} className="overflow-hidden rounded-xl border border-concrete-200 bg-white">
+                <div key={m.id} className="overflow-hidden rounded-xl border border-concrete-200 bg-surface">
                   {/* Photo — click to upload */}
                   <div
                     className="group relative aspect-[4/5] w-full cursor-pointer bg-concrete-100"

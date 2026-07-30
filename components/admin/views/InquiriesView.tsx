@@ -113,7 +113,7 @@ export default function InquiriesView() {
                 </div>
 
                 {expanded === inq.id && (
-                  <div className="ml-5 mt-3 rounded-lg border border-concrete-200 bg-white p-4">
+                  <div className="ml-5 mt-3 rounded-lg border border-concrete-200 bg-surface p-4">
                     <p className="whitespace-pre-wrap text-sm leading-relaxed text-ink">{inq.message}</p>
                     <div className="mt-3 flex gap-3">
                       <a

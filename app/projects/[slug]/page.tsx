@@ -101,7 +101,7 @@ export default async function ProjectDetail({ params }: Params) {
         </div>
 
         {/* Back to projects */}
-        <section className="border-t border-concrete-200 bg-white">
+        <section className="border-t border-concrete-200 bg-surface">
           <div className="mx-auto flex max-w-8xl items-center justify-center px-6 py-14 lg:px-10">
             <Link
               href="/projects"

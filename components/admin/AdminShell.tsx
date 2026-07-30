@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/auth";
 import { PERMS, ROLES, type NavKey } from "@/lib/admin";
 import { Avatar, RolePill } from "./ui";
 import { LogoMark } from "@/components/Brand";
+import ThemeToggle from "@/components/ThemeToggle";
 import ChangePasswordModal from "./ChangePasswordModal";
 
 const NAV: { key: NavKey; label: string; href: string }[] = [
@@ -160,7 +161,8 @@ export default function AdminShell({
             <h1 className="truncate font-display text-lg font-bold tracking-tight text-ink sm:text-xl">{title}</h1>
             {sub ? <p className="truncate font-mono text-xs text-concrete-500">{sub}</p> : null}
           </div>
-          <div className="ml-auto flex items-center gap-4">
+          <div className="ml-auto flex items-center gap-3">
+            <ThemeToggle />
             <RolePill role={user.role} />
           </div>
         </header>

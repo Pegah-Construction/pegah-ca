@@ -145,7 +145,7 @@ export default async function TendersPage() {
                     <a href={`mailto:${company.estimatingEmail}`} className="inline-flex items-center gap-2 rounded-md bg-brand-700 px-5 py-2.5 font-display text-sm font-semibold text-white transition-colors hover:bg-brand-800">
                       Email our estimating team →
                     </a>
-                    <a href={company.phoneHref} className="inline-flex items-center gap-2 rounded-md border border-brand-300 bg-white px-5 py-2.5 font-mono text-sm text-brand-700 transition-colors hover:border-brand-400">
+                    <a href={company.phoneHref} className="inline-flex items-center gap-2 rounded-md border border-brand-300 bg-surface px-5 py-2.5 font-mono text-sm text-brand-700 transition-colors hover:border-brand-400">
                       {company.phone}
                     </a>
                   </div>

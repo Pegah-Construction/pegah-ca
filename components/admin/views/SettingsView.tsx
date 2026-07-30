@@ -30,7 +30,7 @@ function Field({
         value={value}
         disabled={disabled}
         onChange={(e) => onChange?.(e.target.value)}
-        className="mt-2 w-full rounded-md border border-concrete-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-500 disabled:bg-concrete-100 disabled:text-concrete-400"
+        className="mt-2 w-full rounded-md border border-concrete-300 bg-surface px-4 py-2.5 text-sm outline-none focus:border-brand-500 disabled:bg-concrete-100 disabled:text-concrete-400"
       />
       {hint && <p className="mt-1.5 text-xs text-concrete-400">{hint}</p>}
     </div>
@@ -60,7 +60,7 @@ function TextareaField({
         disabled={disabled}
         rows={rows}
         onChange={(e) => onChange?.(e.target.value)}
-        className="mt-2 w-full rounded-md border border-concrete-300 bg-white px-4 py-2.5 text-sm leading-relaxed outline-none focus:border-brand-500 disabled:bg-concrete-100 disabled:text-concrete-400"
+        className="mt-2 w-full rounded-md border border-concrete-300 bg-surface px-4 py-2.5 text-sm leading-relaxed outline-none focus:border-brand-500 disabled:bg-concrete-100 disabled:text-concrete-400"
       />
       {hint && <p className="mt-1.5 text-xs text-concrete-400">{hint}</p>}
     </div>

@@ -66,7 +66,7 @@ export default function SubcontractorRegisterPage() {
             </Reveal>
           ) : (
             <Reveal>
-              <div className="mx-auto max-w-xl rounded-xl border border-concrete-200 bg-white px-8 py-12 text-center">
+              <div className="mx-auto max-w-xl rounded-xl border border-concrete-200 bg-surface px-8 py-12 text-center">
                 <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-brand-50">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7 text-brand-700">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />

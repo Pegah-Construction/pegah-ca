@@ -33,7 +33,7 @@ function FilterSelect({
         className={`${widthCls} cursor-pointer appearance-none truncate rounded-md border py-1.5 pl-3 pr-8 text-sm outline-none transition-colors focus:ring-1 focus:ring-brand-500 ${
           isActive
             ? "border-brand-300 bg-brand-50 font-medium text-brand-800"
-            : "border-concrete-200 bg-white text-ink hover:border-concrete-300"
+            : "border-concrete-200 bg-surface text-ink hover:border-concrete-300"
         }`}
       >
         {children}

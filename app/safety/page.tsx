@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
 import Reveal from "@/components/Reveal";
 import { db } from "@/lib/db";
@@ -149,7 +149,7 @@ export default async function SafetyPage() {
                 href={r.b || "#"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-center justify-between gap-3 rounded-xl border border-concrete-200 bg-white px-5 py-4 transition-colors hover:border-brand-300 hover:bg-brand-50/40"
+                className="group flex items-center justify-between gap-3 rounded-xl border border-concrete-200 bg-surface px-5 py-4 transition-colors hover:border-brand-300 hover:bg-brand-50/40"
               >
                 <span className="font-display font-semibold text-ink group-hover:text-brand-700">{r.a}</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 shrink-0 text-concrete-400 group-hover:text-brand-700">

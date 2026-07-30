@@ -79,7 +79,7 @@ export default function BoardView() {
                   const subDone = c.subtasks.filter((s) => s.done).length;
                   return (
                     <div key={c.id} draggable onDragStart={() => setDragId(c.id)} onClick={() => setOpenId(c.id)}
-                      className="group cursor-grab rounded-lg border border-concrete-200 bg-white p-3 shadow-sm transition-shadow hover:shadow-md active:cursor-grabbing">
+                      className="group cursor-grab rounded-lg border border-concrete-200 bg-surface p-3 shadow-sm transition-shadow hover:shadow-md active:cursor-grabbing">
                       <span className="font-display text-sm font-semibold leading-snug text-ink">{c.title}</span>
                       <div className="mt-2 font-mono text-[11px] text-concrete-500">{pr?.name}</div>
                       <div className="mt-3 flex items-center justify-between">
@@ -108,7 +108,7 @@ function CardDrawer({ card, onClose, onToggleSub }: { card: TCard; onClose: () =
   const pr = getProject(card.project);
   return (
     <div onClick={onClose} className="fixed inset-0 z-[110] flex items-center justify-center bg-ink/40 p-4">
-      <div onClick={(e) => e.stopPropagation()} className="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl">
+      <div onClick={(e) => e.stopPropagation()} className="w-full max-w-lg overflow-hidden rounded-2xl bg-surface shadow-2xl">
         <div className="flex items-center justify-between border-b border-concrete-200 px-6 py-4">
           <h2 className="font-display text-lg font-bold tracking-tight text-ink">{card.title}</h2>
           <button onClick={onClose} className="text-xl leading-none text-concrete-400 hover:text-ink">×</button>

@@ -101,7 +101,61 @@
   box-shadow: 0 30px 55px -12px rgba(15, 31, 77, 0.45);
 }
 
+/* Dark-mode card resting shadows — a light hairline reads on dark surfaces
+   where the navy one vanishes. */
+.dark .img-card,
+.dark .blog-card {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 14px 34px -10px rgba(0, 0, 0, 0.6);
+}
+.dark .card-elevated {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 14px 34px -10px rgba(0, 0, 0, 0.55);
+}
+
+/* Brand-blue *text* (links, icons) is too dark to read on dark surfaces — lighten
+   it. Background utilities (bg-brand-700 buttons, bg-brand-800 bands) are untouched. */
+.dark .text-brand-600 { color: #93b0f0; }
+.dark .text-brand-700 { color: #7c9ce0; }
+.dark .text-brand-800 { color: #a9c0f0; }
+.dark .hover\:text-brand-700:hover { color: #96b0ec; }
+.dark .hover\:text-brand-800:hover { color: #b4c8f4; }
+.dark .group:hover .group-hover\:text-brand-700 { color: #96b0ec; }
+
 @layer base {
+  /* ── Theme tokens (light) ── consumed by the tailwind color config as
+     rgb(var(--c-*) / <alpha>). Only semantic colours flip; brand/accent hues
+     that read on both grounds stay constant. */
+  :root {
+    --c-paper: 250 251 253;
+    --c-surface: 255 255 255;
+    --c-ink: 18 34 79;
+    --c-brand-50: 238 242 251;
+    --c-accent-700: 152 90 13;
+    --c-concrete-50: 244 246 249;
+    --c-concrete-100: 238 241 245;
+    --c-concrete-200: 221 226 234;
+    --c-concrete-300: 193 200 212;
+    --c-concrete-400: 91 100 114;
+    --c-concrete-500: 51 64 92;
+    --grid-line: 15 31 77;   /* blueprint grid line colour */
+    --grid-alpha: 0.05;
+  }
+  .dark {
+    --c-paper: 12 18 33;
+    --c-surface: 20 28 51;
+    --c-ink: 236 240 248;
+    --c-brand-50: 26 37 64;
+    --c-accent-700: 231 154 47;
+    --c-concrete-50: 24 32 54;
+    --c-concrete-100: 30 40 66;
+    --c-concrete-200: 45 57 90;
+    --c-concrete-300: 74 88 122;
+    --c-concrete-400: 148 158 184;
+    --c-concrete-500: 198 205 225;
+    --grid-line: 255 255 255;
+    --grid-alpha: 0.045;
+    color-scheme: dark;
+  }
+
   html {
     scroll-behavior: smooth;
     color-scheme: light;
@@ -111,8 +165,8 @@
     @apply bg-paper text-ink font-body antialiased;
     /* Faint blueprint grid — subtle construction-themed texture site-wide. */
     background-image:
-      linear-gradient(rgba(15, 31, 77, 0.042) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(15, 31, 77, 0.042) 1px, transparent 1px);
+      linear-gradient(rgb(var(--grid-line) / var(--grid-alpha)) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--grid-line) / var(--grid-alpha)) 1px, transparent 1px);
     background-size: 46px 46px;
   }
   /* Gentle default transitions on interactive elements. */
@@ -130,37 +184,37 @@
 
   /* Soft brand-tinted glow + blueprint grid for page heroes. */
   .hero-surface {
-    background-color: #ffffff;
+    background-color: rgb(var(--c-surface));
     background-image:
       radial-gradient(48rem 22rem at 12% -25%, rgba(31, 58, 147, 0.18), transparent 60%),
       radial-gradient(40rem 20rem at 96% -10%, rgba(58, 90, 191, 0.12), transparent 55%),
-      linear-gradient(rgba(15, 31, 77, 0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(15, 31, 77, 0.06) 1px, transparent 1px);
+      linear-gradient(rgb(var(--grid-line) / 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--grid-line) / 0.06) 1px, transparent 1px);
     background-size: auto, auto, 46px 46px, 46px 46px;
   }
 
-  /* White surface with the faint blueprint grid (for white content sections). */
+  /* Surface with the faint blueprint grid (for plain content sections). */
   .grid-surface {
-    background-color: #ffffff;
+    background-color: rgb(var(--c-surface));
     background-image:
-      linear-gradient(rgba(15, 31, 77, 0.055) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(15, 31, 77, 0.055) 1px, transparent 1px);
+      linear-gradient(rgb(var(--grid-line) / 0.055) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--grid-line) / 0.055) 1px, transparent 1px);
     background-size: 46px 46px;
   }
 
   /* Brand tint wash with a very faint blueprint grid on top. */
   .tint-grid-surface {
-    background-color: #ffffff;
+    background-color: rgb(var(--c-surface));
     background-image:
-      linear-gradient(rgba(15, 31, 77, 0.032) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(15, 31, 77, 0.032) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(238, 242, 251, 0.6), transparent 70%);
+      linear-gradient(rgb(var(--grid-line) / 0.032) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--grid-line) / 0.032) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(var(--c-brand-50) / 0.6), transparent 70%);
     background-size: 46px 46px, 46px 46px, auto;
   }
 
   /* Reusable elevated card with hover lift. */
   .card-elevated {
-    @apply rounded-2xl border border-concrete-200 bg-white;
+    @apply rounded-2xl border border-concrete-200 bg-surface;
     /* Crisp hairline + soft resting shadow — a calmer, more refined card. */
     box-shadow: 0 0 0 1px rgba(15, 31, 77, 0.14), 0 12px 30px -8px rgba(15, 31, 77, 0.24);
     transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);

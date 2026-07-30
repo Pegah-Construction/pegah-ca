@@ -9,7 +9,7 @@ export default function PartnerStrip() {
   const items = [...partners, ...partners];
 
   return (
-    <section className="overflow-hidden border-b border-concrete-200 bg-white py-8">
+    <section className="overflow-hidden border-b border-concrete-200 bg-surface py-8">
       <div className="marquee flex w-max items-center gap-16 pl-16">
         {items.map((a, i) => (
           <a

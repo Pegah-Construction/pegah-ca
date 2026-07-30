@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import AuthPanel from "@/components/admin/AuthPanel";
 
 const inputCls =
-  "mt-2 w-full rounded-md border border-concrete-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-500";
+  "mt-2 w-full rounded-md border border-concrete-300 bg-surface px-4 py-2.5 text-sm outline-none focus:border-brand-500";
 
 export default function ResetPasswordPage() {
   const router = useRouter();

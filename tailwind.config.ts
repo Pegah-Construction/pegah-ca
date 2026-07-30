@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: "class",
   content: [
     "./app/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
@@ -8,17 +9,22 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // "Blueprint & Ironwork" palette
-        paper: "#fafbfd",
-        ink: "#12224f", // blueprint navy — primary text & headings
-        // Deep corporate blue brand scale (centres on brand blue #1f3a93)
+        // "Blueprint & Ironwork" palette. Theme-aware tokens are driven by CSS
+        // variables (see globals.css :root / .dark) so the whole UI flips
+        // between light and dark. rgb(... / <alpha-value>) keeps /opacity working.
+        paper: "rgb(var(--c-paper) / <alpha-value>)",       // page background
+        surface: "rgb(var(--c-surface) / <alpha-value>)",   // card / section surface (was bg-white)
+        ink: "rgb(var(--c-ink) / <alpha-value>)",           // primary text & headings
         brand: {
-          50: "#eef2fb",
+          50: "rgb(var(--c-brand-50) / <alpha-value>)",     // tinted card background (flips)
           100: "#dbe3f6",
           200: "#b8c8ec",
           300: "#8da6df",
           400: "#5c7ccd",
           500: "#3a5abf",
+          // 600–900 stay saturated (used as button / band backgrounds with white
+          // text). Brand-blue *text* is lightened for dark mode via .dark overrides
+          // in globals.css so links stay readable.
           600: "#2a45a6",
           700: "#1f3a93",
           800: "#172c70",
@@ -33,20 +39,18 @@ const config: Config = {
           400: "#e79a2f",
           500: "#e08a1e",
           600: "#c0730f",
-          700: "#985a0d",
+          700: "rgb(var(--c-accent-700) / <alpha-value>)",  // eyebrow / label text (brightens in dark)
           800: "#6f4209",
           900: "#4b2c06",
         },
-        // Cool steel / concrete neutrals
+        // Cool steel / concrete neutrals (all flip)
         concrete: {
-          50: "#f4f6f9",
-          100: "#eef1f5",
-          200: "#dde2ea",
-          300: "#c1c8d4",
-          // Steel gray — muted secondary text, icons, borders
-          400: "#5b6472",
-          // Dark steel-navy — strong secondary text (accessible on light)
-          500: "#33405c",
+          50: "rgb(var(--c-concrete-50) / <alpha-value>)",
+          100: "rgb(var(--c-concrete-100) / <alpha-value>)",
+          200: "rgb(var(--c-concrete-200) / <alpha-value>)",
+          300: "rgb(var(--c-concrete-300) / <alpha-value>)",
+          400: "rgb(var(--c-concrete-400) / <alpha-value>)", // muted secondary text
+          500: "rgb(var(--c-concrete-500) / <alpha-value>)", // strong secondary text
         },
       },
       fontFamily: {

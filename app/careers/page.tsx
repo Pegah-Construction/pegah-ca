@@ -66,7 +66,7 @@ export default async function CareersPage() {
         </section>
 
         {/* Intro */}
-        <section className="border-b border-concrete-200 bg-white">
+        <section className="border-b border-concrete-200 bg-surface">
           <div className="mx-auto max-w-8xl px-6 py-14 lg:px-10">
             <div className="grid max-w-5xl gap-8 lg:grid-cols-2">
               <Reveal direction="left">
@@ -88,7 +88,7 @@ export default async function CareersPage() {
           {jobs.length === 0 ? (
             /* Empty state */
             <Reveal>
-              <div className="rounded-2xl border border-concrete-200 bg-white px-10 py-20 text-center">
+              <div className="rounded-2xl border border-concrete-200 bg-surface px-10 py-20 text-center">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className="mx-auto h-12 w-12 text-concrete-300">
                   <rect x="2" y="7" width="20" height="14" rx="2" />
                   <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
@@ -126,7 +126,7 @@ export default async function CareersPage() {
                       <h3 className="mb-4 font-mono text-[11px] uppercase tracking-label text-accent-700">
                         {dept}
                       </h3>
-                      <div className="divide-y divide-concrete-100 overflow-hidden rounded-xl border border-concrete-200 bg-white">
+                      <div className="divide-y divide-concrete-100 overflow-hidden rounded-xl border border-concrete-200 bg-surface">
                         {byDept[dept].map((job) => (
                           <div key={job.id} className="px-6 py-6 sm:px-8">
                             <div className="flex flex-wrap items-start gap-3">

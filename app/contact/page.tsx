@@ -75,7 +75,7 @@ export default function ContactPage() {
                     required={required}
                     value={form[key as keyof typeof form]}
                     onChange={(e) => set(key, e.target.value)}
-                    className="mt-2 w-full rounded-md border border-concrete-300 bg-white px-4 py-3 outline-none focus:border-brand-500"
+                    className="mt-2 w-full rounded-md border border-concrete-300 bg-surface px-4 py-3 outline-none focus:border-brand-500"
                   />
                 </div>
               ))}
@@ -88,7 +88,7 @@ export default function ContactPage() {
                   rows={4}
                   value={form.message}
                   onChange={(e) => set("message", e.target.value)}
-                  className="mt-2 w-full rounded-md border border-concrete-300 bg-white px-4 py-3 outline-none focus:border-brand-500"
+                  className="mt-2 w-full rounded-md border border-concrete-300 bg-surface px-4 py-3 outline-none focus:border-brand-500"
                 />
               </div>
               {status === "error" && (

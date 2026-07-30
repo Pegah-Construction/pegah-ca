@@ -52,7 +52,7 @@ function fmtClosing(iso: string) {
 function TenderCard({ t }: { t: PublicTender }) {
   const sub = [t.org, [t.city, t.province].filter(Boolean).join(", ")].filter(Boolean).join(" · ");
   return (
-    <div className="flex h-full flex-col rounded-xl border border-concrete-200 bg-white p-5 transition-all hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-md">
+    <div className="flex h-full flex-col rounded-xl border border-concrete-200 bg-surface p-5 transition-all hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-md">
       <div className="mb-2.5 flex items-start justify-between gap-2">
         <span className="truncate font-mono text-[10px] uppercase tracking-label text-concrete-400">{t.ref}</span>
         <StatusBadge status={t.status} />
@@ -149,7 +149,7 @@ export default function TenderList({ tenders }: { tenders: PublicTender[] }) {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Search by title, reference, or city…"
-            className="w-full rounded-md border border-concrete-300 bg-white py-2.5 pl-10 pr-4 text-sm outline-none focus:border-brand-500"
+            className="w-full rounded-md border border-concrete-300 bg-surface py-2.5 pl-10 pr-4 text-sm outline-none focus:border-brand-500"
           />
         </div>
 
@@ -189,7 +189,7 @@ export default function TenderList({ tenders }: { tenders: PublicTender[] }) {
                 onClick={() => setGroup(c)}
                 className={`rounded-full px-3 py-1.5 font-mono text-[11px] uppercase tracking-label transition-colors ${
                   on
-                    ? "bg-ink text-white"
+                    ? "bg-ink text-paper"
                     : "border border-concrete-300 text-concrete-500 hover:border-ink/40 hover:text-ink"
                 }`}
               >
@@ -202,7 +202,7 @@ export default function TenderList({ tenders }: { tenders: PublicTender[] }) {
 
       {/* Results */}
       {visible.length === 0 ? (
-        <div className="rounded-xl border border-concrete-200 bg-white px-8 py-20 text-center">
+        <div className="rounded-xl border border-concrete-200 bg-surface px-8 py-20 text-center">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className="mx-auto h-10 w-10 text-concrete-300">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
             <path d="M14 2v6h6M9 13h6M9 17h6" />

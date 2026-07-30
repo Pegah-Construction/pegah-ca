@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { nav } from "@/lib/site";
 import { SiteLogo } from "./Brand";
+import ThemeToggle from "./ThemeToggle";
 import { useAuth } from "@/lib/auth";
 import { useSiteSettings } from "@/lib/use-settings";
 import { telHref } from "@/lib/settings";
@@ -31,7 +32,7 @@ export default function Navbar() {
   useEffect(() => { setMenuOpen(false); }, [pathname]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-concrete-200 bg-white">
+    <header className="sticky top-0 z-50 border-b border-concrete-200 bg-surface">
       <nav className="mx-auto flex max-w-8xl items-center justify-between gap-8 px-6 py-3 lg:px-10">
         <SiteLogo />
 
@@ -49,7 +50,7 @@ export default function Navbar() {
             </a>
             <a
               href={`mailto:${s.estimatingEmail}`}
-              className="whitespace-nowrap rounded-md bg-ink px-4 py-2 font-display text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-ink/90"
+              className="whitespace-nowrap rounded-md bg-ink px-4 py-2 font-display text-sm font-bold uppercase tracking-wide text-paper transition-colors hover:bg-ink/90"
             >
               Email Estimating
             </a>
@@ -58,6 +59,7 @@ export default function Navbar() {
                 <UserAvatar name={user.name} id={user.id} />
               </Link>
             )}
+            <ThemeToggle />
           </div>
 
           <ul className="flex items-center gap-7">
@@ -91,7 +93,7 @@ export default function Navbar() {
 
                     {/* Dropdown panel — pt-3 bridges the gap so hover doesn't break */}
                     <div className="invisible absolute right-0 top-full z-50 pt-3 opacity-0 transition-all duration-150 group-hover:visible group-hover:opacity-100">
-                      <div className="min-w-[220px] overflow-hidden rounded-xl border border-concrete-200 bg-white shadow-xl shadow-ink/5">
+                      <div className="min-w-[220px] overflow-hidden rounded-xl border border-concrete-200 bg-surface shadow-xl shadow-ink/5">
                         {item.children.map((child) => {
                           const childActive = pathname === child.href;
                           return (
@@ -125,18 +127,21 @@ export default function Navbar() {
           </ul>
         </div>
 
-        {/* Mobile menu toggle */}
+        {/* Mobile: theme toggle + menu button */}
+        <div className="flex items-center gap-1 lg:hidden">
+        <ThemeToggle className="border-0" />
         <button
           type="button"
           onClick={() => setMenuOpen((o) => !o)}
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           aria-expanded={menuOpen}
-          className="-mr-1 inline-flex items-center justify-center rounded-md p-2 text-ink hover:bg-concrete-100 lg:hidden"
+          className="-mr-1 inline-flex items-center justify-center rounded-md p-2 text-ink hover:bg-concrete-100"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
             {menuOpen ? <path d="M18 6 6 18M6 6l12 12" /> : <><path d="M3 12h18" /><path d="M3 6h18" /><path d="M3 18h18" /></>}
           </svg>
         </button>
+        </div>
       </nav>
 
       {/* Mobile menu panel */}
@@ -178,7 +183,7 @@ export default function Navbar() {
             <li className="!mt-3 flex flex-col gap-3 border-t border-concrete-200 pt-4">
               <a
                 href={`mailto:${s.estimatingEmail}`}
-                className="rounded-md bg-ink px-4 py-2 text-center font-display text-sm font-bold uppercase tracking-wide text-white hover:bg-ink/90"
+                className="rounded-md bg-ink px-4 py-2 text-center font-display text-sm font-bold uppercase tracking-wide text-paper hover:bg-ink/90"
               >
                 Email Estimating
               </a>

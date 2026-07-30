@@ -356,7 +356,7 @@ export default function RichEditor({ value, onChange, articleId }: { value: stri
           type="button"
           title="Reset color"
           onClick={() => editor.chain().focus().unsetColor().run()}
-          className="h-4 w-4 rounded-sm border border-concrete-300 bg-white text-[8px] font-bold text-concrete-500 hover:border-concrete-400 leading-none"
+          className="h-4 w-4 rounded-sm border border-concrete-300 bg-surface text-[8px] font-bold text-concrete-500 hover:border-concrete-400 leading-none"
         >
           ×
         </button>
@@ -386,13 +386,13 @@ export default function RichEditor({ value, onChange, articleId }: { value: stri
           <p className="mb-2 font-mono text-[10px] uppercase tracking-widest text-concrete-500">Progress Banner</p>
           <div className="grid gap-2 sm:grid-cols-2">
             <input autoFocus placeholder="Label (e.g. Billing Progress)" value={progressForm.label} onChange={(e) => setProgressForm((f) => ({ ...f, label: e.target.value }))}
-              className="rounded border border-concrete-200 bg-white px-2 py-1 font-mono text-xs text-ink outline-none focus:border-brand-400 placeholder:text-concrete-400" />
+              className="rounded border border-concrete-200 bg-surface px-2 py-1 font-mono text-xs text-ink outline-none focus:border-brand-400 placeholder:text-concrete-400" />
             <input placeholder="Title (e.g. Progress Draw #29, May 2026)" value={progressForm.title} onChange={(e) => setProgressForm((f) => ({ ...f, title: e.target.value }))}
-              className="rounded border border-concrete-200 bg-white px-2 py-1 font-mono text-xs text-ink outline-none focus:border-brand-400 placeholder:text-concrete-400" />
+              className="rounded border border-concrete-200 bg-surface px-2 py-1 font-mono text-xs text-ink outline-none focus:border-brand-400 placeholder:text-concrete-400" />
             <input placeholder="Bar label (e.g. Construction Completion)" value={progressForm.barLabel} onChange={(e) => setProgressForm((f) => ({ ...f, barLabel: e.target.value }))}
-              className="rounded border border-concrete-200 bg-white px-2 py-1 font-mono text-xs text-ink outline-none focus:border-brand-400 placeholder:text-concrete-400" />
+              className="rounded border border-concrete-200 bg-surface px-2 py-1 font-mono text-xs text-ink outline-none focus:border-brand-400 placeholder:text-concrete-400" />
             <input type="number" min={0} max={100} placeholder="% complete" value={progressForm.percent} onChange={(e) => setProgressForm((f) => ({ ...f, percent: e.target.value }))}
-              className="rounded border border-concrete-200 bg-white px-2 py-1 font-mono text-xs text-ink outline-none focus:border-brand-400 placeholder:text-concrete-400" />
+              className="rounded border border-concrete-200 bg-surface px-2 py-1 font-mono text-xs text-ink outline-none focus:border-brand-400 placeholder:text-concrete-400" />
           </div>
           <div className="mt-2 flex justify-end gap-2">
             <button type="button" onClick={() => setPanel(null)} className="font-mono text-[10px] text-concrete-400 hover:text-ink">Cancel</button>
@@ -409,9 +409,9 @@ export default function RichEditor({ value, onChange, articleId }: { value: stri
             {stats.map((s, i) => (
               <div key={i} className="grid grid-cols-2 gap-2">
                 <input placeholder={`Stat ${i + 1} value (e.g. 29)`} value={s.value} onChange={(e) => setStat(i, "value", e.target.value)}
-                  className="rounded border border-concrete-200 bg-white px-2 py-1 font-mono text-xs text-ink outline-none focus:border-brand-400 placeholder:text-concrete-400" />
+                  className="rounded border border-concrete-200 bg-surface px-2 py-1 font-mono text-xs text-ink outline-none focus:border-brand-400 placeholder:text-concrete-400" />
                 <input placeholder={`Stat ${i + 1} label (e.g. Progress Draws)`} value={s.label} onChange={(e) => setStat(i, "label", e.target.value)}
-                  className="rounded border border-concrete-200 bg-white px-2 py-1 font-mono text-xs text-ink outline-none focus:border-brand-400 placeholder:text-concrete-400" />
+                  className="rounded border border-concrete-200 bg-surface px-2 py-1 font-mono text-xs text-ink outline-none focus:border-brand-400 placeholder:text-concrete-400" />
               </div>
             ))}
           </div>

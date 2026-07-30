@@ -169,7 +169,7 @@ export default function CareersView() {
 
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setOpen(false)}>
-          <div className="flex max-h-[90vh] w-full max-w-2xl flex-col rounded-xl bg-white shadow-2xl" onClick={(e) => e.stopPropagation()}>
+          <div className="flex max-h-[90vh] w-full max-w-2xl flex-col rounded-xl bg-surface shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between border-b border-concrete-200 px-6 py-4">
               <h2 className="font-display text-sm font-bold text-ink">{editingId ? "Edit job posting" : "New job posting"}</h2>
               <button onClick={() => setOpen(false)} className="rounded-md p-1 text-concrete-400 hover:bg-concrete-100 hover:text-ink">

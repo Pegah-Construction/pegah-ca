@@ -81,7 +81,7 @@ function ControlSelect({ value, onChange, children }: { value: string; onChange:
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="cursor-pointer appearance-none rounded-md border border-concrete-300 bg-white py-2.5 pl-3 pr-9 text-sm text-ink outline-none focus:border-brand-500"
+        className="cursor-pointer appearance-none rounded-md border border-concrete-300 bg-surface py-2.5 pl-3 pr-9 text-sm text-ink outline-none focus:border-brand-500"
       >
         {children}
       </select>
@@ -154,7 +154,7 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
                   type="button"
                   onClick={() => { setFilter(f); setSubType("All"); }}
                   className={`rounded-md border-2 px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-label transition-colors ${
-                    on ? "border-ink bg-ink text-white" : "border-ink text-ink hover:bg-ink hover:text-white"
+                    on ? "border-ink bg-ink text-paper" : "border-ink text-ink hover:bg-ink hover:text-paper"
                   }`}
                 >
                   {f}
@@ -178,7 +178,7 @@ export default function ProjectFilter({ projects }: { projects: PublicProject[] 
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Search projects…"
-              className="w-full rounded-md border border-concrete-300 bg-white py-2.5 pl-10 pr-4 text-sm outline-none focus:border-brand-500"
+              className="w-full rounded-md border border-concrete-300 bg-surface py-2.5 pl-10 pr-4 text-sm outline-none focus:border-brand-500"
             />
           </div>
           <div className="flex flex-wrap items-center gap-2">

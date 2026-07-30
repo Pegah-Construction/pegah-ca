@@ -40,7 +40,7 @@ function aiRespond(u: User, q: string): Msg {
     return {
       role: "assistant", tool: "getNews",
       node: (<div>I can draft that. Based on the Riverbend Recreation Complex record (80% complete, Markham), here&rsquo;s an opening:
-        <div className="mt-2 rounded-lg bg-white p-3 text-concrete-700 ring-1 ring-concrete-200"><span className="font-semibold">Riverbend Recreation Complex Nears Completion</span><br />As one of Markham&rsquo;s most anticipated community facilities takes shape, our design-build team has reached 80% completion…</div>
+        <div className="mt-2 rounded-lg bg-surface p-3 text-concrete-700 ring-1 ring-concrete-200"><span className="font-semibold">Riverbend Recreation Complex Nears Completion</span><br />As one of Markham&rsquo;s most anticipated community facilities takes shape, our design-build team has reached 80% completion…</div>
         <div className="mt-2 text-concrete-500">Want me to save this as a draft in News &amp; Blog?</div></div>),
     };
   }
@@ -82,7 +82,7 @@ export default function AIView() {
   return (
     <div className="grid gap-6 xl:grid-cols-3">
       <div className="xl:col-span-2">
-        <div className="flex flex-col rounded-xl border border-concrete-200 bg-white" style={{ height: "calc(100vh - 220px)" }}>
+        <div className="flex flex-col rounded-xl border border-concrete-200 bg-surface" style={{ height: "calc(100vh - 220px)" }}>
           <div className="flex items-center justify-between border-b border-concrete-200 px-5 py-3">
             <div className="flex items-center gap-2">
               <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-700 text-white">
@@ -93,7 +93,7 @@ export default function AIView() {
               <span className="font-mono text-[11px] text-concrete-400">{prov.model}</span>
             </div>
             <div className="flex items-center gap-2">
-              <select value={provider} onChange={(e) => setProvider(e.target.value)} className="rounded-md border border-concrete-300 bg-white px-2 py-1 font-mono text-[11px] outline-none focus:border-brand-500">
+              <select value={provider} onChange={(e) => setProvider(e.target.value)} className="rounded-md border border-concrete-300 bg-surface px-2 py-1 font-mono text-[11px] outline-none focus:border-brand-500">
                 {AI_PROVIDERS.map((p) => <option key={p.key} value={p.key}>{p.label}</option>)}
               </select>
               {messages.length > 0 && <button onClick={() => setMessages([])} className="rounded-md border border-concrete-300 px-2 py-1 font-display text-[11px] font-semibold text-concrete-500 hover:text-ink">Clear</button>}
@@ -120,7 +120,7 @@ export default function AIView() {
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-4 w-4"><path d="M12 2a3 3 0 0 1 3 3v1a3 3 0 0 1 3 3 3 3 0 0 1 0 6 3 3 0 0 1-3 3v1a3 3 0 0 1-6 0v-1a3 3 0 0 1-3-3 3 3 0 0 1 0-6 3 3 0 0 1 3-3V5a3 3 0 0 1 3-3z" /></svg>
                 </span>
                 <div className="max-w-[85%] rounded-2xl rounded-bl-sm bg-concrete-100 px-4 py-2.5 text-sm text-ink">
-                  {m.tool && <div className="mb-2 inline-flex items-center gap-1.5 rounded-md bg-white px-2 py-1 font-mono text-[10px] text-concrete-500 ring-1 ring-concrete-200"><span className="h-1.5 w-1.5 rounded-full bg-brand-500" />called {m.tool}</div>}
+                  {m.tool && <div className="mb-2 inline-flex items-center gap-1.5 rounded-md bg-surface px-2 py-1 font-mono text-[10px] text-concrete-500 ring-1 ring-concrete-200"><span className="h-1.5 w-1.5 rounded-full bg-brand-500" />called {m.tool}</div>}
                   <div>{m.node}</div>
                 </div>
               </div>

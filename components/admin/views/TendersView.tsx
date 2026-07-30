@@ -77,7 +77,7 @@ export default function TendersView() {
               onClick={() => setStatus(s)}
               className={`rounded-full px-3 py-1.5 font-mono text-[11px] uppercase tracking-wide transition-colors ${
                 status === s
-                  ? "bg-ink text-white"
+                  ? "bg-ink text-paper"
                   : "border border-concrete-300 text-concrete-500 hover:border-ink/40 hover:text-ink"
               }`}
             >
@@ -94,7 +94,7 @@ export default function TendersView() {
             <button
               onClick={runSync}
               disabled={syncing}
-              className="rounded-md border border-concrete-300 bg-white px-4 py-2 font-display text-sm font-semibold text-ink transition-colors hover:bg-concrete-50 disabled:opacity-60"
+              className="rounded-md border border-concrete-300 bg-surface px-4 py-2 font-display text-sm font-semibold text-ink transition-colors hover:bg-concrete-50 disabled:opacity-60"
             >
               {syncing ? "Syncing…" : "Sync from SmartBid"}
             </button>

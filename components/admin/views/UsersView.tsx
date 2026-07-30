@@ -88,7 +88,7 @@ export default function UsersView() {
             <p className="font-display text-sm font-semibold text-emerald-800">User created successfully</p>
             <p className="mt-0.5 text-sm text-emerald-700">
               Share this temporary password. It won&apos;t be shown again:
-              <span className="ml-2 rounded bg-white px-2 py-0.5 font-mono text-sm font-semibold text-ink ring-1 ring-emerald-200">
+              <span className="ml-2 rounded bg-surface px-2 py-0.5 font-mono text-sm font-semibold text-ink ring-1 ring-emerald-200">
                 {createdPassword}
               </span>
             </p>
@@ -143,7 +143,7 @@ export default function UsersView() {
 
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
         {(Object.keys(ROLES) as RoleKey[]).map((k) => (
-          <div key={k} className="rounded-xl border border-concrete-200 bg-white p-5">
+          <div key={k} className="rounded-xl border border-concrete-200 bg-surface p-5">
             <div className="flex items-center gap-2"><RolePill role={k} /></div>
             <p className="mt-3 text-sm text-concrete-500">{ROLES[k].blurb}</p>
           </div>

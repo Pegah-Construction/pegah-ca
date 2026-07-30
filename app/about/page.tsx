@@ -67,7 +67,7 @@ export default async function AboutPage() {
 
         {/* Pegah Construction Ltd. will */}
         <Reveal>
-          <section className="rounded-2xl border border-concrete-200 bg-white p-7 shadow-sm sm:p-8">
+          <section className="rounded-2xl border border-concrete-200 bg-surface p-7 shadow-sm sm:p-8">
             <div className="accent-bar mb-3" />
             <h2 className="font-display text-2xl font-bold tracking-tight text-ink">Pegah Construction Ltd. will</h2>
             <ul className="mt-5 grid gap-4 sm:grid-cols-2">

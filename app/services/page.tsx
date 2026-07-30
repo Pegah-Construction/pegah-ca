@@ -20,7 +20,7 @@ export default async function ServicesPage() {
       <div className="grid gap-px overflow-hidden rounded-xl border border-concrete-200 bg-concrete-200 sm:grid-cols-2">
         {services.map((s, i) => (
           <Reveal key={s.title} delay={i * 80} direction="up">
-            <div id={s.slug} className="h-full bg-white p-8">
+            <div id={s.slug} className="h-full bg-surface p-8">
               <span className="font-mono text-xs text-concrete-400">0{i + 1}</span>
               <h2 className="mt-2 font-display text-2xl font-bold tracking-tight text-ink">{s.title}</h2>
               <p className="mt-3 leading-relaxed text-concrete-500">{s.desc}</p>

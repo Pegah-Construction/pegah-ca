@@ -32,7 +32,16 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${display.variable} ${body.variable}`}
+      suppressHydrationWarning
     >
+      <head>
+        {/* Apply the saved / system theme before paint to avoid a flash. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body className="flex min-h-screen flex-col"><AuthProvider>{children}</AuthProvider></body>
     </html>
   );

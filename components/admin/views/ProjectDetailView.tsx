@@ -156,7 +156,7 @@ export default function ProjectDetailView({ id }: { id: string }) {
             {perms.editProjects && (
               <button
                 onClick={openEdit}
-                className="rounded-md border border-concrete-200 bg-white px-3 py-1.5 font-display text-xs font-semibold text-ink hover:bg-concrete-50"
+                className="rounded-md border border-concrete-200 bg-surface px-3 py-1.5 font-display text-xs font-semibold text-ink hover:bg-concrete-50"
               >
                 Edit project
               </button>
@@ -211,7 +211,7 @@ export default function ProjectDetailView({ id }: { id: string }) {
 
       {/* Description */}
       {x.description && (
-        <div className="mb-6 rounded-xl border border-concrete-200 bg-white px-6 py-5">
+        <div className="mb-6 rounded-xl border border-concrete-200 bg-surface px-6 py-5">
           <p className="font-body text-base leading-relaxed text-concrete-600">{x.description}</p>
         </div>
       )}
@@ -220,7 +220,7 @@ export default function ProjectDetailView({ id }: { id: string }) {
         <div className="min-w-0 space-y-6 xl:col-span-2">
 
           {/* Photos */}
-          <section className="rounded-xl border border-concrete-200 bg-white">
+          <section className="rounded-xl border border-concrete-200 bg-surface">
             <div className="flex items-center justify-between border-b border-concrete-200 px-5 py-4">
               <h2 className="font-display text-sm font-bold tracking-tight text-ink">
                 Photos <span className="ml-1 font-mono text-xs font-normal text-concrete-400">({photos.length})</span>
