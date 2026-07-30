@@ -8,7 +8,9 @@ import { getStorageUrl } from "@/lib/storage-url";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Projects | Pegah Construction Ltd.",
+  title: "Projects",
+  description: "Explore Pegah Construction's portfolio of ICI and residential projects delivered across Ontario since 1988.",
+  alternates: { canonical: "/projects" },
 };
 
 export default async function ProjectsPage() {

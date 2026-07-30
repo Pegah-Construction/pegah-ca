@@ -6,7 +6,9 @@ import { getStorageUrl } from "@/lib/storage-url";
 import { mergeSafetyContent, toParagraphs, toLines, toPairs } from "@/lib/safety-content";
 
 export const metadata: Metadata = {
-  title: "Health & Safety | Pegah Construction Ltd.",
+  title: "Health & Safety",
+  description: "Health, safety and environment at Pegah Construction Ltd. — our HSE commitment, policies, key duties and certifications.",
+  alternates: { canonical: "/safety" },
 };
 
 export default async function SafetyPage() {

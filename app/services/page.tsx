@@ -5,7 +5,9 @@ import { getSiteSettings } from "@/lib/settings-server";
 import { parseServices } from "@/lib/settings";
 
 export const metadata: Metadata = {
-  title: "Services | Pegah Construction Ltd.",
+  title: "Services",
+  description: "General contracting, construction management, design-build and long-term care — the services Pegah Construction delivers across Ontario.",
+  alternates: { canonical: "/services" },
 };
 
 export default async function ServicesPage() {

@@ -1,5 +1,9 @@
 // Central content for the site. Edit copy and data here.
 
+// Canonical site origin — used for metadata, sitemap, robots and structured data.
+// Set NEXT_PUBLIC_SITE_URL in production (e.g. https://www.pegah.ca).
+export const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.pegah.ca").replace(/\/+$/, "");
+
 export const company = {
   name: "Pegah Construction Ltd.",
   shortName: "Pegah",

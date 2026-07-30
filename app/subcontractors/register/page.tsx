@@ -8,7 +8,8 @@ import { Eyebrow } from "@/components/Brand";
 import { company, affiliations } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Subcontractor Registration | Pegah Construction Ltd.",
+  title: "Subcontractor Registration",
+  alternates: { canonical: "/subcontractors/register" },
   description:
     "Register as a subcontractor with Pegah Construction to receive bid invitations from our estimating team.",
 };

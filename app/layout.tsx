@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat, Roboto } from "next/font/google";
 import { AuthProvider } from "@/lib/auth";
+import { company, siteUrl } from "@/lib/site";
 import "./globals.css";
 
 const display = Montserrat({
@@ -17,10 +18,83 @@ const body = Roboto({
   display: "swap",
 });
 
+const DESCRIPTION =
+  "Pegah Construction Ltd. is an established general contracting and project-management firm serving Ontario across institutional, commercial, industrial (ICI) and residential sectors since 1988.";
+
 export const metadata: Metadata = {
-  title: "Pegah Construction Ltd. | Building Ontario since 1988",
-  description:
-    "An established general contracting and project-management firm serving Ontario across commercial, industrial, institutional and residential sectors since 1988.",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "Pegah Construction Ltd. | General Contractor in Ontario since 1988",
+    template: "%s | Pegah Construction Ltd.",
+  },
+  description: DESCRIPTION,
+  applicationName: "Pegah Construction Ltd.",
+  keywords: [
+    "general contractor Ontario",
+    "construction management",
+    "design-build",
+    "ICI construction",
+    "commercial construction Toronto",
+    "industrial construction",
+    "institutional construction",
+    "residential construction Ontario",
+    "Pegah Construction",
+    "project management construction",
+  ],
+  authors: [{ name: "Pegah Construction Ltd.", url: siteUrl }],
+  creator: "Pegah Construction Ltd.",
+  publisher: "Pegah Construction Ltd.",
+  category: "construction",
+  formatDetection: { telephone: true, address: true, email: true },
+  openGraph: {
+    type: "website",
+    siteName: "Pegah Construction Ltd.",
+    title: "Pegah Construction Ltd. | General Contractor in Ontario since 1988",
+    description: DESCRIPTION,
+    url: siteUrl,
+    locale: "en_CA",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Pegah Construction Ltd. | General Contractor in Ontario since 1988",
+    description: DESCRIPTION,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+};
+
+// Organization / local-business structured data (shown site-wide).
+const orgJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "GeneralContractor",
+  "@id": `${siteUrl}/#organization`,
+  name: company.name,
+  url: siteUrl,
+  logo: `${siteUrl}/logo.webp`,
+  image: `${siteUrl}/opengraph-image.png`,
+  description: DESCRIPTION,
+  foundingDate: company.established,
+  telephone: company.phone,
+  email: company.email,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: company.address.line1,
+    addressLocality: "Toronto",
+    addressRegion: "ON",
+    postalCode: "M3H 5T5",
+    addressCountry: "CA",
+  },
+  areaServed: { "@type": "State", name: "Ontario" },
+  sameAs: [company.linkedin],
 };
 
 export default function RootLayout({
@@ -42,7 +116,13 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="flex min-h-screen flex-col"><AuthProvider>{children}</AuthProvider></body>
+      <body className="flex min-h-screen flex-col">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+        />
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 }

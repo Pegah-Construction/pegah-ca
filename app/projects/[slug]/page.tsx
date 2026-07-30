@@ -7,16 +7,37 @@ import Footer from "@/components/Footer";
 import PhotoCarousel from "@/components/PhotoCarousel";
 import { Eyebrow } from "@/components/Brand";
 import { getStorageUrl } from "@/lib/storage-url";
+import { siteUrl } from "@/lib/site";
 
 type Params = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
-  const project = await db.project.findUnique({ where: { id: slug }, select: { name: true } });
+  const project = await db.project.findUnique({
+    where: { id: slug },
+    select: { name: true, location: true, type: true, category: true, description: true, photos: { orderBy: { order: "asc" }, take: 1, select: { path: true } } },
+  });
+  if (!project) return { title: "Project", robots: { index: false, follow: true } };
+
+  const where = project.location ? ` in ${project.location}` : " in Ontario";
+  const kind = project.type || project.category || "construction";
+  const description =
+    (project.description && project.description.slice(0, 200)) ||
+    `${project.name} — a ${kind.toLowerCase()} project${where} delivered by Pegah Construction Ltd.`;
+  const images = project.photos[0] ? [getStorageUrl(project.photos[0].path)] : undefined;
+
   return {
-    title: project
-      ? `${project.name} | Pegah Construction Ltd.`
-      : "Project | Pegah Construction Ltd.",
+    title: project.name,
+    description,
+    alternates: { canonical: `/projects/${slug}` },
+    openGraph: {
+      type: "article",
+      title: project.name,
+      description,
+      url: `${siteUrl}/projects/${slug}`,
+      images,
+    },
+    twitter: { card: "summary_large_image", title: project.name, description, images },
   };
 }
 

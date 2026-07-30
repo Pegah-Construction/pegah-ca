@@ -7,6 +7,9 @@ import FeaturedProjects from "@/components/FeaturedProjects";
 import ServicesList from "@/components/ServicesList";
 import SafetyBand from "@/components/SafetyBand";
 import Footer from "@/components/Footer";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 // Rendered per-request so the featured projects are freshly randomized.
 export const dynamic = "force-dynamic";

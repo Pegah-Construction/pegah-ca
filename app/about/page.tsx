@@ -8,7 +8,12 @@ import { getStorageUrl } from "@/lib/storage-url";
 import { mergeAboutContent, toParagraphs, toLines } from "@/lib/about-content";
 import { stats } from "@/lib/site";
 
-export const metadata: Metadata = { title: "About Us | Pegah Construction Ltd." };
+export const metadata: Metadata = {
+  title: "About Us",
+  description:
+    "Learn about Pegah Construction Ltd. — an Ontario general contractor and project-management firm delivering ICI and residential projects since 1988.",
+  alternates: { canonical: "/about" },
+};
 
 export default async function AboutPage() {
   const [members, teamPhotoRow, aboutRow, aboutImageRow] = await Promise.all([

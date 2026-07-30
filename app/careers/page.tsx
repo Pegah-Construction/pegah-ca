@@ -8,9 +8,10 @@ import { company } from "@/lib/site";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Careers | Pegah Construction Ltd.",
+  title: "Careers",
   description:
     "Join Pegah Construction's team of builders and project professionals. View open positions across construction, project management, estimating, and more.",
+  alternates: { canonical: "/careers" },
 };
 
 const TYPE_STYLE: Record<string, string> = {

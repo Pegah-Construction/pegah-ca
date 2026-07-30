@@ -11,7 +11,8 @@ import { company, affiliations } from "@/lib/site";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Tenders | Pegah Construction Ltd.",
+  title: "Tenders",
+  alternates: { canonical: "/tenders" },
   description:
     "Active bid opportunities where Pegah Construction is seeking qualified subcontractor quotes across Ontario.",
 };

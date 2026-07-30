@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
 import { getStorageUrl } from "@/lib/storage-url";
+import { siteUrl } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
@@ -14,11 +15,29 @@ type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const article = await db.article.findUnique({ where: { slug } });
+  if (!article) {
+    return { title: "Article", robots: { index: false, follow: true } };
+  }
+  const url = `${siteUrl}/blog/${slug}`;
+  const images = article.coverImage ? [getStorageUrl(article.coverImage)] : undefined;
   return {
-    title: article
-      ? `${article.title} | Pegah Construction Ltd.`
-      : "Article | Pegah Construction Ltd.",
-    description: article?.excerpt ?? undefined,
+    title: article.title, // template appends " | Pegah Construction Ltd."
+    description: article.excerpt || undefined,
+    alternates: { canonical: `/blog/${slug}` },
+    openGraph: {
+      type: "article",
+      title: article.title,
+      description: article.excerpt || undefined,
+      url,
+      publishedTime: article.date || undefined,
+      images,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: article.title,
+      description: article.excerpt || undefined,
+      images,
+    },
   };
 }
 
@@ -50,8 +69,28 @@ export default async function BlogPost({ params }: Props) {
     .slice(0, 2)
     .toUpperCase();
 
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: article.title,
+    description: article.excerpt || undefined,
+    datePublished: article.date || undefined,
+    image: article.coverImage ? getStorageUrl(article.coverImage) : `${siteUrl}/opengraph-image.png`,
+    author: { "@type": "Organization", name: "Pegah Construction Ltd.", url: siteUrl },
+    publisher: {
+      "@type": "Organization",
+      name: "Pegah Construction Ltd.",
+      logo: { "@type": "ImageObject", url: `${siteUrl}/logo.webp` },
+    },
+    mainEntityOfPage: `${siteUrl}/blog/${article.slug}`,
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
       <Navbar />
       <main className="flex-1">
 
