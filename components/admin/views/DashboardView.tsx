@@ -57,7 +57,10 @@ export default function DashboardView() {
                       <div className="font-display font-semibold text-ink">{x.name}</div>
                       <div className="font-mono text-[11px] text-concrete-500">{x.location}</div>
                     </td>
-                    <td className="px-5 py-3 text-sm text-concrete-500">{x.type || "—"}</td>
+                    {/* Purpose types apply to ICI only; residential projects show their category. */}
+                    <td className="px-5 py-3 text-sm text-concrete-500">
+                      {x.category === "Residential" ? "Residential" : x.type || "—"}
+                    </td>
                     <td className="px-5 py-3 font-mono text-xs text-concrete-500">{x.value > 0 ? money(x.value) : "—"}</td>
                     <td className="px-5 py-3 text-right font-mono text-xs text-brand-700">→</td>
                   </tr>
