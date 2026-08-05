@@ -8,10 +8,14 @@
 .text-\[10px\] { font-size: 13px !important; }
 .text-\[11px\] { font-size: 14px !important; }
 
-/* Continuously scrolling partner-logo strip (logos duplicated 2x in the track). */
+/* Continuously scrolling partner-logo strip. The track holds COPIES repeats of
+   the logo list (see PartnerStrip.tsx) and shifts by exactly one copy per cycle,
+   so the reset is invisible. --marquee-shift is -100%/COPIES, set on the element
+   so it can't drift from the markup. The -50% fallback is safe: with an even
+   COPIES it lands on a copy boundary too, just twice as fast. */
 @keyframes marquee {
   from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+  to   { transform: translateX(var(--marquee-shift, -50%)); }
 }
 .marquee {
   animation: marquee 32s linear infinite;
