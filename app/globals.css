@@ -120,6 +120,50 @@
 .dark .hover\:text-brand-800:hover { color: #b4c8f4; }
 .dark .group:hover .group-hover\:text-brand-700 { color: #96b0ec; }
 
+/* ── Light/dark switch animation ──
+   ThemeToggle puts .theme-transition on <html> only while the theme flips, so
+   every colour cross-fades instead of snapping. CSS custom properties can't be
+   transitioned, but the properties that *consume* them can, which is what these
+   rules do. Scoping it to the toggle window keeps the blanket transition away
+   from the first paint and from ordinary hover states.
+   Keep the 320ms duration in sync with TRANSITION_MS in ThemeToggle.tsx. */
+.theme-transition,
+.theme-transition *,
+.theme-transition *::before,
+.theme-transition *::after {
+  transition:
+    background-color 320ms ease,
+    border-color 320ms ease,
+    color 320ms ease,
+    fill 320ms ease,
+    stroke 320ms ease,
+    box-shadow 320ms ease,
+    /* transform is re-declared so a hover mid-flip still eases rather than
+       snapping — the universal rule would otherwise drop it. */
+    transform 320ms ease !important;
+  transition-delay: 0s !important;
+}
+
+/* Sun/moon cross-fade. Both icons are always in the DOM; .dark decides which
+   one is scaled up, so the swap spins instead of popping. !important so the
+   icons keep their own easing during the .theme-transition window above, which
+   would otherwise win and drop opacity from the transition. */
+.theme-icon {
+  transition:
+    transform 380ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 260ms ease !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-transition,
+  .theme-transition *,
+  .theme-transition *::before,
+  .theme-transition *::after,
+  .theme-icon {
+    transition: none !important;
+  }
+}
+
 @layer base {
   /* ── Theme tokens (light) ── consumed by the tailwind color config as
      rgb(var(--c-*) / <alpha>). Only semantic colours flip; brand/accent hues
@@ -246,7 +290,15 @@
     );
   }
 
-  /* Rich-text article body rendered from TipTap HTML */
+  /* Rich-text article body rendered from TipTap HTML.
+     Headings and body copy are pinned to `ink` — the colours the first
+     published post renders — so every article reads the same instead of
+     depending on what the editor happened to leave in the stored HTML.
+     Deliberate accents (the dark-red section labels) still come from
+     inline spans, which win over these rules. */
+  .article-body h1 {
+    @apply mt-10 mb-4 font-display text-3xl font-black tracking-tight text-ink;
+  }
   .article-body h2 {
     @apply mt-8 mb-3 font-display text-2xl font-bold tracking-tight text-ink;
   }
@@ -265,7 +317,7 @@
     color: inherit;
   }
   .article-body p {
-    @apply my-4;
+    @apply my-4 text-ink;
   }
   /* Empty paragraphs (blank lines) must have height so user-added spacing shows */
   .article-body p:empty {

@@ -193,7 +193,7 @@ export default async function BlogPost({ params }: Props) {
               {/* Rich text body */}
               {article.body ? (
                 <div
-                  className="article-body text-lg leading-relaxed text-concrete-600"
+                  className="article-body text-lg leading-relaxed text-ink"
                   dangerouslySetInnerHTML={{ __html: article.body }}
                 />
               ) : null}
