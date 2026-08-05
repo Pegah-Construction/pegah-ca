@@ -186,6 +186,9 @@
     --c-concrete-500: 51 64 92;
     --grid-line: 15 31 77;   /* blueprint grid line colour */
     --grid-alpha: 0.05;
+    /* Scrollbar thumb, resting and hovered. */
+    --scroll-thumb: 193 200 212;
+    --scroll-thumb-hover: 91 100 114;
   }
   .dark {
     --c-paper: 12 18 33;
@@ -201,6 +204,8 @@
     --c-concrete-500: 198 205 225;
     --grid-line: 255 255 255;
     --grid-alpha: 0.045;
+    --scroll-thumb: 74 88 122;
+    --scroll-thumb-hover: 148 158 184;
     color-scheme: dark;
   }
 
@@ -208,6 +213,47 @@
     scroll-behavior: smooth;
     color-scheme: light;
     font-size: 20px;
+  }
+
+  /* ── Scrollbars ──
+     A slim, rounded thumb on a transparent track, in the theme's own greys, so
+     scrollbars read as part of the UI instead of an OS artefact. The thumb sits
+     inside a transparent border with background-clip: content-box, which is what
+     gives it breathing room from the page edge. Firefox gets the two-property
+     version; `color-scheme` above keeps the fallback sensible anywhere neither
+     applies. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--scroll-thumb)) transparent;
+  }
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+  ::-webkit-scrollbar-track,
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: rgb(var(--scroll-thumb));
+    background-clip: content-box;
+    border: 3px solid transparent;
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(var(--scroll-thumb-hover));
+  }
+
+  /* The admin sidebar is dark navy in both themes, so the grey thumb would
+     disappear against it — give that one a translucent white thumb instead. */
+  .admin-scroll {
+    scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+  }
+  .admin-scroll::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.22);
+  }
+  .admin-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.38);
   }
   body {
     @apply bg-paper text-ink font-body antialiased;

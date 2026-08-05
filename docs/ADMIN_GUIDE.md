@@ -19,8 +19,9 @@ use this to learn the system yourself and to show others how to keep the site up
 most day-to-day content (projects, blog posts, job postings, team members) is edited in the
 **admin dashboard**. the site-wide marketing copy — the **home**, **about**, **services**,
 **health & safety** and **contact** pages, plus the **navbar** and **footer** details — is now
-editable too, through the **about / team**, **health & safety**, and **settings** screens. only the
-page layouts, styling and navigation structure remain in code — see [§14](#14-what-lives-in-code).
+editable too, through the **about / team**, **health & safety**, **services**, and **settings**
+screens. only the
+page layouts, styling and navigation structure remain in code — see [§15](#15-what-lives-in-code).
 
 ---
 
@@ -58,7 +59,7 @@ for it. an administrator can adjust roles under **users & roles**.
 
 the landing page after login. it shows a quick overview of projects and recent activity. use the
 **left sidebar** to move between modules: dashboard, projects, tenders, news & blog, careers,
-inquiries, about / team, health & safety, users & roles, settings.
+inquiries, about / team, health & safety, services, users & roles, settings.
 
 ![description](images/dashboard.PNG)
 
@@ -101,7 +102,7 @@ above the table you have:
 ### generate a blog post from a project
 on a project's detail page, **generate blog post** drafts an article from the project's details
 (and attached documents) using ai. it's saved as a **draft** in news & blog for you to review and
-publish. *(requires the ai key to be configured — see [§15](#15-ai-features).)*
+publish. *(requires the ai key to be configured — see [§16](#16-ai-features).)*
 
 ### delete a project
 click **delete** on a row and confirm. this also removes its photos and related data.
@@ -130,7 +131,7 @@ captions:
 - **generate instagram post** — an instagram-style caption for the same article.
 
 edit the result and copy it to paste into the network. *(both require the ai key — see
-[§15](#15-ai-features).)*
+[§16](#16-ai-features).)*
 
 ---
 
@@ -200,7 +201,33 @@ save to publish.
 
 ---
 
-## 12. users & roles
+## 12. services
+
+**where:** sidebar → **services** *(administrators only)*. one screen for everything about services —
+it feeds both the public **services** page and the services section on the **home** page.
+**edit the fields, then click _save changes_** at the bottom to publish.
+
+**headings**
+- **eyebrow** — the small label above the heading. used on both the services page and the home page
+  section.
+- **page title** — the services page heading, and the browser tab title.
+- **home page section heading** — the heading above the service cards on the home page. write
+  `{count}` for the number of services spelled out ("four"), or `{n}` for digits ("4"); either one
+  updates itself when you add or remove a service, so the heading can't end up claiming "four ways"
+  when five are listed. the hint under the field shows the current value.
+- **intro** — shown under the services page title, and used as the page's search-result description.
+
+**services list**
+one service per line, written as `Title | description`. the **preview** below the box shows how each
+line was read, numbered as it will appear on the site — if a line is missing its `|`, the preview
+flags it. the card header shows the current count. with an empty list, the home page section hides
+itself rather than showing a heading with no cards.
+
+> 📸 _add screenshot: services editor_
+
+---
+
+## 13. users & roles
 
 **where:** sidebar → **users & roles** *(administrators only)*.
 
@@ -213,7 +240,7 @@ save to publish.
 
 ---
 
-## 13. settings
+## 14. settings
 
 **where:** sidebar → **settings** *(administrators only)*. this is where the site-wide copy lives.
 **edit any field, then scroll to the bottom of the page and click _save changes_** to publish.
@@ -226,15 +253,16 @@ the settings are grouped:
   **intro text** below the hero.
 - **home page hero images** — upload or remove the full-bleed background image(s). if you add more
   than one, they cycle as a carousel. the ✕ on an image removes it.
-- **services page** — the services **intro**, and the **services list** (one service per line,
-  written as `Title | description`).
 - **contact page** — the contact **title** and **intro** shown above the form.
+
+services copy is **not** here — it has its own screen, **sidebar → services**. see
+[§12](#12-services).
 
 > 📸 _add screenshot: settings page_
 
 ---
 
-## 14. what lives in code
+## 15. what lives in code
 
 thanks to the editors above, the **home, about, services, health & safety and contact** page copy —
 and the navbar/footer contact details — are all editable in the dashboard. what still lives in the
@@ -252,7 +280,7 @@ pass it to whoever maintains the code.
 
 ---
 
-## 15. ai features
+## 16. ai features
 
 three buttons use ai:
 
@@ -266,7 +294,7 @@ buttons show a "not configured" message instead of failing. ask your developer t
 
 ---
 
-## 16. quick reference — "how do i…?"
+## 17. quick reference — "how do i…?"
 
 | i want to… | go to |
 |---|---|
@@ -284,7 +312,7 @@ buttons show a "not configured" message instead of failing. ask your developer t
 | update the health & safety page | **health & safety** |
 | change the home page hero wording | **settings → home page** |
 | swap the home hero background images | **settings → home page hero images** |
-| edit the services list | **settings → services page** |
+| edit the services list, or any services heading | **services** |
 | change the contact page intro | **settings → contact page** |
 | change company phone/address (navbar, footer, contact) | **settings → organization & contact details** |
 | add a staff login | **users & roles → add user** |

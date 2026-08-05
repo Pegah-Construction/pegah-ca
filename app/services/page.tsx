@@ -4,19 +4,24 @@ import Reveal from "@/components/Reveal";
 import { getSiteSettings } from "@/lib/settings-server";
 import { parseServices } from "@/lib/settings";
 
-export const metadata: Metadata = {
-  title: "Services",
-  description: "General contracting, construction management, design-build and long-term care — the services Pegah Construction delivers across Ontario.",
-  alternates: { canonical: "/services" },
-};
+// Title and description follow the editable settings so the tab title and search
+// snippet can't drift from the copy shown on the page.
+export async function generateMetadata(): Promise<Metadata> {
+  const s = await getSiteSettings();
+  return {
+    title: s.servicesTitle,
+    description: s.servicesIntro,
+    alternates: { canonical: "/services" },
+  };
+}
 
 export default async function ServicesPage() {
   const s = await getSiteSettings();
   const services = parseServices(s.servicesList);
   return (
     <PageShell
-      eyebrow="What we do"
-      title="Services"
+      eyebrow={s.servicesEyebrow}
+      title={s.servicesTitle}
       intro={s.servicesIntro}
     >
       <div className="grid gap-px overflow-hidden rounded-xl border border-concrete-200 bg-concrete-200 sm:grid-cols-2">

@@ -4,68 +4,12 @@ import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/lib/auth";
 import { PERMS } from "@/lib/admin";
 import { Card, Spinner } from "../ui";
+import { Field, TextareaField, LockBanner, SaveBar } from "../SettingsFields";
 import { getStorageUrl } from "@/lib/storage-url";
 import { SETTINGS_DEFAULTS } from "@/lib/settings";
 
 type Settings = Record<string, string>;
 type HeroImage = { id: number; path: string; order: number };
-
-function Field({
-  label,
-  value,
-  disabled,
-  onChange,
-  hint,
-}: {
-  label: string;
-  value: string;
-  disabled: boolean;
-  onChange?: (v: string) => void;
-  hint?: string;
-}) {
-  return (
-    <div>
-      <label className="font-mono text-[11px] uppercase tracking-label text-accent-700">{label}</label>
-      <input
-        value={value}
-        disabled={disabled}
-        onChange={(e) => onChange?.(e.target.value)}
-        className="mt-2 w-full rounded-md border border-concrete-300 bg-surface px-4 py-2.5 text-sm outline-none focus:border-brand-500 disabled:bg-concrete-100 disabled:text-concrete-400"
-      />
-      {hint && <p className="mt-1.5 text-xs text-concrete-400">{hint}</p>}
-    </div>
-  );
-}
-
-function TextareaField({
-  label,
-  value,
-  disabled,
-  onChange,
-  rows = 3,
-  hint,
-}: {
-  label: string;
-  value: string;
-  disabled: boolean;
-  onChange?: (v: string) => void;
-  rows?: number;
-  hint?: string;
-}) {
-  return (
-    <div>
-      <label className="font-mono text-[11px] uppercase tracking-label text-accent-700">{label}</label>
-      <textarea
-        value={value}
-        disabled={disabled}
-        rows={rows}
-        onChange={(e) => onChange?.(e.target.value)}
-        className="mt-2 w-full rounded-md border border-concrete-300 bg-surface px-4 py-2.5 text-sm leading-relaxed outline-none focus:border-brand-500 disabled:bg-concrete-100 disabled:text-concrete-400"
-      />
-      {hint && <p className="mt-1.5 text-xs text-concrete-400">{hint}</p>}
-    </div>
-  );
-}
 
 export default function SettingsView() {
   const { user } = useAuth();
@@ -137,15 +81,7 @@ export default function SettingsView() {
 
   return (
     <>
-      {locked ? (
-        <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          Site content is read-only for your role. Contact an administrator to make changes.
-        </div>
-      ) : (
-        <div className="mb-6 rounded-lg border border-brand-100 bg-brand-50 px-4 py-3 text-sm text-brand-800">
-          Edit any of the content below, then scroll to the bottom of the page and click <strong>Save changes</strong> to publish.
-        </div>
-      )}
+      <LockBanner locked={locked} />
 
       <div className="grid gap-6">
         <Card title="Organization &amp; contact details">
@@ -168,20 +104,6 @@ export default function SettingsView() {
             <TextareaField label="Hero subtitle" value={form.heroSubtitle} disabled={locked} onChange={set("heroSubtitle")} rows={2} />
             <TextareaField label="Intro heading" value={form.introHeading} disabled={locked} onChange={set("introHeading")} rows={2} />
             <TextareaField label="Intro text" value={form.introText} disabled={locked} onChange={set("introText")} rows={3} />
-          </div>
-        </Card>
-
-        <Card title="Services page">
-          <div className="grid gap-5 p-5">
-            <TextareaField label="Services intro" value={form.servicesIntro} disabled={locked} onChange={set("servicesIntro")} rows={2} />
-            <TextareaField
-              label="Services list"
-              value={form.servicesList}
-              disabled={locked}
-              onChange={set("servicesList")}
-              rows={6}
-              hint={'One service per line, written as "Title | description".'}
-            />
           </div>
         </Card>
 
@@ -238,19 +160,7 @@ export default function SettingsView() {
         </Card>
       </div>
 
-      {!locked && (
-        <div className="mt-6 flex items-center gap-4">
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="rounded-md bg-brand-700 px-5 py-2.5 font-display text-sm font-semibold text-white hover:bg-brand-800 disabled:opacity-50"
-          >
-            {saving ? "Saving…" : "Save changes"}
-          </button>
-          {saved && <span className="text-sm text-emerald-600">Saved successfully.</span>}
-          {error && <span className="text-sm text-red-600">{error}</span>}
-        </div>
-      )}
+      {!locked && <SaveBar onSave={handleSave} saving={saving} saved={saved} error={error} />}
     </>
   );
 }

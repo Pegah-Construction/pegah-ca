@@ -2,19 +2,20 @@ import Link from "next/link";
 import { Eyebrow } from "./Brand";
 import Reveal from "./Reveal";
 import { getSiteSettings } from "@/lib/settings-server";
-import { parseServices } from "@/lib/settings";
+import { fillCount, parseServices } from "@/lib/settings";
 
 export default async function ServicesList() {
   const settings = await getSiteSettings();
   const services = parseServices(settings.servicesList);
+  if (services.length === 0) return null;
   return (
     <section className="tint-grid-surface">
       <div className="mx-auto max-w-8xl px-6 py-24 lg:px-10 lg:py-28">
         <Reveal>
           <div className="accent-bar mb-4" />
-          <Eyebrow>What we do</Eyebrow>
+          <Eyebrow>{settings.servicesEyebrow}</Eyebrow>
           <h2 className="mt-3 max-w-2xl font-display text-3xl font-bold tracking-tight text-ink lg:text-4xl">
-            Four ways we deliver your project.
+            {fillCount(settings.servicesHomeHeading, services.length)}
           </h2>
         </Reveal>
 
