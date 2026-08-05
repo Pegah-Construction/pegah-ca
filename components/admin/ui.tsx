@@ -27,8 +27,11 @@ const STATUS_TONE: Record<string, Tone> = {
 export const StatusPill = ({ status }: { status: string }) => (
   <Pill text={status} tone={STATUS_TONE[status] ?? "gray"} />
 );
-export const RolePill = ({ role }: { role: RoleKey }) => (
-  <Pill text={ROLES[role].label} tone={role === "admin" ? "blue" : role === "pm" ? "amber" : "gray"} />
+// Takes a plain string, not RoleKey: `user.role` is a database column, so a row
+// could still hold a role that no longer exists. Those show the raw value in a
+// grey pill instead of crashing on a missing ROLES entry.
+export const RolePill = ({ role }: { role: string }) => (
+  <Pill text={ROLES[role as RoleKey]?.label ?? role} tone={role === "admin" ? "blue" : "gray"} />
 );
 export const PriorityPill = ({ p }: { p: string }) => (
   <Pill text={p} tone={p === "High" ? "red" : p === "Medium" ? "amber" : "gray"} />

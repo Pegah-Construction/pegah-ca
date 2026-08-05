@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
-import { PERMS, money, type Tender } from "@/lib/admin";
+import { permsFor, money, type Tender } from "@/lib/admin";
 import { StatCard, Card, THead, Table, Pill, SearchInput } from "../ui";
 
 export default function TendersView() {
@@ -21,7 +21,7 @@ export default function TendersView() {
   }, []);
 
   if (!user) return null;
-  const perms = PERMS[user.role];
+  const perms = permsFor(user.role);
 
   const runSync = async () => {
     setSyncing(true);

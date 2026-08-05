@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth";
-import { PERMS, ROLES, type NavKey } from "@/lib/admin";
+import { permsFor, ROLES, type NavKey } from "@/lib/admin";
 import { Avatar, RolePill } from "./ui";
 import { LogoMark } from "@/components/Brand";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -78,7 +78,7 @@ export default function AdminShell({
   useEffect(() => { setNavOpen(false); }, [pathname]);
 
   if (!user) return null;
-  const perms = PERMS[user.role];
+  const perms = permsFor(user.role);
   const items = NAV.filter((n) => perms.nav.includes(n.key));
 
   return (

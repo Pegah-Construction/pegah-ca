@@ -25,7 +25,9 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const body = await req.json();
-  const allowed = ["name", "email", "role", "title", "phone", "status"] as const;
+  // "role" is deliberately absent: administrator is the only role, so there is
+  // nothing to change and no way to demote or escalate an account through here.
+  const allowed = ["name", "email", "title", "phone", "status"] as const;
   const data: Record<string, unknown> = {};
   for (const key of allowed) if (key in body) data[key] = body[key];
   if (body.password?.trim()) {

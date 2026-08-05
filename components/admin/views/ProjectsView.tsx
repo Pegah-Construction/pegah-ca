@@ -2,7 +2,7 @@
 
 import { useState, useEffect, type ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
-import { PERMS, money, type Project, type ProjectPhoto } from "@/lib/admin";
+import { permsFor, money, type Project, type ProjectPhoto } from "@/lib/admin";
 import { Card, THead, Table, Pill, PrimaryBtn, Modal, Field, inputCls, SearchInput, Spinner } from "../ui";
 import { getStorageUrl } from "@/lib/storage-url";
 
@@ -242,7 +242,7 @@ export default function ProjectsView() {
   };
 
   if (!user) return null;
-  const perms = PERMS[user.role];
+  const perms = permsFor(user.role);
 
   // Filter options derived from the actual data.
   const categoryOptions = Array.from(new Set(projects.map((p) => p.category).filter(Boolean))).sort() as string[];

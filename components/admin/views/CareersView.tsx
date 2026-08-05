@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
-import { PERMS } from "@/lib/admin";
+import { permsFor } from "@/lib/admin";
 import { StatCard, Card, THead, Table, Pill, PrimaryBtn, Field, inputCls, SearchInput } from "../ui";
 
 type Job = {
@@ -44,7 +44,7 @@ export default function CareersView() {
   }, []);
 
   if (!user) return null;
-  const canManage = PERMS[user.role].manageCareers;
+  const canManage = permsFor(user.role).manageCareers;
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
   const openCreate = () => { setForm(emptyForm()); setEditingId(null); setOpen(true); };

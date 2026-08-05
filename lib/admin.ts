@@ -1,11 +1,13 @@
 // Pegah Admin — data, types, roles & permissions (Next.js mirror of admin/data.js)
 
-export type RoleKey = "admin" | "pm" | "foreman";
+// Administrator is the only role. The dashboard isn't something the wider
+// company is meant to know about, so there are no reduced-access accounts to
+// hand out — anyone who can sign in has full access, and a person's job is
+// recorded in their `title` rather than their role.
+export type RoleKey = "admin";
 
 export const ROLES: Record<RoleKey, { key: RoleKey; label: string; blurb: string }> = {
   admin: { key: "admin", label: "Administrator", blurb: "Full access to every module, users and settings." },
-  pm: { key: "pm", label: "Project Manager", blurb: "Manages assigned projects, clients, tasks and documents." },
-  foreman: { key: "foreman", label: "Site Foreman", blurb: "Field access to assigned projects, tasks and safety." },
 };
 
 export type NavKey =
@@ -38,19 +40,23 @@ export const PERMS: Record<RoleKey, Perms> = {
     viewBudget: true, editProjects: true, manageUsers: true, manageClients: true, resolveIncidents: true, editSettings: true,
     manageTenders: true, manageNews: true, manageCareers: true, manageInquiries: true, manageTeam: true, useAI: true, configureAI: true,
   },
-  pm: {
-    nav: ["dashboard","projects","board","schedule","tenders","news","inquiries","team","safety","clients","documents"],
-    projectScope: "managed",
-    viewBudget: true, editProjects: true, manageUsers: false, manageClients: true, resolveIncidents: true, editSettings: false,
-    manageTenders: true, manageNews: true, manageCareers: false, manageInquiries: true, manageTeam: true, useAI: true, configureAI: false,
-  },
-  foreman: {
-    nav: ["dashboard","projects","board","documents"],
-    projectScope: "assigned",
-    viewBudget: false, editProjects: false, manageUsers: false, manageClients: false, resolveIncidents: false, editSettings: false,
-    manageTenders: false, manageNews: false, manageCareers: false, manageInquiries: false, manageTeam: false, useAI: false, configureAI: false,
-  },
 };
+
+// Denies everything. Used only when an account carries a role that no longer
+// exists (legacy data, or a hand-edited row): such a session sees nothing rather
+// than being quietly promoted to administrator. The login route rejects those
+// accounts outright, so this is a backstop, not a code path in normal use.
+const NO_PERMS: Perms = {
+  nav: [],
+  projectScope: "assigned",
+  viewBudget: false, editProjects: false, manageUsers: false, manageClients: false, resolveIncidents: false, editSettings: false,
+  manageTenders: false, manageNews: false, manageCareers: false, manageInquiries: false, manageTeam: false, useAI: false, configureAI: false,
+};
+
+// Permissions for a role string that came from the database. Prefer this over
+// indexing PERMS directly — `user.role` is a plain column, so it can hold a
+// value the type system doesn't know about.
+export const permsFor = (role: string): Perms => (role === "admin" ? PERMS.admin : NO_PERMS);
 
 export type User = {
   id: string; name: string; role: RoleKey; title: string;
@@ -59,12 +65,12 @@ export type User = {
 
 export const USERS: User[] = [
   { id:"u1", name:"Sarah Chen",   role:"admin",   title:"Operations Director",    email:"s.chen@pegah.ca",   phone:"416 739 9301", status:"Active",   since:"2014" },
-  { id:"u2", name:"Daniel Osei",  role:"pm",      title:"Senior Project Manager", email:"d.osei@pegah.ca",   phone:"416 739 9312", status:"Active",   since:"2017" },
-  { id:"u3", name:"Mike Reyes",   role:"foreman", title:"Site Foreman",           email:"m.reyes@pegah.ca",  phone:"416 739 9333", status:"Active",   since:"2019" },
-  { id:"u4", name:"Priya Sharma", role:"pm",      title:"Project Manager",        email:"p.sharma@pegah.ca", phone:"416 739 9314", status:"Active",   since:"2020" },
-  { id:"u5", name:"Tom Becker",   role:"foreman", title:"Site Foreman",           email:"t.becker@pegah.ca", phone:"416 739 9335", status:"Active",   since:"2018" },
-  { id:"u6", name:"Elena Rossi",  role:"pm",      title:"Project Coordinator",    email:"e.rossi@pegah.ca",  phone:"416 739 9316", status:"Active",   since:"2021" },
-  { id:"u7", name:"James Wright", role:"foreman", title:"Site Foreman",           email:"j.wright@pegah.ca", phone:"416 739 9337", status:"On leave", since:"2016" },
+  { id:"u2", name:"Daniel Osei",  role:"admin",   title:"Senior Project Manager", email:"d.osei@pegah.ca",   phone:"416 739 9312", status:"Active",   since:"2017" },
+  { id:"u3", name:"Mike Reyes",   role:"admin",   title:"Site Foreman",           email:"m.reyes@pegah.ca",  phone:"416 739 9333", status:"Active",   since:"2019" },
+  { id:"u4", name:"Priya Sharma", role:"admin",   title:"Project Manager",        email:"p.sharma@pegah.ca", phone:"416 739 9314", status:"Active",   since:"2020" },
+  { id:"u5", name:"Tom Becker",   role:"admin",   title:"Site Foreman",           email:"t.becker@pegah.ca", phone:"416 739 9335", status:"Active",   since:"2018" },
+  { id:"u6", name:"Elena Rossi",  role:"admin",   title:"Project Coordinator",    email:"e.rossi@pegah.ca",  phone:"416 739 9316", status:"Active",   since:"2021" },
+  { id:"u7", name:"James Wright", role:"admin",   title:"Site Foreman",           email:"j.wright@pegah.ca", phone:"416 739 9337", status:"On leave", since:"2016" },
   { id:"u8", name:"Aisha Khan",   role:"admin",   title:"Office Administrator",   email:"a.khan@pegah.ca",   phone:"416 739 9308", status:"Active",   since:"2022" },
 ];
 
@@ -283,7 +289,7 @@ export function visibleProjects(u: User): Project[] {
   return PROJECTS.filter((x) => x.foreman === u.id || x.team.includes(u.id));
 }
 export const visibleIds = (u: User) => visibleProjects(u).map((p) => p.id);
-export const canSee = (u: User, key: NavKey) => PERMS[u.role].nav.includes(key);
+export const canSee = (u: User, key: NavKey) => permsFor(u.role).nav.includes(key);
 
 export const money = (n: number) =>
   n >= 1e6 ? "$" + (n / 1e6).toFixed(1) + "M" : n >= 1e3 ? "$" + Math.round(n / 1e3) + "K" : "$" + n;

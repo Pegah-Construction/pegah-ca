@@ -1,7 +1,10 @@
 import { db } from "@/lib/db";
 import { verifyPassword } from "@/lib/password";
 
-const VALID_ROLES = ["admin", "pm", "foreman"];
+// Administrator is the only role the dashboard grants. Anything else in the data
+// — a legacy row, or a hand-edited one — is refused here rather than being
+// treated as an administrator.
+const VALID_ROLES = ["admin"];
 
 export async function POST(req: Request) {
   const { email, password } = await req.json();

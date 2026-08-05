@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth";
-import { PERMS, type Project, type ProjectPhoto } from "@/lib/admin";
+import { permsFor, type Project, type ProjectPhoto } from "@/lib/admin";
 import { Card, Pill, Modal, Field, inputCls, Spinner } from "../ui";
 import { getStorageUrl } from "@/lib/storage-url";
 
@@ -50,7 +50,7 @@ export default function ProjectDetailView({ id }: { id: string }) {
   if (denied) return null;
   if (!project) return null;
 
-  const perms = PERMS[user.role];
+  const perms = permsFor(user.role);
   const x = project;
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
 

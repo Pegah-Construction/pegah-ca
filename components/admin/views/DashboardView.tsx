@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth";
-import { PERMS, money, type Project, type Task, type Incident, type Activity, type Article } from "@/lib/admin";
+import { permsFor, money, type Project, type Task, type Incident, type Activity, type Article } from "@/lib/admin";
 import { StatCard, Card, THead, Table, Avatar } from "../ui";
 
 export default function DashboardView() {
@@ -24,7 +24,7 @@ export default function DashboardView() {
   }, [user]);
 
   if (!user) return null;
-  const perms = PERMS[user.role];
+  const perms = permsFor(user.role);
   const active = projects.filter((x) => x.status !== "Complete");
   const spent = projects.reduce((a, x) => a + x.spent, 0);
   const openInc = incidents.filter((i) => i.status !== "Closed");

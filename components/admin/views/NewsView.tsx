@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useAuth } from "@/lib/auth";
-import { PERMS, type Article } from "@/lib/admin";
+import { permsFor, type Article } from "@/lib/admin";
 import { StatCard, Card, THead, Table, Pill, PrimaryBtn, Field, inputCls, SearchInput, Spinner } from "../ui";
 import { getStorageUrl } from "@/lib/storage-url";
 
@@ -48,7 +48,7 @@ export default function NewsView() {
   }, []);
 
   if (!user) return null;
-  const perms = PERMS[user.role];
+  const perms = permsFor(user.role);
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
   const openCreate = () => { setForm(empty()); setEditingId(null); setFormCoverImage(""); setOpen(true); };

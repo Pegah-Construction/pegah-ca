@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
-import { ROLES, type RoleKey } from "@/lib/admin";
+import { ROLES } from "@/lib/admin";
 import { Card, THead, Table, RolePill, Pill, Avatar, PrimaryBtn, Modal, Field, inputCls, SearchInput } from "../ui";
 
 type UserRow = { id: string; name: string; role: string; title: string; email: string; phone: string; status: string; since: string };
 
+// No `role` field: the API sets every account to administrator, so there is
+// nothing for the form to choose or send.
 const emptyForm = () => ({
-  name: "", email: "", role: "pm" as RoleKey, title: "", phone: "", status: "Active", password: "",
+  name: "", email: "", title: "", phone: "", status: "Active", password: "",
 });
 
 export default function UsersView() {
@@ -29,7 +31,7 @@ export default function UsersView() {
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
   const openCreate = () => { setForm(emptyForm()); setEditingId(null); setOpen(true); };
   const openEdit = (u: UserRow) => {
-    setForm({ name: u.name, email: u.email, role: u.role as RoleKey, title: u.title, phone: u.phone ?? "", status: u.status, password: "" });
+    setForm({ name: u.name, email: u.email, title: u.title, phone: u.phone ?? "", status: u.status, password: "" });
     setEditingId(u.id);
     setOpen(true);
   };
@@ -120,7 +122,7 @@ export default function UsersView() {
                   </div>
                 </td>
                 <td className="px-5 py-3 text-concrete-600">{m.title}</td>
-                <td className="px-5 py-3"><RolePill role={m.role as RoleKey} /></td>
+                <td className="px-5 py-3"><RolePill role={m.role} /></td>
                 <td className="px-5 py-3"><Pill text={m.status} tone={m.status === "Active" ? "green" : "amber"} /></td>
                 <td className="px-5 py-3 font-mono text-xs text-concrete-500">{m.since}</td>
                 <td className="px-5 py-3 text-right">
@@ -141,13 +143,14 @@ export default function UsersView() {
         </Table>
       </Card>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-3">
-        {(Object.keys(ROLES) as RoleKey[]).map((k) => (
-          <div key={k} className="rounded-xl border border-concrete-200 bg-surface p-5">
-            <div className="flex items-center gap-2"><RolePill role={k} /></div>
-            <p className="mt-3 text-sm text-concrete-500">{ROLES[k].blurb}</p>
-          </div>
-        ))}
+      {/* One role, so this is a single explanatory card rather than a comparison
+          grid of what each role can do. */}
+      <div className="mt-6 rounded-xl border border-concrete-200 bg-surface p-5">
+        <div className="flex items-center gap-2"><RolePill role="admin" /></div>
+        <p className="mt-3 text-sm text-concrete-500">
+          {ROLES.admin.blurb} The dashboard has no reduced-access role — everyone who can sign in
+          sees every module, so accounts should only exist for people who need that.
+        </p>
       </div>
 
       {open && (
@@ -159,22 +162,20 @@ export default function UsersView() {
             <Field label="Email">
               <input required type="email" className={inputCls} value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="a.nguyen@pegah.ca" />
             </Field>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Role">
-                <select className={inputCls} value={form.role} onChange={(e) => set("role", e.target.value)}>
-                  <option value="admin">Administrator</option>
-                  <option value="pm">Project Manager</option>
-                  <option value="foreman">Site Foreman</option>
-                </select>
-              </Field>
-              <Field label="Status">
-                <select className={inputCls} value={form.status} onChange={(e) => set("status", e.target.value)}>
-                  <option value="Active">Active</option>
-                  <option value="On leave">On leave</option>
-                  <option value="Inactive">Inactive</option>
-                </select>
-              </Field>
-            </div>
+            <Field label="Status">
+              <select className={inputCls} value={form.status} onChange={(e) => set("status", e.target.value)}>
+                <option value="Active">Active</option>
+                <option value="On leave">On leave</option>
+                <option value="Inactive">Inactive</option>
+              </select>
+            </Field>
+            {/* No role picker: every account is an administrator with full
+                access. Only add people who should see the whole dashboard. */}
+            <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+              Every account is an <strong>administrator</strong> with full access to the dashboard —
+              there is no reduced-access role. Add someone here only if they should see everything,
+              and use <strong>job title</strong> below to record what they actually do.
+            </p>
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Job title">
                 <input required className={inputCls} value={form.title} onChange={(e) => set("title", e.target.value)} placeholder="e.g. Project Coordinator" />

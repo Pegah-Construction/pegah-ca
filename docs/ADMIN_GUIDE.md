@@ -20,8 +20,8 @@ most day-to-day content (projects, blog posts, job postings, team members) is ed
 **admin dashboard**. the site-wide marketing copy — the **home**, **about**, **services**,
 **health & safety** and **contact** pages, plus the **navbar** and **footer** details — is now
 editable too, through the **about / team**, **health & safety**, **services**, and **settings**
-screens. only the
-page layouts, styling and navigation structure remain in code — see [§15](#15-what-lives-in-code).
+screens. only the page layouts, styling and navigation structure remain in code — see
+[§15](#15-what-lives-in-code).
 
 ---
 
@@ -42,16 +42,22 @@ reset link is emailed to you.
 
 ## 3. roles & what each can do
 
-every user has one role. roles decide which buttons and modules are visible.
+there is **one role: administrator**. everyone who can sign in has full access to every module,
+including **users & roles** and **settings**.
 
 | role | can do |
 |---|---|
-| **administrator** | everything — all content, plus **users & roles** and **settings**. |
-| **project manager** | projects, news & blog, tenders, inquiries, about/team. cannot manage users, careers, or settings. |
-| **site foreman** | view access only — no editing. |
+| **administrator** | everything. it is the only role. |
 
-if a button described in this guide is missing for you, your role probably doesn't have permission
-for it. an administrator can adjust roles under **users & roles**.
+this is deliberate — the dashboard isn't something the wider company is meant to browse, so there
+are no reduced-access accounts to hand out. two things follow from it:
+
+- **only create an account for someone who should see everything.** there is no way to give
+  somebody a limited view.
+- **a person's job is recorded in their _job title_**, not their role. "site foreman" or "project
+  manager" can be someone's title while their access is still administrator.
+
+accounts are added and removed under **users & roles**.
 
 ---
 
@@ -156,7 +162,7 @@ registration form** — those registrations go straight to smartbid, not to this
 
 ## 8. careers
 
-**where:** sidebar → **careers** *(administrators only)*. manage the job openings listed on the
+**where:** sidebar → **careers**. manage the job openings listed on the
 public **careers** page — add, edit, or close postings.
 
 ![description](images/careers-page.PNG)
@@ -203,7 +209,7 @@ save to publish.
 
 ## 12. services
 
-**where:** sidebar → **services** *(administrators only)*. one screen for everything about services —
+**where:** sidebar → **services**. one screen for everything about services —
 it feeds both the public **services** page and the services section on the **home** page.
 **edit the fields, then click _save changes_** at the bottom to publish.
 
@@ -229,7 +235,7 @@ itself rather than showing a heading with no cards.
 
 ## 13. users & roles
 
-**where:** sidebar → **users & roles** *(administrators only)*.
+**where:** sidebar → **users & roles**.
 
 - **add a user:** enter their name, email, title, and role. a temporary password is generated and
   shown **once** — copy it and share it with them; they can change it after logging in.
@@ -242,7 +248,7 @@ itself rather than showing a heading with no cards.
 
 ## 14. settings
 
-**where:** sidebar → **settings** *(administrators only)*. this is where the site-wide copy lives.
+**where:** sidebar → **settings**. this is where the site-wide copy lives.
 **edit any field, then scroll to the bottom of the page and click _save changes_** to publish.
 
 the settings are grouped:

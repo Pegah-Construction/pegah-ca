@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
-import { PERMS } from "@/lib/admin";
+import { permsFor } from "@/lib/admin";
 import { Card } from "../ui";
 import { Field, TextareaField, LockBanner, SaveBar } from "../SettingsFields";
 import { SETTINGS_DEFAULTS, fillCount, parseServices } from "@/lib/settings";
@@ -37,7 +37,7 @@ export default function ServicesView() {
   }, []);
 
   if (!user) return null;
-  const locked = !PERMS[user.role].editSettings;
+  const locked = !permsFor(user.role).editSettings;
 
   const set = (k: string) => (v: string) => setForm((f) => ({ ...f, [k]: v }));
 

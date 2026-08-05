@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
-import { PERMS } from "@/lib/admin";
+import { permsFor } from "@/lib/admin";
 import { Card, THead, Table, Pill, PrimaryBtn, Modal, Field, inputCls, SearchInput } from "../ui";
 
 type ClientRow = { id: string; name: string; sector: string; contact: string; email: string; phone: string; since: string };
@@ -25,7 +25,7 @@ export default function ClientsView() {
   }, []);
 
   if (!user) return null;
-  const perms = PERMS[user.role];
+  const perms = permsFor(user.role);
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
   const openCreate = () => { setForm(empty()); setEditingId(null); setOpen(true); };

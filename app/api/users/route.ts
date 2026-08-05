@@ -7,7 +7,9 @@ export async function POST(req: Request) {
   const password = (body.password as string | undefined)?.trim() || generatePassword(body.name, body.email);
   const user = await db.user.create({
     data: {
-      id, name: body.name, email: body.email, role: body.role,
+      // Administrator is the only role — set here rather than taken from the
+      // request, so a crafted payload can't create an account in some other one.
+      id, name: body.name, email: body.email, role: "admin",
       title: body.title, phone: body.phone || "",
       status: "Active", since: new Date().getFullYear().toString(),
       password: hashPassword(password),
