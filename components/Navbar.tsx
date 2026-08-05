@@ -62,7 +62,9 @@ export default function Navbar() {
             <ThemeToggle />
           </div>
 
-          <ul className="flex items-center gap-7">
+          {/* Wraps rather than overflowing: nine uppercase links don't fit on one
+              line between the logo and the right edge at ~lg widths. */}
+          <ul className="flex flex-wrap items-center justify-end gap-x-7 gap-y-2">
             {nav.map((item) => {
               const onSection = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
               const isActive =

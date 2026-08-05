@@ -23,7 +23,7 @@ export default async function ServicesList() {
             <Reveal key={s.title} delay={i * 80} direction="up">
               <div className="card-elevated h-full p-7">
                 <span className="flex h-11 w-11 items-center justify-center rounded-full bg-brand-700 font-display text-base font-bold text-white">
-                  {String(i + 1).padStart(2, "0")}
+                  {i + 1}
                 </span>
                 <h3 className="mt-4 font-display text-xl font-bold tracking-tight text-ink">{s.title}</h3>
                 <p className="mt-2 leading-relaxed text-concrete-500">{s.desc}</p>

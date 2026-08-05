@@ -29,6 +29,7 @@ export type NavItem = {
 export const nav: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
+  { label: "Services", href: "/services" },
   {
     label: "Projects",
     href: "/projects",
@@ -47,6 +48,7 @@ export const nav: NavItem[] = [
   },
   { label: "Health & Safety", href: "/safety" },
   { label: "News", href: "/blog" },
+  { label: "Careers", href: "/careers" },
   { label: "Contact Us", href: "/contact" },
 ];
 
