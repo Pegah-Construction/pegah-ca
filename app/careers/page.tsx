@@ -100,7 +100,7 @@ export default async function CareersPage() {
                   We don&rsquo;t have any openings listed at this time, but we&rsquo;re always interested in hearing from talented people. Send your resume and we&rsquo;ll keep you in mind.
                 </p>
                 <a
-                  href={`mailto:${company.email}?subject=General Application to Pegah Construction`}
+                  href={`mailto:${company.hrEmail}?subject=General Application to Pegah Construction`}
                   className="mt-8 inline-flex items-center gap-2 rounded-md bg-brand-700 px-6 py-3 font-display text-sm font-semibold text-white transition-colors hover:bg-brand-800"
                 >
                   Send a general application →
@@ -147,7 +147,7 @@ export default async function CareersPage() {
                                 </div>
                               </div>
                               <a
-                                href={`mailto:${company.email}?subject=Application: ${encodeURIComponent(job.title)}`}
+                                href={`mailto:${company.hrEmail}?subject=Application: ${encodeURIComponent(job.title)}`}
                                 className="shrink-0 rounded-md bg-brand-700 px-5 py-2.5 font-display text-sm font-semibold text-white transition-colors hover:bg-brand-800"
                               >
                                 Apply now →
@@ -199,7 +199,7 @@ export default async function CareersPage() {
                   </p>
                   <div className="mt-8 flex flex-wrap gap-4">
                     <a
-                      href={`mailto:${company.email}?subject=General Application to Pegah Construction`}
+                      href={`mailto:${company.hrEmail}?subject=General Application to Pegah Construction`}
                       className="inline-flex items-center gap-2 rounded-md bg-white px-6 py-3 font-display text-sm font-semibold text-brand-900 transition-colors hover:bg-brand-50"
                     >
                       Email your résumé →

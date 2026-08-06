@@ -12,6 +12,8 @@ export const company = {
   phoneHref: "tel:+14167399300",
   email: "info@pegah.ca",
   estimatingEmail: "estimating@pegah.ca",
+  // Job applications go to HR, not the general inbox — used by the careers page.
+  hrEmail: "hr@pegah.ca",
   address: {
     line1: "5050 Dufferin Street, Suite 120",
     line2: "Toronto, Ontario M3H 5T5",
