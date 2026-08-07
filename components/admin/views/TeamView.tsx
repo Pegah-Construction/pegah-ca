@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useRef } from "react";
 import { getStorageUrl } from "@/lib/storage-url";
-import { StatCard, Card, PrimaryBtn, Modal, Field, inputCls, Spinner } from "../ui";
-import type { AboutContent } from "@/lib/about-content";
+import { StatCard, Card, PrimaryBtn, Modal, Field, inputCls, Spinner, SearchInput } from "../ui";
+import { TEAM_BIO_MAX, type AboutContent } from "@/lib/about-content";
 
-type Member = { id: string; order: number; name: string; title: string; bio: string; photo: string };
+type Member = { id: string; order: number; name: string; title: string; bio: string; photo: string; leadership: boolean };
 
 const TITLES = [
   "President",
@@ -17,7 +17,7 @@ const TITLES = [
   "Project Director",
 ] as const;
 
-const BLANK = { name: "", title: TITLES[0] as string, bio: "" };
+const BLANK = { name: "", title: TITLES[0] as string, bio: "", leadership: true };
 
 export default function TeamView() {
   const [members, setMembers] = useState<Member[]>([]);
@@ -28,8 +28,7 @@ export default function TeamView() {
   const [saving, setSaving] = useState(false);
   const [modalPhoto, setModalPhoto] = useState<{ file: File; preview: string } | null>(null);
   const [photoUploading, setPhotoUploading] = useState<string | null>(null);
-  const [groupPhoto, setGroupPhoto] = useState("");
-  const [groupUploading, setGroupUploading] = useState(false);
+  const [q, setQ] = useState("");
 
   // Editable About-page content
   const [about, setAbout] = useState<AboutContent | null>(null);
@@ -40,16 +39,13 @@ export default function TeamView() {
 
   const modalPhotoRef = useRef<HTMLInputElement>(null);
   const photoInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
-  const groupPhotoRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     Promise.all([
       fetch("/api/team").then((r) => r.json()).catch(() => []),
-      fetch("/api/team/group-photo").then((r) => r.json()).catch(() => ({ photo: "" })),
       fetch("/api/about").then((r) => r.json()).catch(() => null),
-    ]).then(([membersData, groupData, aboutData]) => {
+    ]).then(([membersData, aboutData]) => {
       setMembers(Array.isArray(membersData) ? membersData : []);
-      setGroupPhoto(groupData?.photo ?? "");
       if (aboutData) {
         setAbout(aboutData.content);
         setAboutImage(aboutData.image ?? "");
@@ -90,10 +86,11 @@ export default function TeamView() {
     setAboutImage("");
   };
 
-  const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
+  const set = (k: string, v: string | boolean) => setForm((f) => ({ ...f, [k]: v }));
 
-  const openCreate = () => { setForm(BLANK); setModalPhoto(null); setEditingId(null); setSaving(false); setOpen(true); };
-  const openEdit = (m: Member) => { setForm({ name: m.name, title: m.title, bio: m.bio }); setModalPhoto(null); setEditingId(m.id); setSaving(false); setOpen(true); };
+  // Each section's "add" button preselects that section in the modal.
+  const openCreate = (leadership: boolean) => { setForm({ ...BLANK, leadership }); setModalPhoto(null); setEditingId(null); setSaving(false); setOpen(true); };
+  const openEdit = (m: Member) => { setForm({ name: m.name, title: m.title, bio: m.bio, leadership: m.leadership }); setModalPhoto(null); setEditingId(m.id); setSaving(false); setOpen(true); };
   const closeModal = () => { setOpen(false); setEditingId(null); setForm(BLANK); setModalPhoto(null); setSaving(false); };
 
   const pickModalPhoto = (file: File) => {
@@ -151,10 +148,15 @@ export default function TeamView() {
   };
 
   const moveOrder = async (id: string, dir: -1 | 1) => {
-    const idx = members.findIndex((m) => m.id === id);
-    const target = members[idx + dir];
+    // Reorder within the person's own section — swapping against someone in the
+    // other section would move them between sections on the About page.
+    const self = members.find((m) => m.id === id);
+    if (!self) return;
+    const section = members.filter((m) => m.leadership === self.leadership);
+    const idx = section.findIndex((m) => m.id === id);
+    const target = section[idx + dir];
     if (!target) return;
-    const a = members[idx];
+    const a = self;
     const newOrderA = target.order;
     const newOrderB = a.order;
     setMembers((ms) =>
@@ -182,26 +184,21 @@ export default function TeamView() {
     setMembers((ms) => ms.map((m) => (m.id === id ? { ...m, photo: "" } : m)));
   };
 
-  const handleGroupUpload = async (file: File) => {
-    setGroupUploading(true);
-    const fd = new FormData();
-    fd.append("file", file);
-    const res = await fetch("/api/team/group-photo", { method: "POST", body: fd });
-    const { photo } = await res.json();
-    setGroupPhoto(photo);
-    setGroupUploading(false);
-  };
+  // Search is scoped to the team members list, where it lives — leadership is a
+  // handful of people that fit on screen without filtering.
+  const needle = q.trim().toLowerCase();
+  const matches = (m: Member) =>
+    !needle || [m.name, m.title, m.bio].some((v) => (v ?? "").toLowerCase().includes(needle));
 
-  const handleGroupDelete = async () => {
-    await fetch("/api/team/group-photo", { method: "DELETE" });
-    setGroupPhoto("");
-  };
+  const leaders = members.filter((m) => m.leadership);
+  const teamMembers = members.filter((m) => !m.leadership);
+  const shownTeam = teamMembers.filter(matches);
 
   return (
     <>
       <div className="mb-6 grid gap-4 sm:grid-cols-3">
-        <StatCard label="Leaders" value={loading ? "—" : members.length} hint="shown on About page" />
-        <StatCard label="Team photo" value={groupPhoto ? "Uploaded" : "None"} hint={groupPhoto ? "live on site" : "not yet uploaded"} />
+        <StatCard label="Leaders" value={loading ? "—" : leaders.length} hint="shown on About page" />
+        <StatCard label="Team members" value={loading ? "—" : teamMembers.length} hint="shown on About page" />
         <StatCard label="About page" value="Live" hint="updates in real time" />
       </div>
 
@@ -274,16 +271,55 @@ export default function TeamView() {
           </div>
         </Card>
 
-        <Card title="Leadership" right={<PrimaryBtn onClick={openCreate}>+ Add member</PrimaryBtn>}>
+        {/* Both sections render the same card, so leadership and the wider team
+            stay identical on the About page — individual photo, name, title, bio. */}
+        {([
+          {
+            key: "leadership",
+            title: "Leadership",
+            list: leaders,
+            total: leaders.length,
+            // Few executives, so they keep the roomier card with the bio, and
+            // there's nothing to search through.
+            compact: false,
+            searchable: false,
+            empty: "No leaders yet. Add the President, CEO, Vice President, or other executives.",
+          },
+          {
+            key: "team",
+            title: "Team members",
+            list: shownTeam,
+            total: teamMembers.length,
+            // The team can run long — denser cards so more fit on screen, and a
+            // search box in this card's own header.
+            compact: true,
+            searchable: true,
+            empty: "No team members yet. Everyone added here appears with their own photo in the “Our team” section.",
+          },
+        ] as const).map((section) => (
+        <Card key={section.key}
+          title={`${section.title}${section.total ? ` (${section.searchable && needle ? `${section.list.length} of ${section.total}` : section.total})` : ""}`}
+          right={
+            <div className="flex flex-wrap items-center gap-3">
+              {section.searchable && (
+                <SearchInput value={q} onChange={setQ} placeholder="Search team members…" />
+              )}
+              <PrimaryBtn onClick={() => openCreate(section.key === "leadership")}>+ Add member</PrimaryBtn>
+            </div>
+          }>
           {loading ? (
             <div className="flex justify-center py-16"><Spinner className="h-6 w-6" /></div>
-          ) : members.length === 0 ? (
+          ) : section.list.length === 0 ? (
             <div className="px-6 py-12 text-center">
-              <p className="text-sm text-concrete-400">No leaders yet. Add the President, Vice President, or other executives.</p>
+              <p className="text-sm text-concrete-400">
+                {section.total === 0 ? section.empty : `No one in this section matches “${q.trim()}”.`}
+              </p>
             </div>
           ) : (
-            <div className="grid gap-6 p-6 sm:grid-cols-2 xl:grid-cols-3">
-              {members.map((m) => (
+            <div className={section.compact
+              ? "grid gap-4 p-5 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6"
+              : "grid gap-6 p-6 sm:grid-cols-2 xl:grid-cols-3"}>
+              {section.list.map((m) => (
                 <div key={m.id} className="overflow-hidden rounded-xl border border-concrete-200 bg-surface">
                   {/* Photo — click to upload */}
                   <div
@@ -294,18 +330,20 @@ export default function TeamView() {
                       <img src={getStorageUrl(m.photo)} alt={m.name} className="h-full w-full object-cover" />
                     ) : (
                       <div className="flex h-full w-full flex-col items-center justify-center gap-3 text-concrete-300">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="h-16 w-16">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className={section.compact ? "h-8 w-8" : "h-16 w-16"}>
                           <circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
                         </svg>
-                        <span className="font-mono text-xs">Click to upload photo</span>
+                        {!section.compact && <span className="font-mono text-xs">Click to upload photo</span>}
                       </div>
                     )}
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" className="h-8 w-8">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" className={section.compact ? "h-5 w-5" : "h-8 w-8"}>
                         <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
                         <circle cx="12" cy="13" r="4" />
                       </svg>
-                      <span className="font-mono text-xs text-white">{m.photo ? "Replace photo" : "Upload photo"}</span>
+                      {!section.compact && (
+                        <span className="font-mono text-xs text-white">{m.photo ? "Replace photo" : "Upload photo"}</span>
+                      )}
                     </div>
                     {photoUploading === m.id && (
                       <div className="absolute inset-0 flex items-center justify-center bg-black/40">
@@ -326,29 +364,41 @@ export default function TeamView() {
                   </div>
 
                   {/* Info */}
-                  <div className="p-4">
-                    <div className="font-display text-base font-bold text-ink">{m.name || <span className="text-concrete-300">No name</span>}</div>
-                    <div className="mt-0.5 font-mono text-[11px] uppercase tracking-label text-accent-700">{m.title}</div>
-                    {m.bio && <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-concrete-500">{m.bio}</p>}
-                    <div className="mt-4 flex items-center gap-2 border-t border-concrete-100 pt-3">
-                      {/* Priority arrows */}
-                      <button type="button" onClick={() => moveOrder(m.id, -1)}
-                        disabled={members.indexOf(m) === 0}
-                        className="rounded border border-concrete-200 p-1 text-concrete-400 hover:text-ink disabled:opacity-30"
-                        title="Move up">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3 w-3"><path d="M18 15l-6-6-6 6"/></svg>
-                      </button>
-                      <button type="button" onClick={() => moveOrder(m.id, 1)}
-                        disabled={members.indexOf(m) === members.length - 1}
-                        className="rounded border border-concrete-200 p-1 text-concrete-400 hover:text-ink disabled:opacity-30"
-                        title="Move down">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3 w-3"><path d="M6 9l6 6 6-6"/></svg>
-                      </button>
+                  <div className={section.compact ? "p-3" : "p-4"}>
+                    <div className={`font-display font-bold text-ink ${section.compact ? "truncate text-sm" : "text-base"}`}>
+                      {m.name || <span className="text-concrete-300">No name</span>}
+                    </div>
+                    <div className="mt-0.5 truncate font-mono text-[11px] uppercase tracking-label text-accent-700">{m.title}</div>
+                    {/* The bio is the tallest element — dropped from compact cards
+                        so more people fit; it stays editable in the modal. */}
+                    {m.bio && !section.compact && (
+                      <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-concrete-500">{m.bio}</p>
+                    )}
+                    <div className={`flex items-center gap-2 border-t border-concrete-100 ${section.compact ? "mt-2.5 pt-2" : "mt-4 pt-3"}`}>
+                      {/* Reorder arrows hide only in the section being filtered:
+                          its visible list is partial, so "up" would swap against
+                          someone off-screen. */}
+                      {!(section.searchable && needle) && (
+                        <>
+                          <button type="button" onClick={() => moveOrder(m.id, -1)}
+                            disabled={section.list.indexOf(m) === 0}
+                            className="rounded border border-concrete-200 p-1 text-concrete-400 hover:text-ink disabled:opacity-30"
+                            title="Move up">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3 w-3"><path d="M18 15l-6-6-6 6"/></svg>
+                          </button>
+                          <button type="button" onClick={() => moveOrder(m.id, 1)}
+                            disabled={section.list.indexOf(m) === section.list.length - 1}
+                            className="rounded border border-concrete-200 p-1 text-concrete-400 hover:text-ink disabled:opacity-30"
+                            title="Move down">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3 w-3"><path d="M6 9l6 6 6-6"/></svg>
+                          </button>
+                        </>
+                      )}
                       <button type="button" onClick={() => openEdit(m)}
-                        className="ml-1 font-display text-xs font-semibold text-concrete-500 hover:text-ink">
-                        Edit info
+                        className={`font-display text-xs font-semibold text-concrete-500 hover:text-ink ${section.searchable && needle ? "" : "ml-1"}`}>
+                        Edit
                       </button>
-                      {m.photo && (
+                      {m.photo && !section.compact && (
                         <button type="button" onClick={() => handlePhotoDelete(m.id)}
                           className="font-display text-xs font-semibold text-concrete-400 hover:text-concrete-600">
                           Remove photo
@@ -365,45 +415,7 @@ export default function TeamView() {
             </div>
           )}
         </Card>
-
-        {/* Team group photo */}
-        <Card title="Team photo" right={
-          <div className="flex gap-2">
-            <input type="file" accept="image/*" className="hidden" ref={groupPhotoRef}
-              onChange={(e) => { const f = e.target.files?.[0]; if (f) handleGroupUpload(f); e.target.value = ""; }}
-            />
-            <PrimaryBtn onClick={() => groupPhotoRef.current?.click()}>
-              {groupUploading ? "Uploading…" : groupPhoto ? "Replace" : "Upload photo"}
-            </PrimaryBtn>
-            {groupPhoto && (
-              <button type="button" onClick={handleGroupDelete}
-                className="rounded-md border border-concrete-200 px-3 py-1.5 font-display text-xs font-semibold text-concrete-600 hover:bg-concrete-50">
-                Remove
-              </button>
-            )}
-          </div>
-        }>
-          <div className="p-6">
-            <p className="mb-4 text-sm text-concrete-500">Wide banner shown in the "Our team" section on the About page.</p>
-            <div className="relative overflow-hidden rounded-xl border border-concrete-200 bg-concrete-50" style={{ aspectRatio: "21/9" }}>
-              {groupPhoto ? (
-                <img src={getStorageUrl(groupPhoto)} alt="Team photo" className="h-full w-full object-cover" />
-              ) : (
-                <div className="flex h-full w-full flex-col items-center justify-center gap-3 text-concrete-300">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="h-10 w-10">
-                    <rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="M21 15l-5-5L5 21" />
-                  </svg>
-                  <span className="font-mono text-xs">No team photo uploaded</span>
-                </div>
-              )}
-              {groupUploading && (
-                <div className="absolute inset-0 flex items-center justify-center bg-white/60">
-                  <Spinner className="h-8 w-8" />
-                </div>
-              )}
-            </div>
-          </div>
-        </Card>
+        ))}
       </div>
 
       {open && (
@@ -452,16 +464,60 @@ export default function TeamView() {
             <Field label="Name">
               <input required className={inputCls} value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="e.g. John Smith" />
             </Field>
-            <Field label="Title">
-              <select required className={inputCls} value={form.title} onChange={(e) => set("title", e.target.value)}>
-                {TITLES.map((t) => (
-                  <option key={t} value={t}>{t}</option>
-                ))}
+            <Field label="Section">
+              <select
+                className={inputCls}
+                value={form.leadership ? "leadership" : "team"}
+                onChange={(e) => {
+                  const isLeader = e.target.value === "leadership";
+                  // Executive titles are a fixed list; team titles are free text.
+                  // Swap to a sensible default so the field is never left holding
+                  // a value the other section wouldn't offer.
+                  setForm((f) => ({
+                    ...f,
+                    leadership: isLeader,
+                    title: isLeader ? (TITLES.includes(f.title as typeof TITLES[number]) ? f.title : TITLES[0]) : f.title,
+                  }));
+                }}
+              >
+                <option value="leadership">Leadership</option>
+                <option value="team">Team members</option>
               </select>
             </Field>
+            <Field label="Title">
+              {form.leadership ? (
+                <select required className={inputCls} value={form.title} onChange={(e) => set("title", e.target.value)}>
+                  {TITLES.map((t) => (
+                    <option key={t} value={t}>{t}</option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  required
+                  className={inputCls}
+                  value={form.title}
+                  onChange={(e) => set("title", e.target.value)}
+                  placeholder="e.g. Site Foreman, Estimator, Project Coordinator"
+                />
+              )}
+            </Field>
             <Field label="Bio">
-              <textarea rows={3} className={inputCls} value={form.bio} onChange={(e) => set("bio", e.target.value)}
-                placeholder="Short biography shown on the About page…" />
+              <textarea
+                rows={3}
+                maxLength={TEAM_BIO_MAX}
+                className={inputCls}
+                value={form.bio}
+                onChange={(e) => set("bio", e.target.value.slice(0, TEAM_BIO_MAX))}
+                placeholder="Short biography shown on the About page — a sentence or two."
+              />
+              <div className="mt-1.5 flex justify-end">
+                <span className={`font-mono text-[11px] ${
+                  form.bio.length >= TEAM_BIO_MAX ? "text-amber-700" : "text-concrete-400"
+                }`}>
+                  {form.bio.length} / {TEAM_BIO_MAX}
+                  {form.bio.length >= TEAM_BIO_MAX ? " — limit reached" : ""}
+                </span>
+              </div>
             </Field>
             <div className="flex items-center justify-between gap-2 pt-2">
               {editingId ? (

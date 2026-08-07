@@ -260,6 +260,10 @@ model TeamMember {
   title String
   bio   String @default("")
   photo String @default("")
+  // Which section of the about page this person appears in: leadership
+  // (president, CEO, vice president) or the wider team. Defaults to true so
+  // rows created before this column existed keep their original placement.
+  leadership Boolean @default(true)
 }
 
 model ContactInquiry {

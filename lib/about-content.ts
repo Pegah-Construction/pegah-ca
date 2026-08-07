@@ -2,6 +2,12 @@
 // "about_content" key as JSON; the "What we do" image under "about_image".
 // These defaults are used until an admin edits the page in the dashboard.
 
+// Longest a team member's bio may be. Their card on the About page is only
+// ~10rem wide, so anything past a couple of sentences makes one person's card
+// tower over the rest of the row. Enforced in the dashboard (input limit +
+// counter) and again in the API, so it holds however the record is saved.
+export const TEAM_BIO_MAX = 200;
+
 export type AboutContent = {
   whoWeAre: string;
   whereWeAre: string;

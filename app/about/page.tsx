@@ -15,14 +15,45 @@ export const metadata: Metadata = {
   alternates: { canonical: "/about" },
 };
 
+type Person = { id: string; name: string; title: string; bio: string; photo: string };
+
+// One person, shown the same way in both the leadership and team sections.
+function PersonCard({ person, delay }: { person: Person; delay: number }) {
+  return (
+    <Reveal delay={delay} direction="up">
+      <div className="w-40 sm:w-48">
+        {person.photo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={getStorageUrl(person.photo)}
+            alt={person.name}
+            className="aspect-[4/5] w-full rounded-xl object-cover"
+          />
+        ) : (
+          <div className="flex aspect-[4/5] w-full items-center justify-center rounded-xl bg-concrete-100 text-concrete-300">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="h-10 w-10">
+              <circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+            </svg>
+          </div>
+        )}
+        <h3 className="mt-3 font-display text-lg font-bold tracking-tight text-ink">{person.name}</h3>
+        <p className="font-mono text-[11px] font-bold uppercase tracking-label text-accent-700">{person.title}</p>
+        {person.bio && <p className="mt-2 text-sm leading-relaxed text-concrete-500">{person.bio}</p>}
+      </div>
+    </Reveal>
+  );
+}
+
 export default async function AboutPage() {
-  const [members, teamPhotoRow, aboutRow, aboutImageRow] = await Promise.all([
+  const [members, aboutRow, aboutImageRow] = await Promise.all([
     db.teamMember.findMany({ orderBy: { order: "asc" } }),
-    db.setting.findUnique({ where: { key: "team_photo" } }),
     db.setting.findUnique({ where: { key: "about_content" } }),
     db.setting.findUnique({ where: { key: "about_image" } }),
   ]);
-  const teamPhoto = teamPhotoRow?.value ?? "";
+  // Leadership and the wider team are the same records, split by their flag —
+  // both render as individual cards, no group photo.
+  const leaders = members.filter((m) => m.leadership);
+  const team = members.filter((m) => !m.leadership);
   const content = mergeAboutContent(aboutRow?.value);
   const whatWeDoImg = aboutImageRow?.value ? getStorageUrl(aboutImageRow.value) : "/about.jpg";
 
@@ -99,29 +130,10 @@ export default async function AboutPage() {
           </h2>
         </Reveal>
 
-        {members.length > 0 ? (
+        {leaders.length > 0 ? (
           <div className="mt-10 flex flex-wrap gap-10">
-            {members.map((person, i) => (
-              <Reveal key={person.id} delay={i * 100} direction="up">
-                <div className="w-40 sm:w-48">
-                  {person.photo ? (
-                    <img
-                      src={getStorageUrl(person.photo)}
-                      alt={person.name}
-                      className="aspect-[4/5] w-full rounded-xl object-cover"
-                    />
-                  ) : (
-                    <div className="flex aspect-[4/5] w-full items-center justify-center rounded-xl bg-concrete-100 text-concrete-300">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="h-10 w-10">
-                        <circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-                      </svg>
-                    </div>
-                  )}
-                  <h3 className="mt-3 font-display text-lg font-bold tracking-tight text-ink">{person.name}</h3>
-                  <p className="font-mono text-[11px] font-bold uppercase tracking-label text-accent-700">{person.title}</p>
-                  {person.bio && <p className="mt-2 text-sm leading-relaxed text-concrete-500">{person.bio}</p>}
-                </div>
-              </Reveal>
+            {leaders.map((person, i) => (
+              <PersonCard key={person.id} person={person} delay={i * 100} />
             ))}
           </div>
         ) : (
@@ -152,22 +164,17 @@ export default async function AboutPage() {
             Built by the people behind every project.
           </h2>
         </Reveal>
-        <Reveal delay={100} direction="up">
-          {teamPhoto ? (
-            <img
-              src={getStorageUrl(teamPhoto)}
-              alt="The Pegah team"
-              className="mt-8 aspect-[16/9] w-full rounded-xl object-cover"
-            />
-          ) : (
-            <div className="mt-8 flex h-72 w-full items-center justify-center rounded-xl bg-concrete-100 text-concrete-300">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="h-12 w-12">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-              </svg>
-            </div>
-          )}
-        </Reveal>
+        {team.length > 0 ? (
+          <div className="mt-10 flex flex-wrap gap-10">
+            {team.map((person, i) => (
+              <PersonCard key={person.id} person={person} delay={i * 100} />
+            ))}
+          </div>
+        ) : (
+          <Reveal delay={100} direction="up">
+            <p className="mt-8 text-concrete-400">Team members will appear here as they are added.</p>
+          </Reveal>
+        )}
       </section>
 
       {/* Closing + Format — last on the page */}
