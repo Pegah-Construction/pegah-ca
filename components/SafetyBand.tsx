@@ -4,7 +4,7 @@ import { Eyebrow } from "./Brand";
 export default function SafetyBand() {
   return (
     <section className="bg-brand-800">
-      <div className="mx-auto flex max-w-8xl flex-col gap-8 px-6 py-20 lg:flex-row lg:items-center lg:justify-between lg:px-10">
+      <div className="mx-auto flex max-w-8xl flex-col gap-8 px-5 py-14 sm:px-6 sm:py-20 lg:flex-row lg:items-center lg:justify-between lg:px-10">
         <div className="max-w-2xl">
           <Eyebrow className="text-brand-200">Safety first</Eyebrow>
           <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-white lg:text-4xl">

@@ -212,7 +212,18 @@
   html {
     scroll-behavior: smooth;
     color-scheme: light;
+    /* Deliberately larger than the 16px default — the whole design is sized in
+       rem against this, so it scales the site up on desktop. */
     font-size: 20px;
+  }
+  /* …but 20px is oversized on a phone: every rem-based size (padding, headings,
+     gaps) inflates by 25%, so a 375px screen loses a sixth of its width to
+     section padding alone. Step the root down on small screens and the entire
+     layout scales with it. */
+  @media (max-width: 640px) {
+    html {
+      font-size: 17px;
+    }
   }
 
   /* ── Scrollbars ──

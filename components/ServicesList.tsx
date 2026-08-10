@@ -10,7 +10,7 @@ export default async function ServicesList() {
   if (services.length === 0) return null;
   return (
     <section className="tint-grid-surface">
-      <div className="mx-auto max-w-8xl px-6 py-24 lg:px-10 lg:py-28">
+      <div className="mx-auto max-w-8xl px-5 py-16 sm:px-6 sm:py-24 lg:px-10 lg:py-28">
         <Reveal>
           <div className="accent-bar mb-4" />
           <Eyebrow>{settings.servicesEyebrow}</Eyebrow>

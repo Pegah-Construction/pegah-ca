@@ -6,7 +6,7 @@ import { getSiteSettings } from "@/lib/settings-server";
 export default async function Intro() {
   const s = await getSiteSettings();
   return (
-    <section className="mx-auto max-w-8xl px-6 py-24 lg:px-10 lg:py-28">
+    <section className="mx-auto max-w-8xl px-5 py-16 sm:px-6 sm:py-24 lg:px-10 lg:py-28">
       <Reveal>
         <div className="accent-bar mb-4" />
         <Eyebrow>Who we are</Eyebrow>
