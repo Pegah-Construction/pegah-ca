@@ -26,7 +26,12 @@ export async function POST(req: Request) {
 }
 
 export async function GET() {
-  const articles = await db.article.findMany({ orderBy: { date: "desc" } });
+  const articles = await db.article.findMany({
+    orderBy: { date: "desc" },
+    // Counts drive the dashboard's Comments button and like column — cheaper
+    // than fetching the rows themselves just to length them.
+    include: { _count: { select: { comments: true, likes: true } } },
+  });
   return Response.json(
     articles.map((a) => ({
       id: a.id, title: a.title, slug: a.slug, project: a.projectId,
@@ -34,6 +39,7 @@ export async function GET() {
       featured: a.featured, excerpt: a.excerpt, body: a.body ?? "",
       coverImage: a.coverImage ?? "", linkedinPost: a.linkedinPost ?? "",
       instagramPost: a.instagramPost ?? "", words: a.words,
+      commentCount: a._count.comments, likeCount: a._count.likes,
     }))
   );
 }

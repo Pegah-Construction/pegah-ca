@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
 import LikeButton from "@/components/LikeButton";
 import ShareButton from "@/components/ShareButton";
+import Comments from "@/components/Comments";
 import { getStorageUrl } from "@/lib/storage-url";
 import { siteUrl } from "@/lib/site";
 
@@ -216,6 +217,9 @@ export default async function BlogPost({ params }: Props) {
                 <ShareButton url={url} title={article.title} />
               </div>
             </Reveal>
+
+            {/* Comments */}
+            <Comments articleId={article.id} />
 
             {/* Author footer */}
             <Reveal delay={100}>

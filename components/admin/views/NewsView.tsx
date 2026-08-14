@@ -10,7 +10,16 @@ import { getStorageUrl } from "@/lib/storage-url";
 const RichEditor = dynamic(() => import("../RichEditor"), { ssr: false });
 
 type UserRow = { id: string; name: string };
-type ArticleWithBody = Article & { body?: string; coverImage?: string };
+type ArticleWithBody = Article & {
+  body?: string;
+  coverImage?: string;
+  commentCount?: number;
+  likeCount?: number;
+};
+// Same shape the public list returns. Commenter emails are stored but not
+// exposed by any endpoint — these routes are unauthenticated, so returning them
+// would put reader addresses one guessed URL away from a harvester.
+type AdminComment = { id: string; name: string; body: string; createdAt: string };
 
 const empty = () => ({ title:"", tags:"", excerpt:"", body:"" });
 
@@ -35,6 +44,12 @@ export default function NewsView() {
   const [linkedinCopied, setLinkedinCopied] = useState(false);
   const [linkedinGenerating, setLinkedinGenerating] = useState(false);
 
+  // Reader comments for one article
+  const [commentsFor, setCommentsFor] = useState<ArticleWithBody | null>(null);
+  const [comments, setComments] = useState<AdminComment[]>([]);
+  const [commentsLoading, setCommentsLoading] = useState(false);
+  const [deletingComment, setDeletingComment] = useState<string | null>(null);
+
   // Instagram caption viewer/editor
   const [instagramFor, setInstagramFor] = useState<ArticleWithBody | null>(null);
   const [instagramText, setInstagramText] = useState("");
@@ -50,6 +65,38 @@ export default function NewsView() {
   if (!user) return null;
   const perms = permsFor(user.role);
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
+
+  const openComments = async (n: ArticleWithBody) => {
+    setCommentsFor(n);
+    setComments([]);
+    setCommentsLoading(true);
+    try {
+      const res = await fetch(`/api/news/${n.id}/comments`);
+      const data = await res.json();
+      setComments(Array.isArray(data) ? data : []);
+    } catch {
+      setComments([]);
+    } finally {
+      setCommentsLoading(false);
+    }
+  };
+
+  const deleteComment = async (commentId: string) => {
+    if (!commentsFor || deletingComment) return;
+    if (!confirm("Delete this comment? It disappears from the article immediately.")) return;
+    setDeletingComment(commentId);
+    const res = await fetch(`/api/news/${commentsFor.id}/comments/${commentId}`, { method: "DELETE" });
+    if (res.ok) {
+      setComments((cs) => cs.filter((c) => c.id !== commentId));
+      // Keep the row's badge in step without refetching the whole list.
+      setNews((ns) => ns.map((a) => a.id === commentsFor.id
+        ? { ...a, commentCount: Math.max(0, (a.commentCount ?? 1) - 1) }
+        : a));
+    } else {
+      alert("Couldn't delete that comment.");
+    }
+    setDeletingComment(null);
+  };
 
   const openCreate = () => { setForm(empty()); setEditingId(null); setFormCoverImage(""); setOpen(true); };
   const openEdit = (n: ArticleWithBody) => {
@@ -291,6 +338,18 @@ export default function NewsView() {
                         </button>
                       )}
                       {perms.manageNews && (
+                        <button onClick={() => openComments(n)} title="Read and remove reader comments"
+                          className="flex items-center gap-1 font-display text-xs font-semibold text-concrete-500 hover:text-ink">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5">
+                            <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.9 8.9 0 0 1-3.8-.9L3 21l1.9-5.1A8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5z" />
+                          </svg>
+                          Comments
+                          {(n.commentCount ?? 0) > 0 && (
+                            <span className="rounded-full bg-brand-50 px-1.5 font-mono text-[10px] text-brand-700">{n.commentCount}</span>
+                          )}
+                        </button>
+                      )}
+                      {perms.manageNews && (
                         <button onClick={() => togglePublish(n.id)} disabled={!!togglingId}
                           className={`font-display text-xs font-semibold transition-opacity disabled:opacity-50 ${n.status === "Published" ? "text-concrete-500 hover:text-ink" : "text-brand-700 hover:text-brand-800"}`}>
                           {togglingId === n.id ? "…" : n.status === "Published" ? "Unpublish" : "Publish"}
@@ -386,6 +445,59 @@ export default function NewsView() {
       )}
 
       {/* LinkedIn post modal */}
+      {commentsFor && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setCommentsFor(null)}>
+          <div className="flex max-h-[90vh] w-full max-w-2xl flex-col rounded-xl bg-surface shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between border-b border-concrete-200 px-6 py-4">
+              <div className="min-w-0">
+                <h2 className="font-display text-sm font-bold text-ink">
+                  Comments{comments.length > 0 && <span className="ml-1.5 font-mono text-xs font-normal text-concrete-400">{comments.length}</span>}
+                </h2>
+                <p className="mt-0.5 min-w-0 truncate font-mono text-[11px] text-concrete-500">On: {commentsFor.title}</p>
+              </div>
+              <button onClick={() => setCommentsFor(null)} className="rounded-md p-1 text-concrete-400 hover:bg-concrete-100 hover:text-ink">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-6">
+              {commentsLoading ? (
+                <div className="flex justify-center py-10"><Spinner className="h-6 w-6" /></div>
+              ) : comments.length === 0 ? (
+                <p className="py-8 text-center text-sm text-concrete-400">No comments on this article yet.</p>
+              ) : (
+                <ul className="divide-y divide-concrete-100">
+                  {comments.map((c) => (
+                    <li key={c.id} className="flex gap-4 py-4 first:pt-0 last:pb-0">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-baseline gap-x-3">
+                          <span className="font-display text-sm font-semibold text-ink">{c.name}</span>
+                          <span className="font-mono text-[11px] text-concrete-400">
+                            {new Date(c.createdAt).toLocaleString("en-CA", { dateStyle: "medium", timeStyle: "short" })}
+                          </span>
+                        </div>
+                        <p className="mt-1 whitespace-pre-line break-words text-sm leading-relaxed text-concrete-600">{c.body}</p>
+                      </div>
+                      <button
+                        onClick={() => deleteComment(c.id)}
+                        disabled={!!deletingComment}
+                        className="h-fit shrink-0 font-display text-xs font-semibold text-red-600 transition-opacity hover:text-red-700 disabled:opacity-50"
+                      >
+                        {deletingComment === c.id ? "…" : "Delete"}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            <div className="border-t border-concrete-200 px-6 py-3">
+              <p className="text-xs text-concrete-400">
+                Comments appear on the article as soon as they're posted. Deleting one removes it immediately.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {linkedinFor && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setLinkedinFor(null)}>
           <div className="flex max-h-[90vh] w-full max-w-lg flex-col rounded-xl bg-surface shadow-2xl" onClick={(e) => e.stopPropagation()}>
