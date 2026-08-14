@@ -294,4 +294,23 @@ model Article {
   words       Int
   project   Project? @relation(fields: [projectId], references: [id])
   author    User     @relation(fields: [authorId], references: [id])
+  likes     ArticleLike[]
+}
+
+// One row per (article, browser). Readers are anonymous — the site has no public
+// accounts — so `visitorId` is a random id the reader's browser generates and
+// keeps in localStorage. It identifies a browser, not a person: no IP, no name,
+// nothing that ties back to anyone. The like *count* is the number of rows here,
+// so it lives on the server and is unaffected by anything the browser forgets.
+model ArticleLike {
+  id        String   @id
+  articleId String
+  visitorId String
+  createdAt DateTime @default(now())
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  // Stops the same browser counting twice, and makes "have I liked this?" a
+  // single indexed lookup.
+  @@unique([articleId, visitorId])
+  @@index([articleId])
 }

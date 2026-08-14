@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
+import LikeButton from "@/components/LikeButton";
 import { getStorageUrl } from "@/lib/storage-url";
 import { siteUrl } from "@/lib/site";
 
@@ -45,7 +46,9 @@ export default async function BlogPost({ params }: Props) {
   const { slug } = await params;
   const article = await db.article.findUnique({
     where: { slug },
-    include: { author: true },
+    // The like count is rendered server-side so it's correct on first paint;
+    // whether this reader already liked it is filled in by the button.
+    include: { author: true, _count: { select: { likes: true } } },
   });
 
   if (!article || article.status !== "Published") notFound();
@@ -199,9 +202,16 @@ export default async function BlogPost({ params }: Props) {
               ) : null}
             </Reveal>
 
+            {/* Like — at the end, where someone has actually read the piece */}
+            <Reveal delay={80}>
+              <div className="mt-12 border-t border-concrete-200 pt-8">
+                <LikeButton articleId={article.id} initialCount={article._count.likes} />
+              </div>
+            </Reveal>
+
             {/* Author footer */}
             <Reveal delay={100}>
-              <div className="mt-12 flex items-center gap-4 border-t border-concrete-200 pt-8">
+              <div className="mt-8 flex items-center gap-4 border-t border-concrete-200 pt-8">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand-800 font-display text-base font-bold text-white">
                   {initials}
                 </div>
