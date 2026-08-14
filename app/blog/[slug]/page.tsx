@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
 import LikeButton from "@/components/LikeButton";
+import ShareButton from "@/components/ShareButton";
 import { getStorageUrl } from "@/lib/storage-url";
 import { siteUrl } from "@/lib/site";
 
@@ -52,6 +53,10 @@ export default async function BlogPost({ params }: Props) {
   });
 
   if (!article || article.status !== "Published") notFound();
+
+  // Same canonical URL the metadata advertises — what gets shared should be the
+  // public address, not whatever host happens to be serving the page.
+  const url = `${siteUrl}/blog/${slug}`;
 
   const tags: string[] = JSON.parse(article.tags);
 
@@ -202,10 +207,13 @@ export default async function BlogPost({ params }: Props) {
               ) : null}
             </Reveal>
 
-            {/* Like — at the end, where someone has actually read the piece */}
+            {/* Like + share — at the end, where someone has actually read the piece */}
             <Reveal delay={80}>
-              <div className="mt-12 border-t border-concrete-200 pt-8">
+              <div className="mt-12 flex items-center gap-6 border-t border-concrete-200 pt-8">
                 <LikeButton articleId={article.id} initialCount={article._count.likes} />
+                {/* Canonical URL, not the current host — a shared link should
+                    point at the public site. */}
+                <ShareButton url={url} title={article.title} />
               </div>
             </Reveal>
 
