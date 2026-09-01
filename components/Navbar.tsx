@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { nav } from "@/lib/site";
 import { SiteLogo } from "./Brand";
 import ThemeToggle from "./ThemeToggle";
@@ -27,13 +27,44 @@ export default function Navbar() {
   const { user } = useAuth();
   const s = useSiteSettings();
   const [menuOpen, setMenuOpen] = useState(false);
+  const navRef = useRef<HTMLElement>(null);
+  const [navH, setNavH] = useState(0);
 
   // Close the mobile menu whenever the route changes.
   useEffect(() => { setMenuOpen(false); }, [pathname]);
 
+  // Track the nav bar's real height so the open menu can be capped at exactly the
+  // space left below it. Measured rather than hardcoded because the logo changes
+  // size at `sm` and the root font-size drops to 17px under 640px.
+  useEffect(() => {
+    const el = navRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setNavH(el.offsetHeight));
+    ro.observe(el);
+    setNavH(el.offsetHeight);
+    return () => ro.disconnect();
+  }, []);
+
+  // Lock the page while the menu is open, otherwise a swipe over the panel scrolls
+  // the document behind it instead of the menu. Padding compensates for the
+  // scrollbar the lock removes, so the header doesn't jump at desktop widths.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const root = document.documentElement;
+    const gap = window.innerWidth - root.clientWidth;
+    const prevOverflow = root.style.overflow;
+    const prevPad = root.style.paddingRight;
+    root.style.overflow = "hidden";
+    if (gap > 0) root.style.paddingRight = `${gap}px`;
+    return () => {
+      root.style.overflow = prevOverflow;
+      root.style.paddingRight = prevPad;
+    };
+  }, [menuOpen]);
+
   return (
     <header className="sticky top-0 z-50 border-b border-concrete-200 bg-surface">
-      <nav className="mx-auto flex max-w-8xl items-center justify-between gap-8 px-6 py-3 lg:px-10">
+      <nav ref={navRef} className="mx-auto flex max-w-8xl items-center justify-between gap-8 px-6 py-3 lg:px-10">
         <SiteLogo />
 
         {/* Desktop: contact row on top, nav links below */}
@@ -146,9 +177,14 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile menu panel */}
+      {/* Mobile menu panel. The sticky header can't grow past the viewport, so the
+          panel is capped at the space below the nav bar and scrolls internally. The
+          class is the pre-measurement fallback; `navH` refines it. */}
       {menuOpen && (
-        <div className="border-t border-concrete-200 bg-paper lg:hidden">
+        <div
+          style={navH ? { maxHeight: `calc(100dvh - ${navH}px)` } : undefined}
+          className="max-h-[calc(100dvh-5.5rem)] overflow-y-auto overscroll-contain border-t border-concrete-200 bg-paper sm:max-h-[calc(100dvh-6.25rem)] lg:hidden"
+        >
           <ul className="mx-auto max-w-8xl space-y-1 px-6 py-4">
             {nav.map((item) => {
               const isActive = pathname === item.href || item.children?.some((c) => pathname === c.href);

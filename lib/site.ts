@@ -60,7 +60,7 @@ export const nav: NavItem[] = [
 export type Affiliation = { name: string; href: string; logo: string };
 
 export const affiliations: Affiliation[] = [
-  { name: "OGCA", href: "https://ogca.ca/", logo: "/OGCA%20logo.png" },
+  { name: "OGCA", href: "https://ogca.ca/", logo: "/ogca%20-%202026.png" },
   { name: "Tarion", href: "https://www.tarion.com/", logo: "/Tarion.webp" },
   { name: "ULI", href: "https://uli.org/", logo: "/ULI.webp" },
   { name: "BILD", href: "https://bildgta.ca/", logo: "/bild.webp" },
