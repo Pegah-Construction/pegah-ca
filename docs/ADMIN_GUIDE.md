@@ -21,7 +21,7 @@ most day-to-day content (projects, blog posts, job postings, team members) is ed
 **health & safety** and **contact** pages, plus the **navbar** and **footer** details — is now
 editable too, through the **about / team**, **health & safety**, **services**, and **settings**
 screens. only the page layouts, styling and navigation structure remain in code — see
-[§15](#15-what-lives-in-code).
+[§18](#18-what-lives-in-code).
 
 ---
 
@@ -63,8 +63,12 @@ accounts are added and removed under **users & roles**.
 
 ## 4. dashboard home
 
-the landing page after login. it shows a quick overview of projects and recent activity. use the
-**left sidebar** to move between modules: dashboard, projects, tenders, news & blog, careers,
+the landing page after login. it shows a quick overview: your **six most recent projects**, the
+**four most recent articles**, and a **recent activity** feed of the **last three** things anyone did
+(creating a project, uploading photos, publishing an article). the feed is a summary, not a full
+audit log — open the module itself to see everything.
+
+use the **left sidebar** to move between modules: dashboard, projects, tenders, news & blog, careers,
 inquiries, about / team, health & safety, services, users & roles, settings.
 
 ![description](images/dashboard.PNG)
@@ -108,7 +112,7 @@ above the table you have:
 ### generate a blog post from a project
 on a project's detail page, **generate blog post** drafts an article from the project's details
 (and attached documents) using ai. it's saved as a **draft** in news & blog for you to review and
-publish. *(requires the ai key to be configured — see [§16](#16-ai-features).)*
+publish. *(requires the ai key to be configured — see [§19](#19-ai-features).)*
 
 ### delete a project
 click **delete** on a row and confirm. this also removes its photos and related data.
@@ -121,11 +125,15 @@ click **delete** on a row and confirm. this also removes its photos and related 
 
 ### write or edit an article
 1. click **+ new article** (or **edit** an existing one).
-2. set the **title**, **cover image**, **tags**, and write the body in the **rich text editor**
-   (headings, bold, lists, links, section labels, images, dividers).
+2. set the **title**, **cover image**, **tags**, an **excerpt**, and write the body in the **rich text
+   editor** (headings, bold, lists, links, section labels, images, dividers).
 3. set the **status**: **draft** (hidden from the public) or **published** (live).
 4. optionally mark it **featured** to highlight it on the blog.
 5. save.
+
+the **excerpt** is a short summary. it does more work than it looks like it does: it's the blurb on
+the blog listing, the description google shows in search results, and the text in the preview card
+when someone shares the link. so is the **cover image** — see [§17](#17-how-the-site-appears-in-google-and-when-shared).
 
 ![description](images/article-editor.PNG)
 
@@ -137,7 +145,56 @@ captions:
 - **generate instagram post** — an instagram-style caption for the same article.
 
 edit the result and copy it to paste into the network. *(both require the ai key — see
-[§16](#16-ai-features).)*
+[§19](#19-ai-features).)*
+
+### what readers can do with an article
+
+a published article carries three reader features. none of them need an account — anyone who visits
+the blog can use them.
+
+| | where it is | what it does |
+|---|---|---|
+| **like** ♥ | end of the article | a heart with a running count. clicking again takes the like back. |
+| **share** | beside the heart | on phones (and safari) it opens the device's own share sheet — whatsapp, email, messages. everywhere else it copies the link and says "link copied". |
+| **comments** | below the article | a public thread anyone can post to. |
+
+two things worth knowing about the numbers:
+
+- **likes are counted per browser, not per person.** someone who clears their browser data, or who
+  visits on a phone as well as a laptop, can like the same article more than once. read it as a
+  rough popularity signal, not an audited figure.
+- **like totals only show on the public article.** the dashboard doesn't display them.
+
+shared links always point at the **live site** (`www.pegah.ca/blog/…`), even when shared from a test
+or preview copy — so a link posted to linkedin can't accidentally send people somewhere private.
+
+### reader comments
+
+readers post with a **name**, an **email**, and their **comment**.
+
+- the **email is required but never published.** it's collected so you can follow up privately. only
+  the name, the comment, and a relative time ("3 days ago") appear on the site.
+- **comments go live the moment they're posted.** there is no approval queue holding them back — which
+  is convenient, but it means nobody is stopping a bad comment except you. see moderation below.
+- **drafts don't take comments.** only published articles do.
+- two quiet anti-spam measures run in the background: a hidden field that only bots fill in, and a
+  **30-second wait** between comments from the same browser. a real reader never notices either.
+- length limits are **80 characters** for a name and **2,000** for a comment (a countdown appears as
+  the reader nears the limit).
+
+### moderating comments
+
+**where:** news & blog → the **comments** button on the article's row. the button shows a small count
+when that article has any.
+
+the panel lists every comment on that article, newest first. **delete** removes one — you're asked to
+confirm, and it disappears from the public article immediately.
+
+deleting is the **only** moderation action. there is no way to edit a comment, hide one temporarily,
+or turn comments off for an article. because comments publish instantly, make a habit of glancing at
+this panel on recently published articles.
+
+> 📸 _add screenshot: comments panel in news & blog_
 
 ---
 
@@ -190,6 +247,17 @@ beside the text. after editing, use the screen's **save** to publish.
 ### leadership & team
 manage the **leadership** (president, vice president) and **team members** shown lower on the page —
 names, **titles**, bios, and photos. titles show in the amber accent colour on the public page.
+
+**each person has their own photo.** add or replace one from that person's row, or in the add / edit
+dialog; the ✕ removes it. someone with no photo shows their initials instead, so a missing photo
+never looks broken — you can add people first and collect headshots later.
+
+**finding and ordering people**
+- the **search team members** box filters by name or title, which helps once the list runs long. it
+  filters the **team members** section only — leadership is short enough to read at a glance.
+- the **up / down arrows** on each row set the order people appear in on the public page. they are
+  hidden while a search is active, because reordering a filtered list would shuffle people against
+  rows you can't currently see. clear the search to reorder.
 
 ![description](images/team-manager-page.PNG)
 
@@ -268,7 +336,65 @@ services copy is **not** here — it has its own screen, **sidebar → services*
 
 ---
 
-## 15. what lives in code
+## 15. phones and tablets
+
+the public site and the dashboard both adapt to whatever screen they're on. there is no separate
+mobile site to keep in step, and nothing extra to do when you publish.
+
+on a phone, or in a narrow window:
+
+- the navbar's links collapse behind a **☰ menu button**. tapping it opens the full menu, which
+  **scrolls on its own** when there are more links than fit the screen, and closes as soon as you
+  choose a page.
+- the dashboard's sidebar collapses the same way.
+- project grids, article layouts and the home page stack into a single column.
+
+**it's still worth a phone check after you publish something substantial.** the layout adapts by
+itself, but what you type and upload doesn't: an unusually long project name, a very wide photo, or
+a table pasted into an article can still sit awkwardly on a narrow screen.
+
+---
+
+## 16. light and dark mode
+
+the site can be viewed in a light or a dark colour scheme. the **sun / moon button** switches
+between them — top right of the public navbar, and in the dashboard's top bar.
+
+- until someone chooses, the site **follows the device's own light/dark setting** — a visitor whose
+  phone is in dark mode sees the dark site straight away.
+- once chosen, the choice is **remembered in that browser only**. it is not a setting you publish,
+  and switching it changes nothing for anyone else.
+- every page is designed for both, the dashboard included.
+- **photos are shown as-is in both modes.** an image with a white background will sit on a dark page
+  as a bright rectangle. that's fine for a photograph, but if it matters for a logo or a diagram,
+  supply a version with a transparent background.
+
+---
+
+## 17. how the site appears in google and when shared
+
+this looks after itself, but it runs on the same fields you already edit — so it's worth knowing
+which ones do the work. there is **no separate seo screen**, and nothing to submit anywhere.
+
+- **the title and description google shows** come from the editors: an article's **title** and
+  **excerpt**, the services **page title** and **intro**, and so on. writing a clear excerpt *is* the
+  seo work.
+- **new pages announce themselves.** the site maintains a sitemap that rebuilds on its own and lists
+  every project and every **published** article. publishing is all that's needed for a page to become
+  findable. drafts are deliberately left out.
+- **the dashboard is kept out of search results.** `/admin` and the site's internal addresses are
+  excluded, so staff pages can't surface in a google search.
+- **shared links expand into a preview card.** paste a link into linkedin, whatsapp or teams and it
+  becomes a card with a title, a description and an image. an article uses its **cover image**;
+  anything without one falls back to the site's default image. this is the practical reason to give
+  every article a cover image.
+- **the business details google reads about pegah** — the company name, address, phone, and that it's
+  a general contractor serving ontario — come from the site's code rather than from settings. see
+  [§18](#18-what-lives-in-code).
+
+---
+
+## 18. what lives in code
 
 thanks to the editors above, the **home, about, services, health & safety and contact** page copy —
 and the navbar/footer contact details — are all editable in the dashboard. what still lives in the
@@ -278,6 +404,11 @@ website's code and needs a **developer** to change:
   blueprint-grid background texture, spacing and card treatments.
 - the **navigation menu structure** and which items appear.
 - **partner / affiliation logo images** and where they're displayed.
+- the **careers email** (`hr@pegah.ca`) that the "apply" and "send your resume" links on the careers
+  page open. it is not a settings field — changing it needs a developer.
+- the **business details google reads** (company name, address, phone, area served), which are
+  separate from the contact details in **settings**. if you change the phone or address in settings,
+  ask your developer to update these to match.
 - anything not exposed as a field in **settings** or the **about / team** and **health & safety**
   editors.
 
@@ -286,7 +417,7 @@ pass it to whoever maintains the code.
 
 ---
 
-## 16. ai features
+## 19. ai features
 
 three buttons use ai:
 
@@ -300,7 +431,7 @@ buttons show a "not configured" message instead of failing. ask your developer t
 
 ---
 
-## 17. quick reference — "how do i…?"
+## 20. quick reference — "how do i…?"
 
 | i want to… | go to |
 |---|---|
@@ -310,11 +441,19 @@ buttons show a "not configured" message instead of failing. ask your developer t
 | turn a project into a blog draft | **projects → open project → generate blog post** |
 | get a linkedin caption for a post | **news & blog → edit → generate linkedin post** |
 | get an instagram caption for a post | **news & blog → edit → generate instagram post** |
+| read the comments readers left on an article | **news & blog → comments** |
+| remove an offensive or spam comment | **news & blog → comments → delete** |
+| see how many likes an article has | the **public article page** — not shown in the dashboard |
+| fix how an article looks when shared or in google | **news & blog → edit → excerpt + cover image** |
 | refresh the tenders list | **tenders → sync from smartbid** |
 | reply-track a contact message | **inquiries → mark read/unread** |
 | post a job opening | **careers → add posting** |
 | edit the about page story text or image | **about / team** |
 | update a leader's bio/photo | **about / team** |
+| add a photo for one team member | **about / team → that person's row → photo** |
+| find someone in a long team list | **about / team → search team members** |
+| change the order people appear on the about page | **about / team → up / down arrows** (clear the search first) |
+| switch between light and dark mode | the **sun / moon button** in the navbar or dashboard top bar |
 | update the health & safety page | **health & safety** |
 | change the home page hero wording | **settings → home page** |
 | swap the home hero background images | **settings → home page hero images** |
