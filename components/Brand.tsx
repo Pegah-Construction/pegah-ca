@@ -21,17 +21,22 @@ export function SiteLogo() {
 }
 
 /**
- * The Pegah logo on a white "chip" — for use on dark backgrounds (footer,
- * admin sidebar, login panel) since the logo artwork is dark-on-white.
+ * The Pegah logo for dark grounds — the admin sidebar and the login / password
+ * brand panels, all of which are brand-900 navy in both themes.
+ *
+ * It uses the white artwork directly. The dark artwork on a white chip (what
+ * this was) stayed legible once the rest of the UI went dark, but read as a
+ * glaring white rectangle against it. No `dark:` variant is needed here, unlike
+ * SiteLogo: the ground behind this one is navy in both themes.
  */
 export function LogoMark({ href = "/", heightClass = "h-9" }: { href?: string; heightClass?: string }) {
   return (
     <Link href={href} className="inline-flex shrink-0 items-center">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/logo.webp"
+        src="/logo-dark.webp"
         alt="Pegah Construction Ltd."
-        className={`${heightClass} w-auto rounded-md bg-white p-1.5`}
+        className={`${heightClass} w-auto`}
       />
     </Link>
   );
