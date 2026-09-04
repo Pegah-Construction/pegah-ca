@@ -64,7 +64,7 @@ export default function ContactPage() {
               {[
                 { label: "Name", key: "name", type: "text", required: true },
                 { label: "Email", key: "email", type: "email", required: true },
-                { label: "Company", key: "company", type: "text", required: false },
+                { label: "Company/Organization/Individuals", key: "company", type: "text", required: false },
               ].map(({ label, key, type, required }) => (
                 <div key={key}>
                   <label className="font-mono text-xs uppercase tracking-label text-accent-700">
@@ -81,7 +81,7 @@ export default function ContactPage() {
               ))}
               <div>
                 <label className="font-mono text-xs uppercase tracking-label text-accent-700">
-                  Project details<span className="ml-0.5 text-red-500">*</span>
+                  Message<span className="ml-0.5 text-red-500">*</span>
                 </label>
                 <textarea
                   required

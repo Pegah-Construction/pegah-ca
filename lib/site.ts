@@ -31,7 +31,7 @@ export type NavItem = {
 export const nav: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
-  { label: "Services", href: "/services" },
+  { label: "Services", href: "/#services" },
   {
     label: "Projects",
     href: "/projects",
@@ -69,7 +69,7 @@ export const affiliations: Affiliation[] = [
   { name: "Procore", href: "https://www.procore.com/", logo: "/Procore%20logo.png" },
   { name: "WSIB", href: "https://www.wsib.ca/", logo: "/WSIB.webp" },
   { name: "Smartbid", href: "https://smartbid.co/", logo: "/smartbid.png" },
-  { name: "Format Group", href: "http://formatgroup.ca/", logo: "/Format%20logo.png" },
+  { name: "Format Group", href: "http://formatgroup.ca/", logo: "/format-group-compact.svg" },
 ];
 
 export type Stat = { value: string; label: string; href: string };
@@ -78,7 +78,7 @@ export const stats: Stat[] = [
   { value: "1988", label: "Established", href: "/about" },
   { value: "35+", label: "Years building", href: "/about" },
   { value: "500+", label: "Projects delivered", href: "/projects" },
-  { value: "7", label: "Sectors served", href: "/services" },
+  { value: "7", label: "Sectors served", href: "/#services" },
 ];
 
 export type Leader = { name: string; title: string; bio: string };

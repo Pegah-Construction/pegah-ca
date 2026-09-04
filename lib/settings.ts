@@ -8,8 +8,9 @@ export const SETTINGS_DEFAULTS: Record<string, string> = {
   estimatingEmail: "estimating@pegah.ca",
   addressLine1: "5050 Dufferin Street, Suite 120",
   addressLine2: "Toronto, Ontario M3H 5T5",
-  contactTitle: "Let's build something.",
-  contactIntro: "Tell us about your project and our team will get back to you.",
+  contactTitle: "How can we help?",
+  contactIntro:
+    "Whether it's a new project, a tender, a careers enquiry or a general question, send us a note and we'll get it to the right person.",
   // Home / landing page
   heroEyebrow: "Established 1988",
   heroTitle: "Building Excellence",
@@ -18,13 +19,14 @@ export const SETTINGS_DEFAULTS: Record<string, string> = {
     "A general contractor and project-management firm trusted across commercial, industrial and institutional work in Ontario.",
   introText:
     "From the first concept through to long-term care, we manage every stage, on time, on budget, and to the highest standard of workmanship.",
-  // Services page + the services section on the home page
+  // The services section on the home page (there is no separate services page —
+  // the section is the whole of it).
   servicesEyebrow: "What we do",
-  servicesTitle: "Services",
   // {count} is replaced with the number of services actually in the list below,
   // so the heading can't go stale when a service is added or removed.
   servicesHomeHeading: "{count} ways we deliver your project.",
-  servicesIntro: "From initial concept through to long-term care, we manage every stage of delivery.",
+  servicesIntro:
+    "Pegah is a full-service construction firm delivering general contracting, project management and design–build across commercial, industrial and institutional work. From initial concept through to long-term care, we manage every stage of delivery.",
   servicesList: [
     "General Contracting | Responsible for the site as the Constructor: trades, schedule and delivery.",
     "Project Management | Procurement, contractor relationships, coordination and commissioning.",
@@ -67,16 +69,61 @@ export function fillCount(template: string, count: number): string {
     .replace(/\{n\}/g, String(count));
 }
 
-// Parse the "Title | description" services list into structured items.
-export function parseServices(raw: string): { title: string; desc: string; slug: string }[] {
+export type ParsedService = { title: string; desc: string; image: string; slug: string };
+
+/**
+ * A trailing third field is only read as a card image when it actually looks
+ * like one — an absolute URL, an "uploads/…" storage path, or a filename with
+ * an image extension. That way a description that happens to contain a "|"
+ * still parses as description rather than silently becoming an image path.
+ */
+const looksLikeImage = (s: string) =>
+  /^(https?:\/\/|\/|uploads\/)/i.test(s) || /\.(jpe?g|png|webp|gif|avif|svg)$/i.test(s);
+
+// Parse one "Title | description | image" line. The image field is optional.
+function parseServiceLine(line: string): ParsedService {
+  const parts = line.split("|").map((p) => p.trim());
+  const title = parts[0] ?? "";
+  const rest = parts.slice(1);
+  const last = rest[rest.length - 1] ?? "";
+  const hasImage = rest.length >= 2 && looksLikeImage(last);
+  return {
+    title,
+    desc: (hasImage ? rest.slice(0, -1) : rest).join(" | "),
+    image: hasImage ? last : "",
+    slug: slugify(title),
+  };
+}
+
+// Parse the "Title | description | image" services list into structured items.
+export function parseServices(raw: string): ParsedService[] {
   return raw
     .split("\n")
     .map((l) => l.trim())
     .filter(Boolean)
+    .map(parseServiceLine);
+}
+
+// Serialise one item back to its line form, dropping the image field when empty
+// so hand-typed "Title | description" lines stay as the editor wrote them.
+export function serviceLine({ title, desc, image }: { title: string; desc: string; image: string }): string {
+  return [title, desc, image].filter((p, i) => i === 0 || p !== "").join(" | ");
+}
+
+/**
+ * Replace the image on the nth service of a raw list, leaving every other line
+ * (and any blank lines between them) exactly as typed. `index` counts only the
+ * non-blank lines, matching what parseServices returns.
+ */
+export function setServiceImage(raw: string, index: number, image: string): string {
+  let seen = -1;
+  return raw
+    .split("\n")
     .map((line) => {
-      const i = line.indexOf("|");
-      const title = (i === -1 ? line : line.slice(0, i)).trim();
-      const desc = i === -1 ? "" : line.slice(i + 1).trim();
-      return { title, desc, slug: slugify(title) };
-    });
+      if (!line.trim()) return line;
+      seen += 1;
+      if (seen !== index) return line;
+      return serviceLine({ ...parseServiceLine(line.trim()), image });
+    })
+    .join("\n");
 }

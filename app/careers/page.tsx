@@ -58,7 +58,7 @@ export default async function CareersPage() {
               Join our team
             </p>
             <h1 className="hero-animate mt-3 font-display text-5xl font-black tracking-tight text-white lg:text-7xl" style={{ animationDelay: "120ms" }}>
-              Careers
+              Careers at Pegah
             </h1>
             <p className="hero-animate mt-5 max-w-xl text-lg leading-relaxed text-brand-100/80" style={{ animationDelay: "260ms" }}>
               We build careers the same way we build projects, with craft, mentorship, and the expectation that people grow.
@@ -96,15 +96,6 @@ export default async function CareersPage() {
                   <path d="M12 12v4m-2-2h4" />
                 </svg>
                 <h2 className="mt-5 font-display text-2xl font-bold text-ink">No open positions right now</h2>
-                <p className="mx-auto mt-3 max-w-md text-concrete-500">
-                  We don&rsquo;t have any openings listed at this time, but we&rsquo;re always interested in hearing from talented people. Send your resume and we&rsquo;ll keep you in mind.
-                </p>
-                <a
-                  href={`mailto:${company.hrEmail}?subject=General Application to Pegah Construction`}
-                  className="mt-8 inline-flex items-center gap-2 rounded-md bg-brand-700 px-6 py-3 font-display text-sm font-semibold text-white transition-colors hover:bg-brand-800"
-                >
-                  Send a general application →
-                </a>
               </div>
             </Reveal>
           ) : (
@@ -190,9 +181,8 @@ export default async function CareersPage() {
             <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
               <Reveal direction="left">
                 <div>
-                  <p className="font-mono text-[11px] uppercase tracking-label text-accent-400">Don&rsquo;t see a fit?</p>
-                  <h2 className="mt-3 font-display text-4xl font-black tracking-tight text-white lg:text-5xl">
-                    Send us your résumé
+                  <h2 className="font-display text-4xl font-black tracking-tight text-white lg:text-5xl">
+                    Explore career opportunities
                   </h2>
                   <p className="mt-5 max-w-lg text-lg leading-relaxed text-brand-100/80">
                     We keep strong candidates on file and reach out when roles open that match your profile. Construction, estimating, project management, safety. We&rsquo;re always looking for good people.
@@ -202,7 +192,7 @@ export default async function CareersPage() {
                       href={`mailto:${company.hrEmail}?subject=General Application to Pegah Construction`}
                       className="inline-flex items-center gap-2 rounded-md bg-white px-6 py-3 font-display text-sm font-semibold text-brand-900 transition-colors hover:bg-brand-50"
                     >
-                      Email your résumé →
+                      Join our team →
                     </a>
                     <a
                       href={company.phoneHref}
@@ -214,18 +204,23 @@ export default async function CareersPage() {
                 </div>
               </Reveal>
               <Reveal direction="right" delay={100}>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {[
-                    { title: "Established 1988", desc: "Over 35 years of sustained growth in Ontario." },
-                    { title: "Mentorship culture", desc: "Senior staff who invest in the next generation of builders." },
-                    { title: "Diverse project types", desc: "Commercial, industrial, residential, institutional, and more." },
-                    { title: "Safety first", desc: "A culture where every person goes home safe every day." },
-                  ].map((item) => (
-                    <div key={item.title} className="rounded-lg border border-white/10 bg-white/5 p-5">
-                      <p className="font-display text-sm font-bold text-white">{item.title}</p>
-                      <p className="mt-1.5 text-sm leading-relaxed text-brand-200/70">{item.desc}</p>
-                    </div>
-                  ))}
+                <div>
+                  <h3 className="mb-4 font-mono text-[11px] uppercase tracking-label text-accent-400">
+                    Why choose Pegah?
+                  </h3>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {[
+                      { title: "Established 1988", desc: "Over 35 years of sustained growth in Ontario." },
+                      { title: "Mentorship culture", desc: "Senior staff who invest in the next generation of builders." },
+                      { title: "Diverse project types", desc: "Commercial, industrial, residential, institutional, and more." },
+                      { title: "Safety first", desc: "A culture where every person goes home safe every day." },
+                    ].map((item) => (
+                      <div key={item.title} className="rounded-lg border border-white/10 bg-white/5 p-5">
+                        <p className="font-display text-sm font-bold text-white">{item.title}</p>
+                        <p className="mt-1.5 text-sm leading-relaxed text-brand-200/70">{item.desc}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </Reveal>
             </div>

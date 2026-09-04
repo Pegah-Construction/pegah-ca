@@ -3,7 +3,7 @@ import ServicesView from "@/components/admin/views/ServicesView";
 
 export default function AdminServices() {
   return (
-    <Guard module="services" title="Services" sub="Headings and the services list, shown on the services page and the home page">
+    <Guard module="services" title="Services" sub="Headings, intro and the services list — the services section on the home page">
       <ServicesView />
     </Guard>
   );

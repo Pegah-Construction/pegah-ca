@@ -11,7 +11,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
 
-// Rendered per-request so the featured projects are freshly randomized.
+// Rendered per-request so newly added projects, photos and edited site copy
+// show up right away.
 export const dynamic = "force-dynamic";
 
 export default function Home() {

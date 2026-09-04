@@ -8,7 +8,7 @@ import { getStorageUrl } from "@/lib/storage-url";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "News & Blog",
+  title: "News",
   description: "Construction news, project case studies and updates from Pegah Construction Ltd.",
   alternates: { canonical: "/blog" },
 };
@@ -23,7 +23,6 @@ export default async function BlogPage() {
   return (
     <PageShell
       eyebrow="Insights & case studies"
-      title="Blog"
       intro="Construction perspectives, project stories and industry thinking from the Pegah team."
     >
       {articles.length === 0 ? (

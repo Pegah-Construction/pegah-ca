@@ -30,7 +30,9 @@ export default function Navbar() {
   const navRef = useRef<HTMLElement>(null);
   const [navH, setNavH] = useState(0);
 
-  // Close the mobile menu whenever the route changes.
+  // Close the mobile menu whenever the route changes. Same-page links (the
+  // "/#services" section anchor) don't change `pathname`, so those close the
+  // menu from their own onClick below.
   useEffect(() => { setMenuOpen(false); }, [pathname]);
 
   // Track the nav bar's real height so the open menu can be capped at exactly the
@@ -192,6 +194,7 @@ export default function Navbar() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
+                    onClick={() => setMenuOpen(false)}
                     className={`block rounded-md px-3 py-2.5 font-display text-base font-medium transition-colors ${
                       isActive ? "bg-brand-50 text-brand-700" : "text-ink/80 hover:bg-concrete-100"
                     }`}
@@ -204,6 +207,7 @@ export default function Navbar() {
                         <li key={child.href}>
                           <Link
                             href={child.href}
+                            onClick={() => setMenuOpen(false)}
                             className={`block rounded-md px-3 py-2 text-sm transition-colors ${
                               pathname === child.href ? "text-brand-700" : "text-ink/60 hover:text-brand-700"
                             }`}

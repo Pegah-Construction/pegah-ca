@@ -53,18 +53,72 @@ export default function SubcontractorRegisterPage() {
         </section>
 
         {/* Registration form */}
-        <div className="mx-auto max-w-5xl px-6 py-14 lg:px-10">
+        <div className="mx-auto max-w-8xl px-6 py-14 lg:px-10">
           {formUrl ? (
-            <Reveal>
-              <SmartBidEmbed src={formUrl} />
-              <p className="mt-4 text-center text-xs text-concrete-400">
-                Registration is powered by SmartBid. Trouble with the form? Email{" "}
-                <a href={`mailto:${company.estimatingEmail}`} className="text-brand-700 hover:underline">
-                  {company.estimatingEmail}
-                </a>
-                .
-              </p>
-            </Reveal>
+            <>
+              <Reveal>
+                <p className="font-mono text-[11px] uppercase tracking-label text-accent-700">Registration form</p>
+                <h2 className="mt-2 font-display text-2xl font-bold tracking-tight text-ink lg:text-3xl">
+                  Register your company
+                </h2>
+                <p className="mt-3 max-w-2xl leading-relaxed text-concrete-500">
+                  It takes about five minutes. You choose a username and password as you go, so you can come
+                  back and keep your company&rsquo;s details and trade divisions up to date.
+                </p>
+              </Reveal>
+
+              {/* The form itself, framed so it reads as part of the page */}
+              <Reveal delay={80}>
+                <div className="mt-8 overflow-hidden rounded-2xl border border-concrete-200 bg-surface shadow-sm">
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-concrete-200 bg-concrete-100 px-5 py-3">
+                    <p className="font-mono text-[11px] uppercase tracking-label text-concrete-500">
+                      Powered by SmartBid
+                    </p>
+                    <a
+                      href={formUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-display text-xs font-semibold text-brand-700 transition-colors hover:text-brand-800"
+                    >
+                      Open in a new tab ↗
+                    </a>
+                  </div>
+                  <div className="p-3 sm:p-6">
+                    <SmartBidEmbed src={formUrl} />
+                    <p className="mt-3 text-center text-xs text-concrete-400 sm:hidden">
+                      SmartBid&rsquo;s form is a fixed width — swipe sideways inside it, or open it in a new tab
+                      for more room.
+                    </p>
+                  </div>
+                </div>
+              </Reveal>
+
+              {/* Same treatment as the "Submit a quote" panel on the Tenders page */}
+              <Reveal delay={140}>
+                <div className="mt-8 rounded-xl border border-brand-200 bg-brand-50 p-8">
+                  <p className="font-mono text-[11px] uppercase tracking-label text-accent-700">Need a hand?</p>
+                  <h3 className="mt-3 font-display text-xl font-bold text-ink">Rather not use the form?</h3>
+                  <p className="mt-3 max-w-xl text-sm leading-relaxed text-concrete-600">
+                    Email our estimating team your company name, contact details and trade divisions and
+                    we&rsquo;ll register you ourselves — or call and we&rsquo;ll walk you through it.
+                  </p>
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    <a
+                      href={`mailto:${company.estimatingEmail}?subject=Subcontractor registration`}
+                      className="inline-flex items-center gap-2 rounded-md bg-brand-700 px-5 py-2.5 font-display text-sm font-semibold text-white transition-colors hover:bg-brand-800"
+                    >
+                      Email {company.estimatingEmail} →
+                    </a>
+                    <a
+                      href={company.phoneHref}
+                      className="inline-flex items-center gap-2 rounded-md border border-brand-300 bg-surface px-5 py-2.5 font-mono text-sm text-brand-700 transition-colors hover:border-brand-400"
+                    >
+                      {company.phone}
+                    </a>
+                  </div>
+                </div>
+              </Reveal>
+            </>
           ) : (
             <Reveal>
               <div className="mx-auto max-w-xl rounded-xl border border-concrete-200 bg-surface px-8 py-12 text-center">

@@ -14,7 +14,8 @@ export default function PageShell({
   children,
 }: {
   eyebrow: string;
-  title: string;
+  /** Hero heading. Omit on a page that carries no title of its own. */
+  title?: string;
   intro?: string;
   children?: React.ReactNode;
 }) {
@@ -26,9 +27,11 @@ export default function PageShell({
           <div className="mx-auto max-w-8xl px-6 pb-16 lg:px-10">
             <div className="accent-bar hero-animate mb-5" style={{ animationDelay: "0ms" }} />
             <Eyebrow className="hero-animate" style={{ animationDelay: "60ms" }}>{eyebrow}</Eyebrow>
-            <h1 className="hero-animate mt-4 max-w-3xl font-display text-4xl font-black tracking-tight text-ink lg:text-6xl" style={{ animationDelay: "100ms" }}>
-              {title}
-            </h1>
+            {title ? (
+              <h1 className="hero-animate mt-4 max-w-3xl font-display text-4xl font-black tracking-tight text-ink lg:text-6xl" style={{ animationDelay: "100ms" }}>
+                {title}
+              </h1>
+            ) : null}
             {intro ? (
               <p className="hero-animate mt-5 max-w-xl text-lg leading-relaxed text-concrete-500" style={{ animationDelay: "220ms" }}>
                 {intro}

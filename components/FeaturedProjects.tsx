@@ -5,19 +5,21 @@ import PhotoCarousel from "./PhotoCarousel";
 import Reveal from "./Reveal";
 import { getStorageUrl } from "@/lib/storage-url";
 
-export default async function FeaturedProjects() {
-  // Pick 3 random projects that have at least one photo: shuffle their ids, take three.
-  const ids = (
-    await db.project.findMany({ where: { photos: { some: {} } }, select: { id: true } })
-  ).map((p) => p.id);
-  for (let i = ids.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [ids[i], ids[j]] = [ids[j], ids[i]];
-  }
-  const pick = ids.slice(0, 3);
+// How wide "recently built" reaches: the most recently completed projects that
+// have photos form the pool, and the three highest-value of those are shown.
+// A pool this size currently reaches back about seven years. Raise it to weigh
+// contract value more heavily, lower it to weigh recency more heavily.
+const RECENT_POOL = 8;
 
-  const projects = await db.project.findMany({
-    where: { id: { in: pick } },
+export default async function FeaturedProjects() {
+  // The three we show are the biggest jobs among the recent, photographed ones.
+  // A project with no photos can't be featured (there'd be nothing to show), and
+  // `dateCompleted` is a year — "2019", sometimes "2019-01" — so ordering it as
+  // text is already newest-first, with blank dates sorting last.
+  const pool = await db.project.findMany({
+    where: { photos: { some: {} } },
+    orderBy: [{ dateCompleted: "desc" }, { value: "desc" }],
+    take: RECENT_POOL,
     select: {
       id: true,
       name: true,
@@ -25,9 +27,12 @@ export default async function FeaturedProjects() {
       category: true,
       location: true,
       description: true,
+      value: true,
       photos: { orderBy: { order: "asc" }, select: { path: true } },
     },
   });
+
+  const projects = [...pool].sort((a, b) => b.value - a.value).slice(0, 3);
 
   if (projects.length === 0) return null;
 

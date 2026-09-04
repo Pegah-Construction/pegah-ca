@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 /**
  * Embeds the SmartBid subcontractor-registration form.
@@ -9,11 +9,19 @@ import { useEffect, useRef, useState } from "react";
  * height directly. We listen for a height message in case SmartBid broadcasts one
  * (making the fit exact); otherwise we fall back to a height that shows the whole
  * form without clipping the Submit button.
+ *
+ * Two things the frame has to allow for, because SmartBid's own page is a fixed
+ * ~605px layout that doesn't reflow:
+ *   - sideways scrolling, so the right-hand half of every row is still reachable
+ *     on a phone rather than being cut off the edge;
+ *   - `scrolling="auto"`, so if the form outgrows the height we guessed (it
+ *     grows as work areas and trade divisions are added) the rest can still be
+ *     scrolled to instead of being sealed off.
  */
 const FALLBACK_HEIGHT = 1344;
+const FORM_WIDTH = 605;
 
 export default function SmartBidEmbed({ src }: { src: string }) {
-  const ref = useRef<HTMLIFrameElement>(null);
   const [height, setHeight] = useState(FALLBACK_HEIGHT);
 
   useEffect(() => {
@@ -45,16 +53,22 @@ export default function SmartBidEmbed({ src }: { src: string }) {
     return () => window.removeEventListener("message", onMessage);
   }, [src]);
 
+  // The outer box is centred and never wider than the form; the inner box is
+  // what scrolls, so on a narrow screen the form starts at its own left edge
+  // instead of being centred with half of it out of reach.
   return (
-    <iframe
-      ref={ref}
-      title="Pegah Construction subcontractor registration"
-      src={src}
-      scrolling="no"
-      style={{ height }}
-      className="mx-auto block w-full max-w-[605px]"
-      loading="lazy"
-      referrerPolicy="no-referrer-when-downgrade"
-    />
+    <div className="mx-auto" style={{ maxWidth: FORM_WIDTH }}>
+      <div className="overflow-x-auto overscroll-x-contain rounded-lg">
+        <iframe
+          title="Pegah Construction subcontractor registration"
+          src={src}
+          scrolling="auto"
+          style={{ height, width: FORM_WIDTH }}
+          className="block max-w-none bg-white"
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+        />
+      </div>
+    </div>
   );
 }

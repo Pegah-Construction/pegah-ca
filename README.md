@@ -49,13 +49,13 @@ app/
   sitemap.ts          Dynamic sitemap (static routes + projects + published posts)
   robots.ts           Allows the public site, disallows /admin and /api
   page.tsx            Homepage
-  about/ services/ safety/ contact/   Public pages, content served from the database
+  about/ safety/ contact/             Public pages, content served from the database
   projects/           List + [slug] detail
   blog/               List + [slug] detail (likes, share, reader comments)
   careers/ tenders/   Job postings; SmartBid-synced tenders
   subcontractors/register/            Embedded SmartBid registration form
   admin/              Staff dashboard (see below)
-  api/                49 route handlers backing both halves
+  api/                50 route handlers backing both halves
 components/
   Navbar.tsx          Sticky nav; collapses to a scrollable menu below `lg`
   ThemeToggle.tsx     Light/dark switch, persisted per browser
@@ -63,6 +63,7 @@ components/
   ShareButton.tsx     Native share sheet, falling back to copy-link
   Comments.tsx        Reader comment form + thread
   Hero.tsx HeroCarousel.tsx StatBand.tsx Intro.tsx ServicesList.tsx …
+                      (services live only as the home page section — there is no /services page)
   Brand.tsx           SiteLogo / LogoMark / Wordmark / Eyebrow
   admin/              Dashboard shell, guard, UI primitives, one view per module
 lib/

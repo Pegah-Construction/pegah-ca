@@ -10,6 +10,24 @@ import { getStorageUrl } from "@/lib/storage-url";
 import { siteUrl } from "@/lib/site";
 
 type Params = { params: Promise<{ slug: string }> };
+type PageProps = Params & { searchParams: Promise<{ back?: string }> };
+
+// The projects list hands its filter/sort/search state over as ?back=…, so the
+// links below return to the view the visitor left. Rebuilt from the keys the
+// list actually understands rather than echoed back verbatim.
+const BACK_KEYS = ["category", "type", "q", "sort"] as const;
+
+function listHref(back: string | undefined): string {
+  if (!back) return "/projects";
+  const from = new URLSearchParams(back);
+  const params = new URLSearchParams();
+  for (const key of BACK_KEYS) {
+    const value = from.get(key);
+    if (value) params.set(key, value);
+  }
+  const query = params.toString();
+  return query ? `/projects?${query}` : "/projects";
+}
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
@@ -41,8 +59,9 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   };
 }
 
-export default async function ProjectDetail({ params }: Params) {
-  const { slug } = await params;
+export default async function ProjectDetail({ params, searchParams }: PageProps) {
+  const [{ slug }, { back }] = await Promise.all([params, searchParams]);
+  const backHref = listHref(back);
   const project = await db.project.findUnique({
     where: { id: slug },
     include: { photos: { orderBy: { order: "asc" } } },
@@ -68,7 +87,7 @@ export default async function ProjectDetail({ params }: Params) {
         {/* Header */}
         <section className="hero-surface border-b border-concrete-200 pt-14">
           <div className="mx-auto max-w-8xl px-6 pb-14 lg:px-10">
-            <Link href="/projects" className="font-body text-sm font-medium text-concrete-600 hover:text-brand-700">
+            <Link href={backHref} className="font-body text-sm font-medium text-concrete-600 hover:text-brand-700">
               ← All projects
             </Link>
             {project.type && <Eyebrow className="mt-6">{project.type}</Eyebrow>}
@@ -125,7 +144,7 @@ export default async function ProjectDetail({ params }: Params) {
         <section className="border-t border-concrete-200 bg-surface">
           <div className="mx-auto flex max-w-8xl items-center justify-center px-6 py-14 lg:px-10">
             <Link
-              href="/projects"
+              href={backHref}
               className="font-display text-sm font-semibold text-brand-700 hover:text-brand-800"
             >
               ← Back to all projects

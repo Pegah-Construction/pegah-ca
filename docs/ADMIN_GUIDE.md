@@ -13,15 +13,15 @@ use this to learn the system yourself and to show others how to keep the site up
 
 | | what it is | who sees it |
 |---|---|---|
-| **public website** | the marketing site visitors browse (home, about, services, projects, tenders, health & safety, careers, blog, contact). | everyone |
+| **public website** | the marketing site visitors browse (home, about, projects, tenders, health & safety, careers, blog, contact). | everyone |
 | **admin dashboard** | the private control panel where staff edit content. | logged-in staff only |
 
 most day-to-day content (projects, blog posts, job postings, team members) is edited in the
-**admin dashboard**. the site-wide marketing copy — the **home**, **about**, **services**,
-**health & safety** and **contact** pages, plus the **navbar** and **footer** details — is now
-editable too, through the **about / team**, **health & safety**, **services**, and **settings**
-screens. only the page layouts, styling and navigation structure remain in code — see
-[§18](#18-what-lives-in-code).
+**admin dashboard**. the site-wide marketing copy — the **home** page (hero, intro and the
+**services** section), plus the **about**, **health & safety** and **contact** pages and the
+**navbar** and **footer** details — is now editable too, through the **about / team**,
+**health & safety**, **services**, and **settings** screens. only the page layouts, styling and
+navigation structure remain in code — see [§18](#18-what-lives-in-code).
 
 ---
 
@@ -277,25 +277,32 @@ save to publish.
 
 ## 12. services
 
-**where:** sidebar → **services**. one screen for everything about services —
-it feeds both the public **services** page and the services section on the **home** page.
-**edit the fields, then click _save changes_** at the bottom to publish.
+**where:** sidebar → **services**. one screen for everything about services. there is **no separate
+services page** — services are the section part-way down the **home** page, and this screen is all of
+it. **edit the fields, then click _save changes_** at the bottom to publish.
 
 **headings**
-- **eyebrow** — the small label above the heading. used on both the services page and the home page
-  section.
-- **page title** — the services page heading, and the browser tab title.
-- **home page section heading** — the heading above the service cards on the home page. write
-  `{count}` for the number of services spelled out ("four"), or `{n}` for digits ("4"); either one
-  updates itself when you add or remove a service, so the heading can't end up claiming "four ways"
-  when five are listed. the hint under the field shows the current value.
-- **intro** — shown under the services page title, and used as the page's search-result description.
+- **eyebrow** — the small label above the heading of the section.
+- **section heading** — the heading above the service cards. write `{count}` for the number of
+  services spelled out ("four"), or `{n}` for digits ("4"); either one updates itself when you add or
+  remove a service, so the heading can't end up claiming "four ways" when five are listed. the hint
+  under the field shows the current value.
+- **intro** — the paragraph between the heading and the cards. a short summary of what the company
+  does, before the individual services.
 
 **services list**
-one service per line, written as `Title | description`. the **preview** below the box shows how each
-line was read, numbered as it will appear on the site — if a line is missing its `|`, the preview
-flags it. the card header shows the current count. with an empty list, the home page section hides
-itself rather than showing a heading with no cards.
+one service per line, written as `Title | description`. below the box, **cards & images** shows how
+each line was read, numbered as it will appear on the site — if a line is missing its `|`, it flags
+it. the card header shows the current count. with an empty list, the section hides itself rather than
+showing a heading with no cards.
+
+**card images**
+each card can carry its own photo, set from the **cards & images** list: **add image** (or
+**replace**) opens the file picker, **remove** clears it. square photos look best — anything else is
+cropped to a square — and a card with no photo shows its title on a striped placeholder instead.
+uploading happens right away, but like every other field the change only reaches the site once you
+click **save changes**. the image path the upload adds to the end of the service's line is managed
+for you; leave it alone when editing the text.
 
 > 📸 _add screenshot: services editor_
 
@@ -377,8 +384,7 @@ this looks after itself, but it runs on the same fields you already edit — so 
 which ones do the work. there is **no separate seo screen**, and nothing to submit anywhere.
 
 - **the title and description google shows** come from the editors: an article's **title** and
-  **excerpt**, the services **page title** and **intro**, and so on. writing a clear excerpt *is* the
-  seo work.
+  **excerpt**, a project's **description**, and so on. writing a clear excerpt *is* the seo work.
 - **new pages announce themselves.** the site maintains a sitemap that rebuilds on its own and lists
   every project and every **published** article. publishing is all that's needed for a page to become
   findable. drafts are deliberately left out.
@@ -396,8 +402,9 @@ which ones do the work. there is **no separate seo screen**, and nothing to subm
 
 ## 18. what lives in code
 
-thanks to the editors above, the **home, about, services, health & safety and contact** page copy —
-and the navbar/footer contact details — are all editable in the dashboard. what still lives in the
+thanks to the editors above, the **home** page copy (including its **services** section), the
+**about, health & safety and contact** page copy, and the navbar/footer contact details are all
+editable in the dashboard. what still lives in the
 website's code and needs a **developer** to change:
 
 - **page layouts and overall styling** — fonts, the navy + amber colour palette, the
@@ -457,7 +464,7 @@ buttons show a "not configured" message instead of failing. ask your developer t
 | update the health & safety page | **health & safety** |
 | change the home page hero wording | **settings → home page** |
 | swap the home hero background images | **settings → home page hero images** |
-| edit the services list, or any services heading | **services** |
+| edit the services list, a services heading, or a service's card image | **services** |
 | change the contact page intro | **settings → contact page** |
 | change company phone/address (navbar, footer, contact) | **settings → organization & contact details** |
 | add a staff login | **users & roles → add user** |
