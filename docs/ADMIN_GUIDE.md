@@ -213,6 +213,16 @@ tenders are **synced from smartbid** — smartbid is the source of truth, so thi
 on the public tenders page, subcontractors register through the embedded **smartbid subcontractor
 registration form** — those registrations go straight to smartbid, not to this dashboard.
 
+**why that form doesn't look like the rest of the site.** the registration form on the
+**subcontractor registration** page is smartbid's own page, shown inside a window on ours. it
+**cannot be rebuilt in our design**: smartbid publishes no interface for another website to submit a
+registration into their system, so the only way a registration reaches smartbid is by someone
+filling in smartbid's own form. rebuilding it in our styling would mean the submissions never arrive
+where the estimating team looks for them. what we *can* control is everything around it — the
+headings, the intro copy, the frame around the form, and the "open in a new tab" link for anyone
+who'd rather fill it in full-screen. if smartbid ever publishes such an interface, ask your
+developer to revisit it.
+
 ![description](images/tenders-list.PNG)
 
 ---
@@ -411,6 +421,8 @@ website's code and needs a **developer** to change:
   blueprint-grid background texture, spacing and card treatments.
 - the **navigation menu structure** and which items appear.
 - **partner / affiliation logo images** and where they're displayed.
+- the **subcontractor registration form** itself — it belongs to smartbid, not to us. see
+  [§7](#7-tenders).
 - the **careers email** (`hr@pegah.ca`) that the "apply" and "send your resume" links on the careers
   page open. it is not a settings field — changing it needs a developer.
 - the **business details google reads** (company name, address, phone, area served), which are
