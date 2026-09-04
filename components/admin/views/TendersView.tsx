@@ -12,12 +12,18 @@ export default function TendersView() {
   const [q, setQ] = useState("");
   const [syncing, setSyncing] = useState(false);
   const [loading, setLoading] = useState(true);
+  // "live" = straight from SmartBid; "stored" = SmartBid was unreachable and
+  // this is the last synced copy, which may name tenders that have since closed.
+  const [source, setSource] = useState<"live" | "stored">("live");
+
+  const load = async () => {
+    const res = await fetch("/api/tenders");
+    setSource(res.headers.get("X-Tenders-Source") === "stored" ? "stored" : "live");
+    setTenders(await res.json());
+  };
 
   useEffect(() => {
-    fetch("/api/tenders")
-      .then((r) => r.json())
-      .then((d) => setTenders(d))
-      .finally(() => setLoading(false));
+    load().finally(() => setLoading(false));
   }, []);
 
   if (!user) return null;
@@ -32,9 +38,9 @@ export default function TendersView() {
         alert(data.error || "SmartBid sync failed.");
         return;
       }
-      const fresh = await fetch("/api/tenders").then((r) => r.json());
-      setTenders(fresh);
-      alert(`SmartBid sync complete: ${data.created} added, ${data.updated} updated (${data.total} total).`);
+      await load();
+      const removed = data.removed ? `, ${data.removed} no longer listed and removed` : "";
+      alert(`SmartBid sync complete: ${data.created} added, ${data.updated} updated${removed} (${data.total} live in SmartBid).`);
     } catch {
       alert("SmartBid sync failed. Please try again.");
     } finally {
@@ -60,13 +66,24 @@ export default function TendersView() {
       <div className="mb-6 grid gap-4 sm:grid-cols-3">
         <StatCard label="Open" value={open} hint="live opportunities" />
         <StatCard label="Closing soon" value={soon} hint="within 14 days" />
-        <StatCard label="Pipeline value" value={money(totVal)} hint="across all tenders" />
+        <StatCard
+          label="Pipeline value"
+          value={totVal > 0 ? money(totVal) : "—"}
+          hint={totVal > 0 ? "across all tenders" : "SmartBid's feed publishes no values"}
+        />
       </div>
 
-      <p className="mb-4 text-sm text-concrete-500">
-        Synced from SmartBid · {tenders.length} tender{tenders.length === 1 ? "" : "s"} in the database. The full bid
-        package, subcontractor invitations and bids are managed in SmartBid.
-      </p>
+      {source === "live" ? (
+        <p className="mb-4 text-sm text-concrete-500">
+          Read live from SmartBid · {tenders.length} opportunit{tenders.length === 1 ? "y" : "ies"} listed right now.
+          The full bid package, subcontractor invitations and bids are managed in SmartBid.
+        </p>
+      ) : (
+        <p className="mb-4 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          SmartBid couldn&rsquo;t be reached, so this is the last synced copy ({tenders.length} tender
+          {tenders.length === 1 ? "" : "s"}) — some may have closed since. Try again shortly.
+        </p>
+      )}
 
       <div className="mb-4 space-y-2">
         <SearchInput value={q} onChange={setQ} placeholder="Search tenders…" />

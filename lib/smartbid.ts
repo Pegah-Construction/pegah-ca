@@ -147,6 +147,24 @@ function pick(o: SmartBidProject, ...keys: string[]): string {
   return "";
 }
 
+// The public feed publishes a bid due date but no status field, so we derive
+// one: past its deadline is Closed, inside a fortnight is Closing soon, and
+// anything else — including the "No Due Date" projects — is Open. Deadlines
+// arrive as "2026-08-20 14:00:00 (ET)"; we read the calendar parts and compare
+// in server-local time, which is accurate enough for a day-level label.
+const CLOSING_SOON_DAYS = 14;
+
+export function deriveTenderStatus(closing: string, now: Date = new Date()): "Open" | "Closing soon" | "Closed" {
+  const m = closing.match(/(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2}))?/);
+  if (!m) return "Open";
+  const due = new Date(+m[1], +m[2] - 1, +m[3], m[4] ? +m[4] : 23, m[5] ? +m[5] : 59);
+  const ms = due.getTime() - now.getTime();
+  if (ms <= 0) return "Closed";
+  return ms <= CLOSING_SOON_DAYS * 86_400_000 ? "Closing soon" : "Open";
+}
+
+const OUR_STATUSES = ["Open", "Closing soon", "Closed"];
+
 export function mapProjectToTender(p: SmartBidProject) {
   // "link" is the public-project identifier (also used to build its public URL).
   const link = pick(p, "link", "id", "projectId", "projectKey", "publicId");
@@ -171,6 +189,11 @@ export function mapProjectToTender(p: SmartBidProject) {
 
   const projectType = pick(p, "projectType", "type", "bidType");
 
+  // Honour a status the feed states outright, otherwise work it out from the
+  // deadline — "Open" for everything was hiding tenders that had already closed.
+  const feedStatus = pick(p, "status", "projectStatus");
+  const status = OUR_STATUSES.includes(feedStatus) ? feedStatus : deriveTenderStatus(closing);
+
   return {
     id: `sb_${link}`,
     ref: pick(p, "projectNumber", "number", "ref") || link,
@@ -179,12 +202,15 @@ export function mapProjectToTender(p: SmartBidProject) {
     platform: "SmartBid",
     type: projectType || "RFQ",
     category: projectType || pick(p, "category", "sector", "market") || "Commercial",
-    value: Number(p.estimatedValue ?? p.value ?? p.budget ?? p.squareFootage ?? 0) || 0,
+    // squareFootage is a floor area, not money. It used to fall through to this
+    // field and printed as an estimated value (7,933 sq ft → "$7,933"), so the
+    // feed's silence on value is now reported honestly as no value.
+    value: Number(p.estimatedValue ?? p.value ?? p.budget ?? 0) || 0,
     province: pick(p, "state", "province", "region"),
     city: pick(p, "city", "town"),
     published: pick(p, "publishedDate", "createdDate", "postedDate"),
     closing,
-    status: pick(p, "status", "projectStatus") || "Open",
+    status,
     tracked: false,
     address: pick(p, "address", "addressLine1", "street"),
     postalCode: pick(p, "zip", "postalCode", "zipCode"),
@@ -217,19 +243,28 @@ export async function fetchLiveTenders(): Promise<ReturnType<typeof mapProjectTo
 // ── Sync ──────────────────────────────────────────────────────────────────────
 // Upserts every SmartBid project into our Tender table (keyed on "sb_<id>", so
 // re-runs update in place and never touch manually-created "Internal" tenders).
-export async function syncTenders(): Promise<{ created: number; updated: number; total: number }> {
+export async function syncTenders(): Promise<{ created: number; updated: number; removed: number; total: number }> {
   const projects = await fetchSmartBidProjects();
   let created = 0;
   let updated = 0;
+  const seen = new Set<string>();
 
   for (const p of projects) {
     const data = mapProjectToTender(p);
     if (!data.id || data.id === "sb_") continue; // skip records with no id
+    seen.add(data.id);
     const existing = await db.tender.findUnique({ where: { id: data.id }, select: { id: true } });
     await db.tender.upsert({ where: { id: data.id }, create: data, update: data });
     if (existing) updated++;
     else created++;
   }
 
-  return { created, updated, total: projects.length };
+  // A project leaves the feed once it closes, and an upsert-only sync would keep
+  // our copy of it for ever. Drop the mirrored rows SmartBid no longer lists —
+  // only "sb_" ids, so tenders entered by hand here are never touched.
+  const mirrored = await db.tender.findMany({ where: { id: { startsWith: "sb_" } }, select: { id: true } });
+  const stale = mirrored.filter((t) => !seen.has(t.id)).map((t) => t.id);
+  if (stale.length) await db.tender.deleteMany({ where: { id: { in: stale } } });
+
+  return { created, updated, removed: stale.length, total: projects.length };
 }
