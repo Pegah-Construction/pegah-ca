@@ -190,7 +190,7 @@ export default async function CareersPage() {
                   <div className="mt-8 flex flex-wrap gap-4">
                     <a
                       href={`mailto:${company.hrEmail}?subject=General Application to Pegah Construction`}
-                      className="inline-flex items-center gap-2 rounded-md bg-white px-6 py-3 font-display text-sm font-semibold text-brand-900 transition-colors hover:bg-brand-50"
+                      className="inline-flex items-center gap-2 rounded-md bg-white px-6 py-3 font-display text-sm font-semibold text-brand-900 transition-colors hover:bg-brand-100"
                     >
                       Join our team →
                     </a>

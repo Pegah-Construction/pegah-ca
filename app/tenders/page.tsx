@@ -204,7 +204,7 @@ export default async function TendersPage() {
                     Register in our subcontractor directory and receive project invitations directly from our estimating team. Registration is free and takes less than five minutes.
                   </p>
                   <div className="mt-8 flex flex-wrap gap-4">
-                    <a href="/subcontractors/register" className="inline-flex items-center gap-2 rounded-md bg-white px-6 py-3 font-display text-sm font-semibold text-brand-900 transition-colors hover:bg-brand-50">Register now →</a>
+                    <a href="/subcontractors/register" className="inline-flex items-center gap-2 rounded-md bg-white px-6 py-3 font-display text-sm font-semibold text-brand-900 transition-colors hover:bg-brand-100">Register now →</a>
                     <a href={`mailto:${company.estimatingEmail}`} className="inline-flex items-center gap-2 rounded-md border border-white/20 px-6 py-3 font-display text-sm font-semibold text-white transition-colors hover:border-white/40 hover:bg-white/5">Contact us</a>
                   </div>
                 </div>
