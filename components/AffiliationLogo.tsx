@@ -11,11 +11,14 @@ export default function AffiliationLogo({
   name,
   logo,
   grayscale = false,
+  large = false,
 }: {
   name: string;
   logo: string;
-  /** Show the logo desaturated until hovered (used on the Tenders page). */
+  /** Show the logo desaturated until hovered. */
   grayscale?: boolean;
+  /** The roomier size used by the full affiliation rows. */
+  large?: boolean;
 }) {
   const [failed, setFailed] = useState(false);
 
@@ -33,11 +36,13 @@ export default function AffiliationLogo({
       src={logo}
       alt={name}
       onError={() => setFailed(true)}
-      className={
+      className={[
+        large ? "h-10 w-auto max-w-[140px]" : "h-9 w-auto max-w-[130px]",
+        "object-contain",
         grayscale
-          ? "h-10 w-auto max-w-[140px] object-contain opacity-70 grayscale transition-all group-hover:opacity-100 group-hover:grayscale-0"
-          : "h-9 w-auto max-w-[130px] object-contain"
-      }
+          ? "opacity-70 grayscale transition-all group-hover:opacity-100 group-hover:grayscale-0"
+          : "transition-opacity group-hover:opacity-80",
+      ].join(" ")}
     />
   );
 }

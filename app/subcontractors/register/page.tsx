@@ -45,7 +45,7 @@ export default function SubcontractorRegisterPage() {
                 .filter((a) => a.name !== "Smartbid")
                 .map((a) => (
                   <span key={a.name} className="group inline-flex items-center">
-                    <AffiliationLogo name={a.name} logo={a.logo} grayscale />
+                    <AffiliationLogo name={a.name} logo={a.logo} grayscale large />
                   </span>
                 ))}
             </div>
