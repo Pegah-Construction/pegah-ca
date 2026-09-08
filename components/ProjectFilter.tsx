@@ -67,6 +67,15 @@ const yearOf = (p: PublicProject) => {
 // than leaving same-year (or same-value) projects in whatever order they came.
 const byName = (a: PublicProject, b: PublicProject) => a.name.localeCompare(b.name);
 
+// Contract value, short enough to sit on the card's one-line meta row. The exact
+// figure is on the project's own page; 0 means none was recorded, so show nothing.
+const fmtValue = (v: number) => {
+  if (!v) return "";
+  if (v >= 1_000_000) return `$${(v / 1_000_000).toFixed(v >= 10_000_000 ? 0 : 1)}M`;
+  if (v >= 1_000) return `$${Math.round(v / 1_000)}K`;
+  return `$${v}`;
+};
+
 function ProjectCard({ p, i, href }: { p: PublicProject; i: number; href: string }) {
   return (
     <Reveal delay={(i % 3) * 80} direction="up">
@@ -91,10 +100,11 @@ function ProjectCard({ p, i, href }: { p: PublicProject; i: number; href: string
         <h3 className="mt-2 font-display text-lg font-bold tracking-tight text-ink group-hover:text-brand-700">
           <Link href={href} className="hover:text-brand-700">{p.name}</Link>
         </h3>
-        {/* Location and year — the year also makes the date sorts readable. */}
-        {(p.location || yearOf(p)) && (
+        {/* Location, year and contract value — the last two also make the date
+            and value sorts readable on the cards themselves. */}
+        {(p.location || yearOf(p) || p.value > 0) && (
           <p className="mt-0.5 font-mono text-[11px] text-concrete-400">
-            {[p.location, yearOf(p) || null].filter(Boolean).join(" · ")}
+            {[p.location, yearOf(p) || null, fmtValue(p.value) || null].filter(Boolean).join(" · ")}
           </p>
         )}
       </div>
