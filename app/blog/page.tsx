@@ -23,6 +23,7 @@ export default async function BlogPage() {
   return (
     <PageShell
       eyebrow="Insights & case studies"
+      title="Notes from the field"
       intro="Construction perspectives, project stories and industry thinking from the Pegah team."
     >
       {articles.length === 0 ? (
