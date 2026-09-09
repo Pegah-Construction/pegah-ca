@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
 import LikeButton from "@/components/LikeButton";
-import ShareButton from "@/components/ShareButton";
+import ShareLinks from "@/components/ShareLinks";
 import Comments from "@/components/Comments";
 import { getStorageUrl } from "@/lib/storage-url";
 import { siteUrl } from "@/lib/site";
@@ -61,15 +61,27 @@ export default async function BlogPost({ params }: Props) {
 
   const tags: string[] = JSON.parse(article.tags);
 
-  const next =
-    (await db.article.findFirst({
+  // Neighbours in both directions — "previous" is the next one back in time and
+  // "next" the one after it, so either is absent at the ends of the run. The
+  // recommended row is the newest three others, featured ones first.
+  const [older, newer, recommended] = await Promise.all([
+    db.article.findFirst({
       where: { status: "Published", date: { lt: article.date }, slug: { not: slug } },
       orderBy: { date: "desc" },
-    })) ??
-    (await db.article.findFirst({
+      select: { slug: true, title: true },
+    }),
+    db.article.findFirst({
+      where: { status: "Published", date: { gt: article.date }, slug: { not: slug } },
+      orderBy: { date: "asc" },
+      select: { slug: true, title: true },
+    }),
+    db.article.findMany({
       where: { status: "Published", slug: { not: slug } },
-      orderBy: { date: "desc" },
-    }));
+      orderBy: [{ featured: "desc" }, { date: "desc" }],
+      take: 3,
+      select: { id: true, slug: true, title: true, excerpt: true, date: true, coverImage: true },
+    }),
+  ]);
 
   const initials = article.author.name
     .split(" ")
@@ -128,22 +140,13 @@ export default async function BlogPost({ params }: Props) {
               ← All articles
             </Link>
 
-            {/* eyebrow: tags */}
-            {tags.length > 0 && (
-              <div className="hero-animate mb-5 flex flex-wrap items-center gap-2" style={{ animationDelay: "100ms" }}>
-                {tags.map((t) => (
-                  <span
-                    key={t}
-                    className="inline-block rounded-full border border-white/25 bg-white/10 px-3.5 py-1 font-mono text-xs uppercase tracking-label text-white/80"
-                  >
-                    {t}
-                  </span>
-                ))}
-                {article.featured && (
-                  <span className="inline-block rounded-full border border-amber-400/60 bg-amber-400/20 px-3.5 py-1 font-mono text-xs uppercase tracking-label text-amber-300">
-                    Featured
-                  </span>
-                )}
+            {/* The tags now read as the keywords line under the body, the way a
+                post's keyword list usually does, so only the badge sits here. */}
+            {article.featured && (
+              <div className="hero-animate mb-5" style={{ animationDelay: "100ms" }}>
+                <span className="inline-block rounded-full border border-amber-400/60 bg-amber-400/20 px-3.5 py-1 font-mono text-xs uppercase tracking-label text-amber-300">
+                  Featured
+                </span>
               </div>
             )}
 
@@ -208,13 +211,24 @@ export default async function BlogPost({ params }: Props) {
               ) : null}
             </Reveal>
 
+            {/* Keywords — the article's own tags, listed rather than shown as
+                pills up in the hero. */}
+            {tags.length > 0 && (
+              <Reveal delay={40}>
+                <p className="mt-12 border-t border-concrete-200 pt-8 leading-relaxed text-concrete-500">
+                  <span className="font-display font-semibold text-ink">Keywords: </span>
+                  {tags.join(", ")}
+                </p>
+              </Reveal>
+            )}
+
             {/* Like + share — at the end, where someone has actually read the piece */}
             <Reveal delay={80}>
-              <div className="mt-12 flex items-center gap-6 border-t border-concrete-200 pt-8">
+              <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
                 <LikeButton articleId={article.id} initialCount={article._count.likes} />
                 {/* Canonical URL, not the current host — a shared link should
                     point at the public site. */}
-                <ShareButton url={url} title={article.title} />
+                <ShareLinks url={url} title={article.title} />
               </div>
             </Reveal>
 
@@ -236,28 +250,87 @@ export default async function BlogPost({ params }: Props) {
           </div>
         </div>
 
-        {/* ── Next article ── */}
-        {next && (
+        {/* ── Previous / next ── */}
+        {(older || newer) && (
           <section className="border-t border-concrete-200 bg-surface">
-            <Reveal className="mx-auto flex max-w-4xl flex-col gap-4 px-6 py-14 sm:flex-row sm:items-center sm:justify-between lg:px-10">
-              <div>
-                <p className="font-mono text-[11px] uppercase tracking-label text-accent-700">
-                  Next article
-                </p>
-                <Link
-                  href={`/blog/${next.slug}`}
-                  className="mt-2 inline-block font-display text-2xl font-bold tracking-tight text-ink hover:text-brand-700"
-                >
-                  {next.title} →
+            <div className="mx-auto grid max-w-4xl gap-8 px-6 py-12 sm:grid-cols-2 lg:px-10">
+              {older ? (
+                <Link href={`/blog/${older.slug}`} className="group">
+                  <p className="font-mono text-[11px] uppercase tracking-label text-accent-700">
+                    ← Previous article
+                  </p>
+                  <p className="mt-2 font-display text-lg font-bold leading-snug tracking-tight text-ink group-hover:text-brand-700">
+                    {older.title}
+                  </p>
                 </Link>
+              ) : (
+                <div />
+              )}
+              {newer ? (
+                <Link href={`/blog/${newer.slug}`} className="group sm:text-right">
+                  <p className="font-mono text-[11px] uppercase tracking-label text-accent-700">
+                    Next article →
+                  </p>
+                  <p className="mt-2 font-display text-lg font-bold leading-snug tracking-tight text-ink group-hover:text-brand-700">
+                    {newer.title}
+                  </p>
+                </Link>
+              ) : null}
+            </div>
+          </section>
+        )}
+
+        {/* ── Recommended posts ── */}
+        {recommended.length > 0 && (
+          <section className="grid-surface border-t border-concrete-200">
+            <div className="mx-auto max-w-8xl px-6 py-16 lg:px-10">
+              <Reveal>
+                <p className="font-mono text-[11px] uppercase tracking-label text-accent-700">Keep reading</p>
+                <h2 className="mt-2 font-display text-2xl font-bold tracking-tight text-ink lg:text-3xl">
+                  Recommended posts
+                </h2>
+              </Reveal>
+
+              <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {recommended.map((a, i) => (
+                  <Reveal key={a.id} delay={i * 80} direction="up">
+                    <Link
+                      href={`/blog/${a.slug}`}
+                      className="blog-card group flex h-full flex-col overflow-hidden rounded-2xl border-2 border-concrete-200 bg-surface"
+                    >
+                      <div className="blog-card-media aspect-[16/9] w-full overflow-hidden">
+                        {a.coverImage ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={getStorageUrl(a.coverImage)}
+                            alt={a.title}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <div className="h-full w-full bg-[radial-gradient(ellipse_80%_60%_at_60%_40%,theme(colors.brand.700),theme(colors.brand.900))]" />
+                        )}
+                      </div>
+                      <div className="flex flex-1 flex-col p-6">
+                        <h3 className="font-display text-base font-bold leading-snug tracking-tight text-ink group-hover:text-brand-700">
+                          {a.title}
+                        </h3>
+                        <p className="mt-2 flex-1 text-sm leading-relaxed text-concrete-500">{a.excerpt}</p>
+                        <span className="mt-4 font-mono text-[11px] text-concrete-400">{a.date}</span>
+                      </div>
+                    </Link>
+                  </Reveal>
+                ))}
               </div>
-              <Link
-                href="/blog"
-                className="shrink-0 font-display text-sm font-semibold text-brand-700 hover:text-brand-800"
-              >
-                Back to all articles
-              </Link>
-            </Reveal>
+
+              <Reveal delay={240}>
+                <Link
+                  href="/blog"
+                  className="mt-8 inline-flex font-display text-sm font-semibold text-brand-700 hover:text-brand-800"
+                >
+                  ← All articles
+                </Link>
+              </Reveal>
+            </div>
           </section>
         )}
 

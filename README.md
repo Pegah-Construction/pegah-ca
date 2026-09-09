@@ -60,7 +60,7 @@ components/
   Navbar.tsx          Sticky nav; collapses to a scrollable menu below `lg`
   ThemeToggle.tsx     Light/dark switch, persisted per browser
   LikeButton.tsx      Anonymous per-browser likes on articles
-  ShareButton.tsx     Native share sheet, falling back to copy-link
+  ShareLinks.tsx      Facebook / X / LinkedIn share buttons on articles
   Comments.tsx        Reader comment form + thread
   Hero.tsx HeroCarousel.tsx StatBand.tsx Intro.tsx ServicesList.tsx …
                       (services live only as the home page section — there is no /services page)

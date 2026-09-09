@@ -53,8 +53,10 @@ export default async function BlogPage() {
 
                   <div className="flex flex-1 flex-col p-7">
                     <div className="flex items-center justify-between gap-2">
+                      {/* Up to three pills: articles now carry more keywords
+                          than a card can show without crowding the title. */}
                       <div className="flex flex-wrap gap-1.5">
-                        {tags.map((t) => (
+                        {tags.slice(0, 3).map((t) => (
                           <span key={t} className="inline-block rounded-full bg-brand-50 px-2.5 py-0.5 font-mono text-[10px] font-semibold text-brand-700">
                             {t}
                           </span>
