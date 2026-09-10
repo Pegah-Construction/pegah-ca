@@ -243,7 +243,12 @@ export default function RichEditor({ value, onChange, articleId }: { value: stri
     setUploading(false);
   };
 
-  const imageDrop = useImageDrop({ onFiles: uploadImages, disabled: !articleId || uploading });
+  // guideOnUrlDrop off: TipTap already handles an image dragged from a web page.
+  const imageDrop = useImageDrop({
+    onFiles: uploadImages,
+    disabled: !articleId || uploading,
+    guideOnUrlDrop: false,
+  });
 
   // Video embed
   const handleVideoEmbed = () => {

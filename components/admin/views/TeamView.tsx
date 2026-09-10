@@ -357,7 +357,12 @@ export default function TeamView() {
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className={section.compact ? "h-8 w-8" : "h-16 w-16"}>
                           <circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
                         </svg>
-                        {!section.compact && <span className="font-mono text-xs">Click to upload photo</span>}
+                        {!section.compact && (
+                          <>
+                            <span className="font-mono text-xs">Click to upload photo</span>
+                            <span className="font-mono text-[10px] text-concrete-400">or drag one here</span>
+                          </>
+                        )}
                       </div>
                     )}
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
@@ -367,6 +372,9 @@ export default function TeamView() {
                       </svg>
                       {!section.compact && (
                         <span className="font-mono text-xs text-white">{m.photo ? "Replace photo" : "Upload photo"}</span>
+                      )}
+                      {!section.compact && (
+                        <span className="font-mono text-[10px] text-white/70">or drop one here</span>
                       )}
                     </div>
                     {photoUploading === m.id && (

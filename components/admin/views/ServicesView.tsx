@@ -182,8 +182,8 @@ export default function ServicesView() {
                             // eslint-disable-next-line @next/next/no-img-element
                             <img src={getStorageUrl(s.image)} alt={s.title} className="h-full w-full object-cover" />
                           ) : (
-                            <span className="flex h-full w-full items-center justify-center font-mono text-[10px] text-concrete-400">
-                              no image
+                            <span className="flex h-full w-full items-center justify-center px-1 text-center font-mono text-[10px] leading-tight text-concrete-400">
+                              {locked ? "no image" : "drop image here"}
                             </span>
                           )}
                           {uploading === i && (

@@ -63,6 +63,25 @@ export default function NewsView() {
     fetch("/api/users").then((r) => r.json()).then(setUsers);
   }, []);
 
+  const handleCoverUpload = async (files: File[]) => {
+    const file = files[0];
+    if (!editingId || !file || uploadingCover) return;
+    setUploadingCover(true);
+    const fd = new FormData();
+    fd.append("file", file);
+    const res = await fetch(`/api/news/${editingId}/cover`, { method: "POST", body: fd });
+    if (res.ok) {
+      const { coverImage } = await res.json();
+      setFormCoverImage(coverImage);
+      setNews((prev) => prev.map((n) => n.id === editingId ? { ...n, coverImage } : n));
+    } else {
+      alert("Cover upload failed. Please try again.");
+    }
+    setUploadingCover(false);
+  };
+
+  const coverDrop = useImageDrop({ onFiles: handleCoverUpload, multiple: false, disabled: uploadingCover || !editingId });
+
   if (!user) return null;
   const perms = permsFor(user.role);
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
@@ -106,25 +125,6 @@ export default function NewsView() {
     setFormCoverImage(n.coverImage ?? "");
     setOpen(true);
   };
-
-  const handleCoverUpload = async (files: File[]) => {
-    const file = files[0];
-    if (!editingId || !file || uploadingCover) return;
-    setUploadingCover(true);
-    const fd = new FormData();
-    fd.append("file", file);
-    const res = await fetch(`/api/news/${editingId}/cover`, { method: "POST", body: fd });
-    if (res.ok) {
-      const { coverImage } = await res.json();
-      setFormCoverImage(coverImage);
-      setNews((prev) => prev.map((n) => n.id === editingId ? { ...n, coverImage } : n));
-    } else {
-      alert("Cover upload failed. Please try again.");
-    }
-    setUploadingCover(false);
-  };
-
-  const coverDrop = useImageDrop({ onFiles: handleCoverUpload, multiple: false, disabled: uploadingCover || !editingId });
 
   const handleCoverDelete = async () => {
     if (!editingId) return;
@@ -429,7 +429,8 @@ export default function NewsView() {
                         />
                       )}
                       {formCoverImage && (
-                        <label className={`flex cursor-pointer items-center gap-1.5 self-end rounded-md border border-concrete-200 px-3 py-1.5 font-display text-xs font-semibold text-ink hover:bg-concrete-50 ${uploadingCover ? "pointer-events-none opacity-60" : ""}`}>
+                        <div className="flex flex-col gap-1.5 self-end">
+                        <label className={`flex cursor-pointer items-center gap-1.5 rounded-md border border-concrete-200 px-3 py-1.5 font-display text-xs font-semibold text-ink hover:bg-concrete-50 ${uploadingCover ? "pointer-events-none opacity-60" : ""}`}>
                           {uploadingCover && <Spinner className="h-3 w-3" />}
                           {uploadingCover ? "Uploading…" : "Replace cover"}
                           <input
@@ -444,6 +445,8 @@ export default function NewsView() {
                             }}
                           />
                         </label>
+                        <span className="text-[11px] text-concrete-400">or drop an image on the preview</span>
+                        </div>
                       )}
                     </div>
                   ) : (

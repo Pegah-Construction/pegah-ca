@@ -287,6 +287,15 @@ export default function ProjectDetailView({ id }: { id: string }) {
                     )}
                   </div>
                 ))}
+                {perms.editProjects && (
+                  <DropZone
+                    onFiles={uploadPhotos}
+                    busy={uploading}
+                    label={uploading ? "Uploading…" : "Add photos"}
+                    hint="or drag and drop"
+                    className="aspect-[4/3] px-2 py-0"
+                  />
+                )}
               </div>
             )}
           </section>

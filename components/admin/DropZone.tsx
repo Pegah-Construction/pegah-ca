@@ -13,6 +13,11 @@ function hasFiles(dt: DataTransfer | null) {
   return !!dt && Array.from(dt.types).includes("Files");
 }
 
+/** An image dragged out of a web page arrives as a URL, with no file attached. */
+function hasUrlOnly(dt: DataTransfer | null) {
+  return !!dt && !hasFiles(dt) && Array.from(dt.types).some((t) => t === "text/uri-list" || t === "text/html");
+}
+
 /**
  * Drag-and-drop file handling for an arbitrary element.
  *
@@ -24,13 +29,22 @@ export function useImageDrop({
   onFiles,
   disabled = false,
   multiple = true,
+  guideOnUrlDrop = true,
 }: {
   onFiles: (files: File[]) => void;
   disabled?: boolean;
   multiple?: boolean;
+  /** Explain why an image dragged from a web page didn't upload. Turn off where
+   *  the element handles URL drops itself (the article editor inserts them). */
+  guideOnUrlDrop?: boolean;
 }) {
   const [dragging, setDragging] = useState(false);
   const depth = useRef(0);
+
+  const owns = useCallback(
+    (dt: DataTransfer | null) => hasFiles(dt) || (guideOnUrlDrop && hasUrlOnly(dt)),
+    [guideOnUrlDrop],
+  );
 
   const reset = useCallback(() => {
     depth.current = 0;
@@ -38,35 +52,44 @@ export function useImageDrop({
   }, []);
 
   const onDragEnter = useCallback((e: React.DragEvent) => {
-    if (disabled || !hasFiles(e.dataTransfer)) return;
+    if (disabled || !owns(e.dataTransfer)) return;
     e.preventDefault();
     depth.current += 1;
     setDragging(true);
-  }, [disabled]);
+  }, [disabled, owns]);
 
   const onDragOver = useCallback((e: React.DragEvent) => {
-    if (disabled || !hasFiles(e.dataTransfer)) return;
+    if (disabled || !owns(e.dataTransfer)) return;
     // Required, or the browser navigates to the dropped file instead.
     e.preventDefault();
     e.dataTransfer.dropEffect = "copy";
-  }, [disabled]);
+  }, [disabled, owns]);
 
   const onDragLeave = useCallback((e: React.DragEvent) => {
-    if (disabled || !hasFiles(e.dataTransfer)) return;
+    if (disabled || !owns(e.dataTransfer)) return;
     e.preventDefault();
     depth.current -= 1;
     if (depth.current <= 0) reset();
-  }, [disabled, reset]);
+  }, [disabled, owns, reset]);
 
   const onDrop = useCallback((e: React.DragEvent) => {
-    if (disabled || !hasFiles(e.dataTransfer)) return;
+    if (disabled || !owns(e.dataTransfer)) return;
     e.preventDefault();
     e.stopPropagation();
     reset();
     const files = imageFiles(e.dataTransfer);
-    if (files.length === 0) return;
+    // Silence is the worst outcome here: an image dragged out of another browser
+    // tab, or a dropped folder, carries no usable file and just looks broken.
+    if (files.length === 0) {
+      alert(
+        hasFiles(e.dataTransfer)
+          ? "That isn't an image file. Drop a JPG, PNG, or WebP — a folder has to be opened and its photos dropped instead."
+          : "Only image files from your computer can be uploaded. An image dragged straight off a web page carries no file — save it first, then drop the saved file here."
+      );
+      return;
+    }
     onFiles(multiple ? files : files.slice(0, 1));
-  }, [disabled, multiple, onFiles, reset]);
+  }, [disabled, multiple, onFiles, owns, reset]);
 
   return { dragging, dropProps: { onDragEnter, onDragOver, onDragLeave, onDrop } };
 }
