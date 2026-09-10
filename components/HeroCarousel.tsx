@@ -2,19 +2,26 @@
 
 import { useState, useEffect } from "react";
 
-export default function HeroCarousel({ images }: { images: string[] }) {
+export default function HeroCarousel({ images, interval = 6000 }: { images: string[]; interval?: number }) {
   const [idx, setIdx] = useState(0);
+  // Bumped on every manual interaction so the autoplay timer restarts.
+  const [tick, setTick] = useState(0);
 
   useEffect(() => {
     if (images.length <= 1) return;
-    const t = setInterval(() => setIdx((i) => (i + 1) % images.length), 6000);
+    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const t = setInterval(() => setIdx((i) => (i + 1) % images.length), interval);
     return () => clearInterval(t);
-  }, [images.length]);
+  }, [images.length, interval, tick]);
 
   if (images.length === 0) return null;
 
-  const prev = () => setIdx((i) => (i - 1 + images.length) % images.length);
-  const next = () => setIdx((i) => (i + 1) % images.length);
+  const go = (n: number) => {
+    setIdx((n + images.length) % images.length);
+    setTick((t) => t + 1);
+  };
+  const prev = () => go(idx - 1);
+  const next = () => go(idx + 1);
 
   return (
     <div className="absolute inset-0 -z-10 h-full w-full">
@@ -54,7 +61,7 @@ export default function HeroCarousel({ images }: { images: string[] }) {
             {images.map((_, i) => (
               <button
                 key={i}
-                onClick={() => setIdx(i)}
+                onClick={() => go(i)}
                 aria-label={`Image ${i + 1}`}
                 className={`h-1.5 rounded-full transition-all ${
                   i === idx ? "w-7 bg-white" : "w-1.5 bg-white/50 hover:bg-white/80"
