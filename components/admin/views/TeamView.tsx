@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { getStorageUrl } from "@/lib/storage-url";
 import { StatCard, Card, PrimaryBtn, Modal, Field, inputCls, Spinner, SearchInput } from "../ui";
-import { DropOverlay, DropTarget, notifyDropIssue, useImageDrop } from "../DropZone";
+import { DropTarget, dropRing, notifyDropIssue, useImageDrop } from "../DropZone";
 import { TEAM_BIO_MAX, type AboutContent } from "@/lib/about-content";
 
 type Member = { id: string; order: number; name: string; title: string; bio: string; photo: string; leadership: boolean };
@@ -260,9 +260,11 @@ export default function TeamView() {
                     ref={aboutImageRef}
                     onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadAboutImage(f); e.target.value = ""; }}
                   />
-                  <div className="flex flex-col items-start gap-4 sm:flex-row" {...aboutImageDrop.dropProps}>
+                  <div
+                    {...aboutImageDrop.dropProps}
+                    className={`flex flex-col items-start gap-4 rounded-lg sm:flex-row ${dropRing(aboutImageDrop.dragging)}`}
+                  >
                     <div className="relative h-28 w-40 shrink-0 overflow-hidden rounded-lg border border-concrete-200 bg-concrete-50">
-                      <DropOverlay dragging={aboutImageDrop.dragging} text="Drop" />
                       {aboutImage ? (
                         <img src={getStorageUrl(aboutImage)} alt="About" className="h-full w-full object-cover" />
                       ) : (
@@ -282,7 +284,7 @@ export default function TeamView() {
                           Reset to default
                         </button>
                       )}
-                      <p className="max-w-[16rem] text-xs text-concrete-400">Shown beside the “What we do” text on the About page. You can also drag an image onto the preview.</p>
+                      <p className="max-w-[16rem] text-xs text-concrete-400">Shown beside the “What we do” text on the About page. You can also drag an image here.</p>
                     </div>
                   </div>
                 </div>
@@ -347,7 +349,6 @@ export default function TeamView() {
                     onClick={() => photoInputRefs.current[m.id]?.click()}
                     multiple={false}
                     disabled={photoUploading !== null}
-                    text="Drop photo"
                     className="group aspect-[4/5] w-full cursor-pointer bg-concrete-100"
                   >
                     {m.photo ? (
@@ -485,7 +486,6 @@ export default function TeamView() {
                     <span className="font-mono text-[11px] text-concrete-400">or drag and drop</span>
                   </div>
                 )}
-                <DropOverlay dragging={modalPhotoDrop.dragging} text="Drop photo" />
                 {(modalPhoto || (editingId && members.find((m) => m.id === editingId)?.photo)) && (
                   <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
                     <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" className="h-7 w-7">

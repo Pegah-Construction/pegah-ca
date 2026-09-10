@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { getStorageUrl } from "@/lib/storage-url";
 import { Card, Field, inputCls, PrimaryBtn, Spinner } from "../ui";
-import { DropOverlay, notifyDropIssue, useImageDrop } from "../DropZone";
+import { dropRing, notifyDropIssue, useImageDrop } from "../DropZone";
 import type { SafetyContent } from "@/lib/safety-content";
 
 export default function SafetyContentView() {
@@ -91,9 +91,11 @@ export default function SafetyContentView() {
               ref={imageRef}
               onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadImage(f); e.target.value = ""; }}
             />
-            <div className="flex flex-col items-start gap-4 sm:flex-row" {...imageDrop.dropProps}>
+            <div
+              {...imageDrop.dropProps}
+              className={`flex flex-col items-start gap-4 rounded-lg sm:flex-row ${dropRing(imageDrop.dragging)}`}
+            >
               <div className="relative h-28 w-40 shrink-0 overflow-hidden rounded-lg border border-concrete-200 bg-concrete-50">
-                <DropOverlay dragging={imageDrop.dragging} text="Drop" />
                 {image ? (
                   <img src={getStorageUrl(image)} alt="Safety" className="h-full w-full object-cover" />
                 ) : (
@@ -113,7 +115,7 @@ export default function SafetyContentView() {
                     Reset to default
                   </button>
                 )}
-                <p className="max-w-[16rem] text-xs text-concrete-400">Shown beside the intro. You can also drag an image onto the preview.</p>
+                <p className="max-w-[16rem] text-xs text-concrete-400">Shown beside the intro. You can also drag an image here.</p>
               </div>
             </div>
           </div>

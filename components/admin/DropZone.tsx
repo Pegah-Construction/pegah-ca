@@ -149,110 +149,22 @@ export function useImageDrop({
 }
 
 /**
- * A click-to-browse / drag-to-drop image target. Renders a dashed panel by
- * default; pass `children` to decorate the inside (previews, hints, spinners).
+ * Marks an element as the live drop target while a file is over it. Deliberately
+ * a soft inset ring rather than a dashed box, so nothing is added to the layout
+ * and nothing covers the field being dropped on.
  */
-export function DropZone({
-  onFiles,
-  multiple = true,
-  disabled = false,
-  busy = false,
-  label,
-  hint = "or drag and drop",
-  className = "",
-  children,
-}: {
-  onFiles: (files: File[]) => void;
-  multiple?: boolean;
-  disabled?: boolean;
-  busy?: boolean;
-  label: string;
-  hint?: string;
-  className?: string;
-  children?: React.ReactNode;
-}) {
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  const { dragging, dropProps } = useImageDrop({ onFiles, disabled: disabled || busy, multiple });
-
-  return (
-    <div
-      {...dropProps}
-      onClick={() => !disabled && !busy && inputRef.current?.click()}
-      onKeyDown={(e) => {
-        if (disabled || busy) return;
-        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); inputRef.current?.click(); }
-      }}
-      role="button"
-      tabIndex={disabled || busy ? -1 : 0}
-      aria-label={label}
-      aria-disabled={disabled || busy}
-      className={`flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-4 py-6 text-center transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 ${
-        dragging
-          ? "border-brand-500 bg-brand-50"
-          : "border-concrete-200 bg-concrete-50 hover:border-brand-400 hover:bg-brand-50"
-      } ${disabled || busy ? "cursor-not-allowed opacity-60" : ""} ${className}`}
-    >
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*"
-        multiple={multiple}
-        className="sr-only"
-        disabled={disabled || busy}
-        onChange={(e) => {
-          const files = Array.from(e.target.files ?? []).filter((f) => f.type.startsWith("image/"));
-          e.target.value = "";
-          if (files.length) onFiles(multiple ? files : files.slice(0, 1));
-        }}
-      />
-      {children ?? (
-        <>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={`h-6 w-6 ${dragging ? "text-brand-600" : "text-concrete-400"}`}>
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="17 8 12 3 7 8" />
-            <line x1="12" y1="3" x2="12" y2="15" />
-          </svg>
-          <span className="font-display text-sm font-semibold text-ink">
-            {dragging ? "Drop to upload" : label}
-          </span>
-          {hint && <span className="text-xs text-concrete-400">{hint}</span>}
-        </>
-      )}
-    </div>
-  );
-}
+export const dropRing = (dragging: boolean) =>
+  dragging ? "ring-2 ring-inset ring-brand-500" : "";
 
 /**
- * Invisible overlay that appears only while files are dragged over the parent —
- * for turning an existing panel into a drop target without changing its layout.
- * The parent must be `relative`.
- */
-export function DropOverlay({ dragging, text = "Drop images to upload" }: { dragging: boolean; text?: string }) {
-  if (!dragging) return null;
-  return (
-    <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center rounded-[inherit] border-2 border-dashed border-brand-500 bg-brand-50/90">
-      <span className="flex items-center gap-2 font-display text-sm font-bold text-brand-700">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-          <polyline points="17 8 12 3 7 8" />
-          <line x1="12" y1="3" x2="12" y2="15" />
-        </svg>
-        {text}
-      </span>
-    </div>
-  );
-}
-
-/**
- * Wraps arbitrary content in a drop target with the overlay already attached —
- * for rows in a list, where a hook per item isn't possible.
+ * Wraps arbitrary content in a drop target — for rows in a list, where a hook
+ * per item isn't possible.
  */
 export function DropTarget({
   onFiles,
   onClick,
   multiple = true,
   disabled = false,
-  text,
   className = "",
   children,
 }: {
@@ -260,15 +172,17 @@ export function DropTarget({
   onClick?: () => void;
   multiple?: boolean;
   disabled?: boolean;
-  text?: string;
   className?: string;
   children: React.ReactNode;
 }) {
   const { dragging, dropProps } = useImageDrop({ onFiles, disabled, multiple });
   return (
-    <div {...(disabled ? {} : dropProps)} onClick={onClick} className={`relative ${className}`}>
+    <div
+      {...(disabled ? {} : dropProps)}
+      onClick={onClick}
+      className={`relative ${dropRing(dragging)} ${className}`}
+    >
       {children}
-      {!disabled && <DropOverlay dragging={dragging} text={text} />}
     </div>
   );
 }

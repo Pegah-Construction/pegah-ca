@@ -172,7 +172,6 @@ export default function ServicesView() {
                         onFiles={(files) => uploadImage(i, files[0])}
                         multiple={false}
                         disabled={locked || uploading !== null}
-                        text="Drop image for this service"
                         className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center"
                       >
                         <span className="font-mono text-xs text-concrete-400">{i + 1}</span>

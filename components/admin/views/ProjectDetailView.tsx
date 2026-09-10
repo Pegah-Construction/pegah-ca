@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useAuth } from "@/lib/auth";
 import { permsFor, type Project, type ProjectPhoto } from "@/lib/admin";
 import { Card, Pill, Modal, Field, inputCls, Spinner } from "../ui";
-import { DropZone, DropOverlay, notifyDropIssue, useImageDrop } from "../DropZone";
+import { dropRing, notifyDropIssue, useImageDrop } from "../DropZone";
 import { getStorageUrl } from "@/lib/storage-url";
 
 const PROJECT_TYPES = ["", "New Construction", "Renovation", "Retrofit", "Restoration", "Interior Fit-out", "Addition", "Demolition"];
@@ -229,9 +229,8 @@ export default function ProjectDetailView({ id }: { id: string }) {
           {/* Photos */}
           <section
             {...(perms.editProjects ? photoDrop.dropProps : {})}
-            className="relative rounded-xl border border-concrete-200 bg-surface"
+            className={`rounded-xl border border-concrete-200 bg-surface ${dropRing(photoDrop.dragging)}`}
           >
-            {perms.editProjects && <DropOverlay dragging={photoDrop.dragging} text="Drop photos to upload" />}
             <div className="flex items-center justify-between gap-3 border-b border-concrete-200 px-5 py-4">
               <h2 className="font-display text-sm font-bold tracking-tight text-ink">
                 Photos <span className="ml-1 font-mono text-xs font-normal text-concrete-400">({photos.length})</span>
@@ -256,18 +255,11 @@ export default function ProjectDetailView({ id }: { id: string }) {
               )}
             </div>
             {photos.length === 0 ? (
-              perms.editProjects ? (
-                <div className="p-5">
-                  <DropZone
-                    onFiles={uploadPhotos}
-                    busy={uploading}
-                    label={uploading ? "Uploading…" : "Click to add photos"}
-                    hint="or drag and drop — these show on the public website"
-                  />
-                </div>
-              ) : (
-                <p className="px-5 py-6 text-sm text-concrete-400">No photos yet.</p>
-              )
+              <p className="px-5 py-6 text-sm text-concrete-400">
+                {perms.editProjects
+                  ? "No photos yet. Upload some — or drag them here — to show on the public website."
+                  : "No photos yet."}
+              </p>
             ) : (
               <div className="grid grid-cols-2 gap-3 p-5 sm:grid-cols-3">
                 {photos.map((ph) => (
@@ -287,15 +279,6 @@ export default function ProjectDetailView({ id }: { id: string }) {
                     )}
                   </div>
                 ))}
-                {perms.editProjects && (
-                  <DropZone
-                    onFiles={uploadPhotos}
-                    busy={uploading}
-                    label={uploading ? "Uploading…" : "Add photos"}
-                    hint="or drag and drop"
-                    className="aspect-[4/3] px-2 py-0"
-                  />
-                )}
               </div>
             )}
           </section>

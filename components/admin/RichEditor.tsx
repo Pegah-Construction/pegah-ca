@@ -7,7 +7,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Youtube from "@tiptap/extension-youtube";
 import { TextStyle, Color } from "@tiptap/extension-text-style";
-import { DropOverlay, notifyDropIssue, useImageDrop } from "./DropZone";
+import { dropRing, notifyDropIssue, useImageDrop } from "./DropZone";
 
 // ─── Progress Banner node view (rendered in editor) ─────────────────
 function ProgressBannerView({ node }: NodeViewProps) {
@@ -445,8 +445,7 @@ export default function RichEditor({ value, onChange, articleId }: { value: stri
       )}
 
       {/* Editor area */}
-      <div {...imageDrop.dropProps} className="relative px-3 py-2 text-sm text-ink [&_.prose-editor_.section-label]:font-mono [&_.prose-editor_.section-label]:text-[10px] [&_.prose-editor_.section-label]:font-bold [&_.prose-editor_.section-label]:uppercase [&_.prose-editor_.section-label]:tracking-widest [&_.prose-editor_.section-label]:text-brand-600 [&_.prose-editor_blockquote]:my-2 [&_.prose-editor_blockquote]:border-l-4 [&_.prose-editor_blockquote]:border-concrete-300 [&_.prose-editor_blockquote]:pl-3 [&_.prose-editor_blockquote]:text-concrete-500 [&_.prose-editor_code]:rounded [&_.prose-editor_code]:bg-concrete-100 [&_.prose-editor_code]:px-1 [&_.prose-editor_h2]:mt-3 [&_.prose-editor_h2]:font-display [&_.prose-editor_h2]:text-lg [&_.prose-editor_h2]:font-bold [&_.prose-editor_h3]:mt-2 [&_.prose-editor_h3]:font-display [&_.prose-editor_h3]:text-base [&_.prose-editor_h3]:font-semibold [&_.prose-editor_img]:my-3 [&_.prose-editor_img]:max-w-full [&_.prose-editor_img]:rounded-lg [&_.prose-editor_li]:ml-4 [&_.prose-editor_ol]:list-decimal [&_.prose-editor_p]:my-1 [&_.prose-editor_p]:leading-relaxed [&_.prose-editor_ul]:list-disc [&_.prose-editor_iframe]:my-3 [&_.prose-editor_iframe]:max-w-full [&_.prose-editor_iframe]:rounded-lg">
-        <DropOverlay dragging={imageDrop.dragging} text="Drop images into the article" />
+      <div {...imageDrop.dropProps} className={`${dropRing(imageDrop.dragging)} px-3 py-2 text-sm text-ink [&_.prose-editor_.section-label]:font-mono [&_.prose-editor_.section-label]:text-[10px] [&_.prose-editor_.section-label]:font-bold [&_.prose-editor_.section-label]:uppercase [&_.prose-editor_.section-label]:tracking-widest [&_.prose-editor_.section-label]:text-brand-600 [&_.prose-editor_blockquote]:my-2 [&_.prose-editor_blockquote]:border-l-4 [&_.prose-editor_blockquote]:border-concrete-300 [&_.prose-editor_blockquote]:pl-3 [&_.prose-editor_blockquote]:text-concrete-500 [&_.prose-editor_code]:rounded [&_.prose-editor_code]:bg-concrete-100 [&_.prose-editor_code]:px-1 [&_.prose-editor_h2]:mt-3 [&_.prose-editor_h2]:font-display [&_.prose-editor_h2]:text-lg [&_.prose-editor_h2]:font-bold [&_.prose-editor_h3]:mt-2 [&_.prose-editor_h3]:font-display [&_.prose-editor_h3]:text-base [&_.prose-editor_h3]:font-semibold [&_.prose-editor_img]:my-3 [&_.prose-editor_img]:max-w-full [&_.prose-editor_img]:rounded-lg [&_.prose-editor_li]:ml-4 [&_.prose-editor_ol]:list-decimal [&_.prose-editor_p]:my-1 [&_.prose-editor_p]:leading-relaxed [&_.prose-editor_ul]:list-disc [&_.prose-editor_iframe]:my-3 [&_.prose-editor_iframe]:max-w-full [&_.prose-editor_iframe]:rounded-lg`}>
         <EditorContent editor={editor} />
       </div>
 

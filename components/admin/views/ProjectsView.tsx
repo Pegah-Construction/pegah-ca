@@ -4,7 +4,7 @@ import { useState, useEffect, type ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
 import { permsFor, money, type Project, type ProjectPhoto } from "@/lib/admin";
 import { Card, THead, Table, Pill, PrimaryBtn, Modal, Field, inputCls, SearchInput, Spinner } from "../ui";
-import { DropZone, notifyDropIssue } from "../DropZone";
+import { dropRing, notifyDropIssue, useImageDrop } from "../DropZone";
 import { getStorageUrl } from "@/lib/storage-url";
 
 const CATEGORIES = ["", "ICI", "Residential"];
@@ -237,6 +237,9 @@ export default function ProjectsView() {
     setProjects((prev) => prev.filter((p) => p.id !== id));
     setDeletingId(null);
   };
+
+  const editPhotoDrop = useImageDrop({ onFiles: handleUploadEditPhoto, disabled: uploadingPhoto });
+  const newPhotoDrop = useImageDrop({ onFiles: addFiles });
 
   if (!user) return null;
   const perms = permsFor(user.role);
@@ -508,6 +511,7 @@ export default function ProjectsView() {
             {/* Photos — edit mode: real-time upload/delete */}
             {editingId && (
               <Field label="Photos">
+                <div {...editPhotoDrop.dropProps} className={`rounded-md ${dropRing(editPhotoDrop.dragging)}`}>
                 {editPhotos.length > 0 && (
                   <div className="mb-3 grid grid-cols-4 gap-2">
                     {editPhotos.map((ph) => (
@@ -527,28 +531,58 @@ export default function ProjectsView() {
                     ))}
                   </div>
                 )}
-                <DropZone
-                  onFiles={handleUploadEditPhoto}
-                  busy={uploadingPhoto}
-                  label={uploadingPhoto ? "Uploading…" : "Add photos"}
-                  hint={uploadingPhoto ? "" : "or drag and drop"}
-                >
-                  {uploadingPhoto ? (
-                    <span className="flex items-center gap-2 font-display text-sm font-semibold text-ink">
-                      <Spinner className="h-4 w-4 shrink-0" /> Uploading…
-                    </span>
-                  ) : undefined}
-                </DropZone>
+                <label className={`flex cursor-pointer items-center gap-2 rounded-md border border-dashed border-concrete-300 px-4 py-3 text-sm text-concrete-500 hover:border-brand-400 hover:text-brand-700 ${uploadingPhoto ? "pointer-events-none opacity-60" : ""}`}>
+                  {uploadingPhoto
+                    ? <Spinner className="h-4 w-4 shrink-0" />
+                    : <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-4 w-4 shrink-0">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="17 8 12 3 7 8" />
+                        <line x1="12" y1="3" x2="12" y2="15" />
+                      </svg>
+                  }
+                  {uploadingPhoto ? "Uploading…" : "Add photos, or drag them here"}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="sr-only"
+                    disabled={uploadingPhoto}
+                    onChange={(e) => {
+                      const files = Array.from(e.target.files ?? []).filter((f) => f.type.startsWith("image/"));
+                      e.target.value = "";
+                      handleUploadEditPhoto(files);
+                    }}
+                  />
+                </label>
+                </div>
               </Field>
             )}
 
             {/* Photos — only shown when creating */}
             {!editingId && (
               <Field label="Photos">
-                <DropZone
-                  onFiles={addFiles}
-                  label={pendingFiles.length === 0 ? "Click to add photos" : `${pendingFiles.length} photo${pendingFiles.length > 1 ? "s" : ""} selected — add more`}
-                />
+                <div {...newPhotoDrop.dropProps} className={`rounded-md ${dropRing(newPhotoDrop.dragging)}`}>
+                <label className="flex cursor-pointer items-center gap-2 rounded-md border border-dashed border-concrete-300 px-4 py-3 text-sm text-concrete-500 hover:border-brand-400 hover:text-brand-700">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-4 w-4 shrink-0">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="17 8 12 3 7 8" />
+                    <line x1="12" y1="3" x2="12" y2="15" />
+                  </svg>
+                  {pendingFiles.length === 0
+                    ? "Click to add photos, or drag them here"
+                    : `${pendingFiles.length} photo${pendingFiles.length > 1 ? "s" : ""} selected, add more`}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="sr-only"
+                    onChange={(e) => {
+                      const files = Array.from(e.target.files ?? []).filter((f) => f.type.startsWith("image/"));
+                      e.target.value = "";
+                      addFiles(files);
+                    }}
+                  />
+                </label>
                 {previews.length > 0 && (
                   <div className="mt-3 grid grid-cols-4 gap-2">
                     {previews.map((src, i) => (
@@ -568,6 +602,7 @@ export default function ProjectsView() {
                     ))}
                   </div>
                 )}
+                </div>
               </Field>
             )}
 

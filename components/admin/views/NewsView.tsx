@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { useAuth } from "@/lib/auth";
 import { permsFor, type Article } from "@/lib/admin";
 import { StatCard, Card, THead, Table, Pill, PrimaryBtn, Field, inputCls, SearchInput, Spinner } from "../ui";
-import { DropZone, DropOverlay, notifyDropIssue, useImageDrop } from "../DropZone";
+import { dropRing, notifyDropIssue, useImageDrop } from "../DropZone";
 import { getStorageUrl } from "@/lib/storage-url";
 
 const RichEditor = dynamic(() => import("../RichEditor"), { ssr: false });
@@ -397,10 +397,12 @@ export default function NewsView() {
                 </div>
                 <Field label="Cover image">
                   {editingId ? (
-                    <div className="flex flex-col items-start gap-3 sm:flex-row" {...coverDrop.dropProps}>
+                    <div
+                      {...coverDrop.dropProps}
+                      className={`flex flex-col items-start gap-3 rounded-lg sm:flex-row ${dropRing(coverDrop.dragging)}`}
+                    >
                       {formCoverImage ? (
                         <div className="group relative h-24 w-40 shrink-0 overflow-hidden rounded-lg bg-concrete-100">
-                          <DropOverlay dragging={coverDrop.dragging} text="Drop" />
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={getStorageUrl(formCoverImage)}
@@ -419,20 +421,14 @@ export default function NewsView() {
                           </button>
                         </div>
                       ) : (
-                        <DropZone
-                          onFiles={handleCoverUpload}
-                          multiple={false}
-                          busy={uploadingCover}
-                          label={uploadingCover ? "Uploading…" : "Add a cover image"}
-                          hint="or drag and drop"
-                          className="h-24 w-full py-0 sm:w-56"
-                        />
+                        <div className="flex h-24 w-40 shrink-0 items-center justify-center rounded-lg border-2 border-dashed border-concrete-200 bg-concrete-100 text-xs text-concrete-400">
+                          No cover
+                        </div>
                       )}
-                      {formCoverImage && (
-                        <div className="flex flex-col gap-1.5 self-end">
+                      <div className="flex flex-col gap-1.5 self-end">
                         <label className={`flex cursor-pointer items-center gap-1.5 rounded-md border border-concrete-200 px-3 py-1.5 font-display text-xs font-semibold text-ink hover:bg-concrete-50 ${uploadingCover ? "pointer-events-none opacity-60" : ""}`}>
                           {uploadingCover && <Spinner className="h-3 w-3" />}
-                          {uploadingCover ? "Uploading…" : "Replace cover"}
+                          {uploadingCover ? "Uploading…" : formCoverImage ? "Replace cover" : "Upload cover"}
                           <input
                             type="file"
                             accept="image/*"
@@ -445,9 +441,8 @@ export default function NewsView() {
                             }}
                           />
                         </label>
-                        <span className="text-[11px] text-concrete-400">or drop an image on the preview</span>
-                        </div>
-                      )}
+                        <span className="text-[11px] text-concrete-400">or drag an image here</span>
+                      </div>
                     </div>
                   ) : (
                     <p className="text-xs text-concrete-400">Save the article first, then you can add a cover image.</p>

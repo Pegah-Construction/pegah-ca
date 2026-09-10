@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/lib/auth";
 import { permsFor } from "@/lib/admin";
 import { Card, Spinner } from "../ui";
-import { DropOverlay, notifyDropIssue, useImageDrop } from "../DropZone";
+import { dropRing, notifyDropIssue, useImageDrop } from "../DropZone";
 import { Field, TextareaField, LockBanner, SaveBar } from "../SettingsFields";
 import { getStorageUrl } from "@/lib/storage-url";
 import { SETTINGS_DEFAULTS } from "@/lib/settings";
@@ -125,12 +125,12 @@ export default function SettingsView() {
             <p className="mb-4 text-sm text-concrete-500">
               These images appear as the full-bleed background on the home page.
               {heroImages.length > 1 && " Multiple images will cycle as a carousel."}
+              {!locked && " You can also drag image files straight onto this section."}
             </p>
             <div
               {...(locked ? {} : heroDrop.dropProps)}
-              className="relative grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4"
+              className={`grid grid-cols-2 gap-3 rounded-lg sm:grid-cols-3 lg:grid-cols-4 ${dropRing(heroDrop.dragging)}`}
             >
-              {!locked && <DropOverlay dragging={heroDrop.dragging} />}
               {heroImages.map((img) => (
                 <div key={img.id} className="group relative overflow-hidden rounded-lg bg-concrete-100">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -154,7 +154,7 @@ export default function SettingsView() {
                   onClick={() => heroInputRef.current?.click()}
                   disabled={uploadingHero}
                   aria-label="Add hero images"
-                  className="flex aspect-video flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-concrete-300 px-2 text-center text-concrete-400 transition hover:border-brand-400 hover:text-brand-500 disabled:opacity-50"
+                  className="flex aspect-video items-center justify-center rounded-lg border-2 border-dashed border-concrete-300 text-concrete-400 transition hover:border-brand-400 hover:text-brand-500 disabled:opacity-50"
                 >
                   {uploadingHero ? (
                     <Spinner className="h-5 w-5" />
@@ -163,7 +163,6 @@ export default function SettingsView() {
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-6 w-6">
                         <path d="M12 5v14M5 12h14" />
                       </svg>
-                      <span className="text-[11px] font-semibold leading-tight">Add or drop images</span>
                     </>
                   )}
                 </button>
