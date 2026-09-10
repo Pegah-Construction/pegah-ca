@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useAuth } from "@/lib/auth";
 import { permsFor, type Project, type ProjectPhoto } from "@/lib/admin";
 import { Card, Pill, Modal, Field, inputCls, Spinner } from "../ui";
-import { DropZone, DropOverlay, useImageDrop } from "../DropZone";
+import { DropZone, DropOverlay, notifyDropIssue, useImageDrop } from "../DropZone";
 import { getStorageUrl } from "@/lib/storage-url";
 
 const PROJECT_TYPES = ["", "New Construction", "Renovation", "Retrofit", "Restoration", "Interior Fit-out", "Addition", "Demolition"];
@@ -64,7 +64,7 @@ export default function ProjectDetailView({ id }: { id: string }) {
         failed += 1;
       }
     }
-    if (failed > 0) alert(`${failed} photo${failed > 1 ? "s" : ""} failed to upload. Please try again.`);
+    if (failed > 0) notifyDropIssue(`${failed} photo${failed > 1 ? "s" : ""} failed to upload. Please try again.`);
     setUploading(false);
   };
 

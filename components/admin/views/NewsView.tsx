@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { useAuth } from "@/lib/auth";
 import { permsFor, type Article } from "@/lib/admin";
 import { StatCard, Card, THead, Table, Pill, PrimaryBtn, Field, inputCls, SearchInput, Spinner } from "../ui";
-import { DropZone, DropOverlay, useImageDrop } from "../DropZone";
+import { DropZone, DropOverlay, notifyDropIssue, useImageDrop } from "../DropZone";
 import { getStorageUrl } from "@/lib/storage-url";
 
 const RichEditor = dynamic(() => import("../RichEditor"), { ssr: false });
@@ -75,7 +75,7 @@ export default function NewsView() {
       setFormCoverImage(coverImage);
       setNews((prev) => prev.map((n) => n.id === editingId ? { ...n, coverImage } : n));
     } else {
-      alert("Cover upload failed. Please try again.");
+      notifyDropIssue("Cover upload failed. Please try again.");
     }
     setUploadingCover(false);
   };

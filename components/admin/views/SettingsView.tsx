@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/lib/auth";
 import { permsFor } from "@/lib/admin";
 import { Card, Spinner } from "../ui";
-import { DropOverlay, useImageDrop } from "../DropZone";
+import { DropOverlay, notifyDropIssue, useImageDrop } from "../DropZone";
 import { Field, TextareaField, LockBanner, SaveBar } from "../SettingsFields";
 import { getStorageUrl } from "@/lib/storage-url";
 import { SETTINGS_DEFAULTS } from "@/lib/settings";
@@ -49,7 +49,7 @@ export default function SettingsView() {
         failed += 1;
       }
     }
-    if (failed > 0) alert(`${failed} image${failed > 1 ? "s" : ""} failed to upload. Please try again.`);
+    if (failed > 0) notifyDropIssue(`${failed} image${failed > 1 ? "s" : ""} failed to upload. Please try again.`);
     setUploadingHero(false);
     if (heroInputRef.current) heroInputRef.current.value = "";
   };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 /** Only image files — dropping a PDF or a folder shouldn't start an upload. */
 function imageFiles(dt: DataTransfer | null): File[] {
@@ -16,6 +16,43 @@ function hasFiles(dt: DataTransfer | null) {
 /** An image dragged out of a web page arrives as a URL, with no file attached. */
 function hasUrlOnly(dt: DataTransfer | null) {
   return !!dt && !hasFiles(dt) && Array.from(dt.types).some((t) => t === "text/uri-list" || t === "text/html");
+}
+
+/**
+ * Small, non-blocking notice for upload problems.
+ *
+ * A blocking `alert()` freezes React mid-handler, so the drag overlay stays
+ * painted underneath the dialog until it's dismissed. This lets the overlay
+ * clear first and says what happened in the corner instead.
+ */
+export function notifyDropIssue(message: string) {
+  if (typeof document === "undefined") return;
+
+  const ID = "drop-issue-notice";
+  document.getElementById(ID)?.remove();
+
+  const el = document.createElement("div");
+  el.id = ID;
+  el.setAttribute("role", "status");
+  // bg-ink / text-paper both flip with the theme, so this stays legible in dark mode.
+  el.className =
+    "fixed bottom-5 left-1/2 z-[60] flex w-[calc(100vw-2rem)] max-w-md -translate-x-1/2 items-start gap-3 " +
+    "rounded-lg bg-ink px-4 py-2.5 text-sm text-paper shadow-lg";
+
+  const text = document.createElement("span");
+  text.textContent = message;
+  el.appendChild(text);
+
+  const close = document.createElement("button");
+  close.type = "button";
+  close.setAttribute("aria-label", "Dismiss");
+  close.textContent = "×";
+  close.className = "-mr-1 shrink-0 px-1 text-base leading-none text-paper/60 hover:text-paper";
+  close.onclick = () => el.remove();
+  el.appendChild(close);
+
+  document.body.appendChild(el);
+  window.setTimeout(() => el.remove(), 6000);
 }
 
 /**
@@ -51,6 +88,23 @@ export function useImageDrop({
     setDragging(false);
   }, []);
 
+  // A drag can end without a dragleave on this element — cancelled with Esc,
+  // dropped somewhere else, or dragged back out of the window — which would
+  // otherwise leave the highlight box stuck on screen.
+  useEffect(() => {
+    if (!dragging) return;
+    const clear = () => reset();
+    const clearIfOutsideWindow = (e: DragEvent) => { if (!e.relatedTarget) reset(); };
+    window.addEventListener("dragend", clear);
+    window.addEventListener("drop", clear);
+    window.addEventListener("dragleave", clearIfOutsideWindow);
+    return () => {
+      window.removeEventListener("dragend", clear);
+      window.removeEventListener("drop", clear);
+      window.removeEventListener("dragleave", clearIfOutsideWindow);
+    };
+  }, [dragging, reset]);
+
   const onDragEnter = useCallback((e: React.DragEvent) => {
     if (disabled || !owns(e.dataTransfer)) return;
     e.preventDefault();
@@ -81,10 +135,10 @@ export function useImageDrop({
     // Silence is the worst outcome here: an image dragged out of another browser
     // tab, or a dropped folder, carries no usable file and just looks broken.
     if (files.length === 0) {
-      alert(
+      notifyDropIssue(
         hasFiles(e.dataTransfer)
-          ? "That isn't an image file. Drop a JPG, PNG, or WebP — a folder has to be opened and its photos dropped instead."
-          : "Only image files from your computer can be uploaded. An image dragged straight off a web page carries no file — save it first, then drop the saved file here."
+          ? "That isn't an image file. Drop a JPG, PNG, or WebP — open a folder and drop the photos inside it."
+          : "An image dragged off a web page carries no file. Save it to your computer first, then drop the saved file."
       );
       return;
     }

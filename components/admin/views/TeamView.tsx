@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { getStorageUrl } from "@/lib/storage-url";
 import { StatCard, Card, PrimaryBtn, Modal, Field, inputCls, Spinner, SearchInput } from "../ui";
-import { DropOverlay, DropTarget, useImageDrop } from "../DropZone";
+import { DropOverlay, DropTarget, notifyDropIssue, useImageDrop } from "../DropZone";
 import { TEAM_BIO_MAX, type AboutContent } from "@/lib/about-content";
 
 type Member = { id: string; order: number; name: string; title: string; bio: string; photo: string; leadership: boolean };
@@ -82,7 +82,7 @@ export default function TeamView() {
       const { image } = await res.json();
       setAboutImage(image);
     } else {
-      alert("Upload failed. Please try again.");
+      notifyDropIssue("Upload failed. Please try again.");
     }
     setAboutImageUploading(false);
   };
@@ -193,7 +193,7 @@ export default function TeamView() {
       const { photo } = await res.json();
       setMembers((ms) => ms.map((m) => (m.id === id ? { ...m, photo } : m)));
     } else {
-      alert("Upload failed. Please try again.");
+      notifyDropIssue("Upload failed. Please try again.");
     }
     setPhotoUploading(null);
   };

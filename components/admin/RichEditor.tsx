@@ -7,7 +7,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Youtube from "@tiptap/extension-youtube";
 import { TextStyle, Color } from "@tiptap/extension-text-style";
-import { DropOverlay, useImageDrop } from "./DropZone";
+import { DropOverlay, notifyDropIssue, useImageDrop } from "./DropZone";
 
 // ─── Progress Banner node view (rendered in editor) ─────────────────
 function ProgressBannerView({ node }: NodeViewProps) {
@@ -236,7 +236,7 @@ export default function RichEditor({ value, onChange, articleId }: { value: stri
         const { url } = await res.json();
         editor.chain().focus().setImage({ src: url }).run();
       } else {
-        alert("Image upload failed. Please try again.");
+        notifyDropIssue("Image upload failed. Please try again.");
         break;
       }
     }

@@ -4,7 +4,7 @@ import { useState, useEffect, type ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
 import { permsFor, money, type Project, type ProjectPhoto } from "@/lib/admin";
 import { Card, THead, Table, Pill, PrimaryBtn, Modal, Field, inputCls, SearchInput, Spinner } from "../ui";
-import { DropZone } from "../DropZone";
+import { DropZone, notifyDropIssue } from "../DropZone";
 import { getStorageUrl } from "@/lib/storage-url";
 
 const CATEGORIES = ["", "ICI", "Residential"];
@@ -142,7 +142,7 @@ export default function ProjectsView() {
         const res = await fetch(`/api/projects/${editingId}/photos`, { method: "POST", body: fd });
         if (!res.ok) {
           const data = await res.json().catch(() => ({}));
-          alert(data.error ?? "Upload failed. Please try again.");
+          notifyDropIssue(data.error ?? "Upload failed. Please try again.");
           break;
         }
         const photo = await res.json();

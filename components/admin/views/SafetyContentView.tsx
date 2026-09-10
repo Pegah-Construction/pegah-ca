@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { getStorageUrl } from "@/lib/storage-url";
 import { Card, Field, inputCls, PrimaryBtn, Spinner } from "../ui";
-import { DropOverlay, useImageDrop } from "../DropZone";
+import { DropOverlay, notifyDropIssue, useImageDrop } from "../DropZone";
 import type { SafetyContent } from "@/lib/safety-content";
 
 export default function SafetyContentView() {
@@ -28,7 +28,7 @@ export default function SafetyContentView() {
       const { image: img } = await res.json();
       setImage(img);
     } else {
-      alert("Upload failed. Please try again.");
+      notifyDropIssue("Upload failed. Please try again.");
     }
     setImageUploading(false);
   };
