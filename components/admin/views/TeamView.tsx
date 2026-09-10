@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { getStorageUrl } from "@/lib/storage-url";
 import { StatCard, Card, PrimaryBtn, Modal, Field, inputCls, Spinner, SearchInput } from "../ui";
+import { DropOverlay, DropTarget, useImageDrop } from "../DropZone";
 import { TEAM_BIO_MAX, type AboutContent } from "@/lib/about-content";
 
 type Member = { id: string; order: number; name: string; title: string; bio: string; photo: string; leadership: boolean };
@@ -72,14 +73,25 @@ export default function TeamView() {
   };
 
   const uploadAboutImage = async (file: File) => {
+    if (aboutImageUploading) return;
     setAboutImageUploading(true);
     const fd = new FormData();
     fd.append("file", file);
     const res = await fetch("/api/about/image", { method: "POST", body: fd });
-    const { image } = await res.json();
-    setAboutImage(image);
+    if (res.ok) {
+      const { image } = await res.json();
+      setAboutImage(image);
+    } else {
+      alert("Upload failed. Please try again.");
+    }
     setAboutImageUploading(false);
   };
+
+  const aboutImageDrop = useImageDrop({
+    onFiles: (files) => uploadAboutImage(files[0]),
+    multiple: false,
+    disabled: aboutImageUploading,
+  });
 
   const deleteAboutImage = async () => {
     await fetch("/api/about/image", { method: "DELETE" });
@@ -97,6 +109,8 @@ export default function TeamView() {
     const preview = URL.createObjectURL(file);
     setModalPhoto({ file, preview });
   };
+
+  const modalPhotoDrop = useImageDrop({ onFiles: (files) => pickModalPhoto(files[0]), multiple: false });
 
   const uploadPhoto = async (id: string, file: File) => {
     const fd = new FormData();
@@ -170,12 +184,17 @@ export default function TeamView() {
   };
 
   const handlePhotoUpload = async (id: string, file: File) => {
+    if (!file || photoUploading) return;
     setPhotoUploading(id);
     const fd = new FormData();
     fd.append("file", file);
     const res = await fetch(`/api/team/${id}/photo`, { method: "POST", body: fd });
-    const { photo } = await res.json();
-    setMembers((ms) => ms.map((m) => (m.id === id ? { ...m, photo } : m)));
+    if (res.ok) {
+      const { photo } = await res.json();
+      setMembers((ms) => ms.map((m) => (m.id === id ? { ...m, photo } : m)));
+    } else {
+      alert("Upload failed. Please try again.");
+    }
     setPhotoUploading(null);
   };
 
@@ -241,8 +260,9 @@ export default function TeamView() {
                     ref={aboutImageRef}
                     onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadAboutImage(f); e.target.value = ""; }}
                   />
-                  <div className="flex items-start gap-4">
+                  <div className="flex flex-col items-start gap-4 sm:flex-row" {...aboutImageDrop.dropProps}>
                     <div className="relative h-28 w-40 shrink-0 overflow-hidden rounded-lg border border-concrete-200 bg-concrete-50">
+                      <DropOverlay dragging={aboutImageDrop.dragging} text="Drop" />
                       {aboutImage ? (
                         <img src={getStorageUrl(aboutImage)} alt="About" className="h-full w-full object-cover" />
                       ) : (
@@ -262,7 +282,7 @@ export default function TeamView() {
                           Reset to default
                         </button>
                       )}
-                      <p className="max-w-[16rem] text-xs text-concrete-400">Shown beside the “What we do” text on the About page.</p>
+                      <p className="max-w-[16rem] text-xs text-concrete-400">Shown beside the “What we do” text on the About page. You can also drag an image onto the preview.</p>
                     </div>
                   </div>
                 </div>
@@ -321,10 +341,14 @@ export default function TeamView() {
               : "grid gap-6 p-6 sm:grid-cols-2 xl:grid-cols-3"}>
               {section.list.map((m) => (
                 <div key={m.id} className="overflow-hidden rounded-xl border border-concrete-200 bg-surface">
-                  {/* Photo — click to upload */}
-                  <div
-                    className="group relative aspect-[4/5] w-full cursor-pointer bg-concrete-100"
+                  {/* Photo — click to upload, or drop an image on it */}
+                  <DropTarget
+                    onFiles={(files) => handlePhotoUpload(m.id, files[0])}
                     onClick={() => photoInputRefs.current[m.id]?.click()}
+                    multiple={false}
+                    disabled={photoUploading !== null}
+                    text="Drop photo"
+                    className="group aspect-[4/5] w-full cursor-pointer bg-concrete-100"
                   >
                     {m.photo ? (
                       <img src={getStorageUrl(m.photo)} alt={m.name} className="h-full w-full object-cover" />
@@ -357,11 +381,11 @@ export default function TeamView() {
                       ref={(el) => { photoInputRefs.current[m.id] = el; }}
                       onChange={(e) => {
                         const file = e.target.files?.[0];
-                        if (file) handlePhotoUpload(m.id, file);
                         e.target.value = "";
+                        if (file) handlePhotoUpload(m.id, file);
                       }}
                     />
-                  </div>
+                  </DropTarget>
 
                   {/* Info */}
                   <div className={section.compact ? "p-3" : "p-4"}>
@@ -432,7 +456,10 @@ export default function TeamView() {
                 onChange={(e) => { const f = e.target.files?.[0]; if (f) pickModalPhoto(f); e.target.value = ""; }}
               />
               <div
-                className="group relative cursor-pointer overflow-hidden rounded-xl border-2 border-dashed border-concrete-200 bg-concrete-50 transition-colors hover:border-brand-400 hover:bg-brand-50"
+                {...modalPhotoDrop.dropProps}
+                className={`group relative cursor-pointer overflow-hidden rounded-xl border-2 border-dashed bg-concrete-50 transition-colors ${
+                  modalPhotoDrop.dragging ? "border-brand-500 bg-brand-50" : "border-concrete-200 hover:border-brand-400 hover:bg-brand-50"
+                }`}
                 style={{ aspectRatio: "4/3" }}
                 onClick={() => modalPhotoRef.current?.click()}
               >
@@ -447,8 +474,10 @@ export default function TeamView() {
                       <circle cx="12" cy="13" r="4" />
                     </svg>
                     <span className="font-mono text-xs">Click to upload photo</span>
+                    <span className="font-mono text-[11px] text-concrete-400">or drag and drop</span>
                   </div>
                 )}
+                <DropOverlay dragging={modalPhotoDrop.dragging} text="Drop photo" />
                 {(modalPhoto || (editingId && members.find((m) => m.id === editingId)?.photo)) && (
                   <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
                     <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" className="h-7 w-7">

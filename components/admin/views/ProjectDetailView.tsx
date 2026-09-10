@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useAuth } from "@/lib/auth";
 import { permsFor, type Project, type ProjectPhoto } from "@/lib/admin";
 import { Card, Pill, Modal, Field, inputCls, Spinner } from "../ui";
+import { DropZone, DropOverlay, useImageDrop } from "../DropZone";
 import { getStorageUrl } from "@/lib/storage-url";
 
 const PROJECT_TYPES = ["", "New Construction", "Renovation", "Retrofit", "Restoration", "Interior Fit-out", "Addition", "Demolition"];
@@ -46,6 +47,30 @@ export default function ProjectDetailView({ id }: { id: string }) {
       .then((data) => { if (data) { setProject(data); setPhotos(data.photos ?? []); } });
   }, [user, id]);
 
+  // Uploaded one at a time so a single bad file doesn't sink the whole batch.
+  const uploadPhotos = async (files: File[]) => {
+    if (files.length === 0 || uploading) return;
+    setUploading(true);
+    let failed = 0;
+    for (const file of files) {
+      const fd = new FormData();
+      fd.append("file", file);
+      if (user?.id) fd.append("userId", user.id);
+      const res = await fetch(`/api/projects/${id}/photos`, { method: "POST", body: fd });
+      if (res.ok) {
+        const photo = await res.json();
+        setPhotos((prev) => [...prev, photo]);
+      } else {
+        failed += 1;
+      }
+    }
+    if (failed > 0) alert(`${failed} photo${failed > 1 ? "s" : ""} failed to upload. Please try again.`);
+    setUploading(false);
+  };
+
+
+  const photoDrop = useImageDrop({ onFiles: uploadPhotos, disabled: uploading });
+
   if (!user) return null;
   if (denied) return null;
   if (!project) return null;
@@ -76,24 +101,6 @@ export default function ProjectDetailView({ id }: { id: string }) {
     setProject((prev) => prev ? { ...prev, ...updated } : prev);
     setEditOpen(false);
     setSaving(false);
-  };
-
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploading(true);
-    const fd = new FormData();
-    fd.append("file", file);
-    if (user?.id) fd.append("userId", user.id);
-    const res = await fetch(`/api/projects/${id}/photos`, { method: "POST", body: fd });
-    if (res.ok) {
-      const photo = await res.json();
-      setPhotos((prev) => [...prev, photo]);
-    } else {
-      alert("Upload failed. Please try again.");
-    }
-    e.target.value = "";
-    setUploading(false);
   };
 
   const handleDeletePhoto = async (photoId: number) => {
@@ -220,27 +227,47 @@ export default function ProjectDetailView({ id }: { id: string }) {
         <div className="min-w-0 space-y-6 xl:col-span-2">
 
           {/* Photos */}
-          <section className="rounded-xl border border-concrete-200 bg-surface">
-            <div className="flex items-center justify-between border-b border-concrete-200 px-5 py-4">
+          <section
+            {...(perms.editProjects ? photoDrop.dropProps : {})}
+            className="relative rounded-xl border border-concrete-200 bg-surface"
+          >
+            {perms.editProjects && <DropOverlay dragging={photoDrop.dragging} text="Drop photos to upload" />}
+            <div className="flex items-center justify-between gap-3 border-b border-concrete-200 px-5 py-4">
               <h2 className="font-display text-sm font-bold tracking-tight text-ink">
                 Photos <span className="ml-1 font-mono text-xs font-normal text-concrete-400">({photos.length})</span>
               </h2>
               {perms.editProjects && (
-                <label className={`flex cursor-pointer items-center gap-1.5 rounded-md border border-concrete-200 px-3 py-1 font-display text-xs font-semibold text-ink hover:bg-concrete-50 ${uploading ? "pointer-events-none opacity-60" : ""}`}>
+                <label className={`flex shrink-0 cursor-pointer items-center gap-1.5 rounded-md border border-concrete-200 px-3 py-1 font-display text-xs font-semibold text-ink hover:bg-concrete-50 ${uploading ? "pointer-events-none opacity-60" : ""}`}>
                   {uploading && <Spinner className="h-3 w-3" />}
-                  {uploading ? "Uploading…" : "Upload photo"}
+                  {uploading ? "Uploading…" : "Upload photos"}
                   <input
                     type="file"
                     accept="image/*"
+                    multiple
                     className="sr-only"
-                    onChange={handleUpload}
+                    onChange={(e) => {
+                      const files = Array.from(e.target.files ?? []).filter((f) => f.type.startsWith("image/"));
+                      e.target.value = "";
+                      uploadPhotos(files);
+                    }}
                     disabled={uploading}
                   />
                 </label>
               )}
             </div>
             {photos.length === 0 ? (
-              <p className="px-5 py-6 text-sm text-concrete-400">No photos yet. Upload some to show on the public website.</p>
+              perms.editProjects ? (
+                <div className="p-5">
+                  <DropZone
+                    onFiles={uploadPhotos}
+                    busy={uploading}
+                    label={uploading ? "Uploading…" : "Click to add photos"}
+                    hint="or drag and drop — these show on the public website"
+                  />
+                </div>
+              ) : (
+                <p className="px-5 py-6 text-sm text-concrete-400">No photos yet.</p>
+              )
             ) : (
               <div className="grid grid-cols-2 gap-3 p-5 sm:grid-cols-3">
                 {photos.map((ph) => (

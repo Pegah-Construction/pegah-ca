@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { getStorageUrl } from "@/lib/storage-url";
 import { Card, Field, inputCls, PrimaryBtn, Spinner } from "../ui";
+import { DropOverlay, useImageDrop } from "../DropZone";
 import type { SafetyContent } from "@/lib/safety-content";
 
 export default function SafetyContentView() {
@@ -18,14 +19,25 @@ export default function SafetyContentView() {
   }, []);
 
   const uploadImage = async (file: File) => {
+    if (imageUploading) return;
     setImageUploading(true);
     const fd = new FormData();
     fd.append("file", file);
     const res = await fetch("/api/safety/image", { method: "POST", body: fd });
-    const { image: img } = await res.json();
-    setImage(img);
+    if (res.ok) {
+      const { image: img } = await res.json();
+      setImage(img);
+    } else {
+      alert("Upload failed. Please try again.");
+    }
     setImageUploading(false);
   };
+
+  const imageDrop = useImageDrop({
+    onFiles: (files) => uploadImage(files[0]),
+    multiple: false,
+    disabled: imageUploading,
+  });
 
   const deleteImage = async () => {
     await fetch("/api/safety/image", { method: "DELETE" });
@@ -79,8 +91,9 @@ export default function SafetyContentView() {
               ref={imageRef}
               onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadImage(f); e.target.value = ""; }}
             />
-            <div className="flex items-start gap-4">
+            <div className="flex flex-col items-start gap-4 sm:flex-row" {...imageDrop.dropProps}>
               <div className="relative h-28 w-40 shrink-0 overflow-hidden rounded-lg border border-concrete-200 bg-concrete-50">
+                <DropOverlay dragging={imageDrop.dragging} text="Drop" />
                 {image ? (
                   <img src={getStorageUrl(image)} alt="Safety" className="h-full w-full object-cover" />
                 ) : (
@@ -100,7 +113,7 @@ export default function SafetyContentView() {
                     Reset to default
                   </button>
                 )}
-                <p className="max-w-[16rem] text-xs text-concrete-400">Shown beside the intro.</p>
+                <p className="max-w-[16rem] text-xs text-concrete-400">Shown beside the intro. You can also drag an image onto the preview.</p>
               </div>
             </div>
           </div>

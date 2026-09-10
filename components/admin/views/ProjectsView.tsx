@@ -4,6 +4,7 @@ import { useState, useEffect, type ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
 import { permsFor, money, type Project, type ProjectPhoto } from "@/lib/admin";
 import { Card, THead, Table, Pill, PrimaryBtn, Modal, Field, inputCls, SearchInput, Spinner } from "../ui";
+import { DropZone } from "../DropZone";
 import { getStorageUrl } from "@/lib/storage-url";
 
 const CATEGORIES = ["", "ICI", "Residential"];
@@ -130,8 +131,7 @@ export default function ProjectsView() {
 
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
-  const handleUploadEditPhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files ?? []);
+  const handleUploadEditPhoto = async (files: File[]) => {
     if (!files.length || !editingId) return;
     setUploadingPhoto(true);
     try {
@@ -149,7 +149,6 @@ export default function ProjectsView() {
         setEditPhotos((prev) => [...prev, photo]);
       }
     } finally {
-      e.target.value = "";
       setUploadingPhoto(false);
     }
   };
@@ -164,13 +163,11 @@ export default function ProjectsView() {
     setEditPhotos((prev) => prev.filter((p) => p.id !== photoId));
   };
 
-  const addFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files ?? []);
+  const addFiles = (files: File[]) => {
     if (!files.length) return;
     const newPreviews = files.map((f) => URL.createObjectURL(f));
     setPendingFiles((prev) => [...prev, ...files]);
     setPreviews((prev) => [...prev, ...newPreviews]);
-    e.target.value = "";
   };
 
   const removeFile = (i: number) => {
@@ -530,46 +527,28 @@ export default function ProjectsView() {
                     ))}
                   </div>
                 )}
-                <label className={`flex cursor-pointer items-center gap-2 rounded-md border border-dashed border-concrete-300 px-4 py-3 text-sm text-concrete-500 hover:border-brand-400 hover:text-brand-700 ${uploadingPhoto ? "pointer-events-none opacity-60" : ""}`}>
-                  {uploadingPhoto
-                    ? <Spinner className="h-4 w-4 shrink-0" />
-                    : <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-4 w-4 shrink-0">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                        <polyline points="17 8 12 3 7 8" />
-                        <line x1="12" y1="3" x2="12" y2="15" />
-                      </svg>
-                  }
-                  {uploadingPhoto ? "Uploading…" : "Add photos"}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    className="sr-only"
-                    onChange={handleUploadEditPhoto}
-                    disabled={uploadingPhoto}
-                  />
-                </label>
+                <DropZone
+                  onFiles={handleUploadEditPhoto}
+                  busy={uploadingPhoto}
+                  label={uploadingPhoto ? "Uploading…" : "Add photos"}
+                  hint={uploadingPhoto ? "" : "or drag and drop"}
+                >
+                  {uploadingPhoto ? (
+                    <span className="flex items-center gap-2 font-display text-sm font-semibold text-ink">
+                      <Spinner className="h-4 w-4 shrink-0" /> Uploading…
+                    </span>
+                  ) : undefined}
+                </DropZone>
               </Field>
             )}
 
             {/* Photos — only shown when creating */}
             {!editingId && (
               <Field label="Photos">
-                <label className="flex cursor-pointer items-center gap-2 rounded-md border border-dashed border-concrete-300 px-4 py-3 text-sm text-concrete-500 hover:border-brand-400 hover:text-brand-700">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-4 w-4 shrink-0">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                    <polyline points="17 8 12 3 7 8" />
-                    <line x1="12" y1="3" x2="12" y2="15" />
-                  </svg>
-                  {pendingFiles.length === 0 ? "Click to add photos" : `${pendingFiles.length} photo${pendingFiles.length > 1 ? "s" : ""} selected, add more`}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    className="sr-only"
-                    onChange={addFiles}
-                  />
-                </label>
+                <DropZone
+                  onFiles={addFiles}
+                  label={pendingFiles.length === 0 ? "Click to add photos" : `${pendingFiles.length} photo${pendingFiles.length > 1 ? "s" : ""} selected — add more`}
+                />
                 {previews.length > 0 && (
                   <div className="mt-3 grid grid-cols-4 gap-2">
                     {previews.map((src, i) => (

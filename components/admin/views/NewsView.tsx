@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { useAuth } from "@/lib/auth";
 import { permsFor, type Article } from "@/lib/admin";
 import { StatCard, Card, THead, Table, Pill, PrimaryBtn, Field, inputCls, SearchInput, Spinner } from "../ui";
+import { DropZone, DropOverlay, useImageDrop } from "../DropZone";
 import { getStorageUrl } from "@/lib/storage-url";
 
 const RichEditor = dynamic(() => import("../RichEditor"), { ssr: false });
@@ -106,10 +107,9 @@ export default function NewsView() {
     setOpen(true);
   };
 
-  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!editingId) return;
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleCoverUpload = async (files: File[]) => {
+    const file = files[0];
+    if (!editingId || !file || uploadingCover) return;
     setUploadingCover(true);
     const fd = new FormData();
     fd.append("file", file);
@@ -118,10 +118,13 @@ export default function NewsView() {
       const { coverImage } = await res.json();
       setFormCoverImage(coverImage);
       setNews((prev) => prev.map((n) => n.id === editingId ? { ...n, coverImage } : n));
+    } else {
+      alert("Cover upload failed. Please try again.");
     }
-    e.target.value = "";
     setUploadingCover(false);
   };
+
+  const coverDrop = useImageDrop({ onFiles: handleCoverUpload, multiple: false, disabled: uploadingCover || !editingId });
 
   const handleCoverDelete = async () => {
     if (!editingId) return;
@@ -394,9 +397,10 @@ export default function NewsView() {
                 </div>
                 <Field label="Cover image">
                   {editingId ? (
-                    <div className="flex items-start gap-3">
+                    <div className="flex flex-col items-start gap-3 sm:flex-row" {...coverDrop.dropProps}>
                       {formCoverImage ? (
                         <div className="group relative h-24 w-40 shrink-0 overflow-hidden rounded-lg bg-concrete-100">
+                          <DropOverlay dragging={coverDrop.dragging} text="Drop" />
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={getStorageUrl(formCoverImage)}
@@ -415,15 +419,32 @@ export default function NewsView() {
                           </button>
                         </div>
                       ) : (
-                        <div className="flex h-24 w-40 shrink-0 items-center justify-center rounded-lg border-2 border-dashed border-concrete-200 bg-concrete-100 text-xs text-concrete-400">
-                          No cover
-                        </div>
+                        <DropZone
+                          onFiles={handleCoverUpload}
+                          multiple={false}
+                          busy={uploadingCover}
+                          label={uploadingCover ? "Uploading…" : "Add a cover image"}
+                          hint="or drag and drop"
+                          className="h-24 w-full py-0 sm:w-56"
+                        />
                       )}
-                      <label className={`flex cursor-pointer items-center gap-1.5 self-end rounded-md border border-concrete-200 px-3 py-1.5 font-display text-xs font-semibold text-ink hover:bg-concrete-50 ${uploadingCover ? "pointer-events-none opacity-60" : ""}`}>
-                        {uploadingCover && <Spinner className="h-3 w-3" />}
-                        {uploadingCover ? "Uploading…" : "Upload cover"}
-                        <input type="file" accept="image/*" className="sr-only" onChange={handleCoverUpload} disabled={uploadingCover} />
-                      </label>
+                      {formCoverImage && (
+                        <label className={`flex cursor-pointer items-center gap-1.5 self-end rounded-md border border-concrete-200 px-3 py-1.5 font-display text-xs font-semibold text-ink hover:bg-concrete-50 ${uploadingCover ? "pointer-events-none opacity-60" : ""}`}>
+                          {uploadingCover && <Spinner className="h-3 w-3" />}
+                          {uploadingCover ? "Uploading…" : "Replace cover"}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="sr-only"
+                            disabled={uploadingCover}
+                            onChange={(e) => {
+                              const f = e.target.files?.[0];
+                              e.target.value = "";
+                              if (f) handleCoverUpload([f]);
+                            }}
+                          />
+                        </label>
+                      )}
                     </div>
                   ) : (
                     <p className="text-xs text-concrete-400">Save the article first, then you can add a cover image.</p>

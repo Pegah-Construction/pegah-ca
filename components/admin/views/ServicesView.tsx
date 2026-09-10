@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/lib/auth";
 import { permsFor } from "@/lib/admin";
 import { Card, PrimaryBtn, Spinner } from "../ui";
+import { DropTarget } from "../DropZone";
 import { Field, TextareaField, LockBanner, SaveBar } from "../SettingsFields";
 import { SETTINGS_DEFAULTS, fillCount, parseServices, setServiceImage } from "@/lib/settings";
 import { getStorageUrl } from "@/lib/storage-url";
@@ -166,65 +167,74 @@ export default function ServicesView() {
               ) : (
                 <ol className="mt-2 divide-y divide-concrete-100 rounded-md border border-concrete-200">
                   {services.map((s, i) => (
-                    <li key={`${s.slug}-${i}`} className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center">
-                      <span className="font-mono text-xs text-concrete-400">{i + 1}</span>
+                    <li key={`${s.slug}-${i}`}>
+                      <DropTarget
+                        onFiles={(files) => uploadImage(i, files[0])}
+                        multiple={false}
+                        disabled={locked || uploading !== null}
+                        text="Drop image for this service"
+                        className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center"
+                      >
+                        <span className="font-mono text-xs text-concrete-400">{i + 1}</span>
 
-                      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md border border-concrete-200 bg-concrete-50">
-                        {s.image ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={getStorageUrl(s.image)} alt={s.title} className="h-full w-full object-cover" />
-                        ) : (
-                          <span className="flex h-full w-full items-center justify-center font-mono text-[10px] text-concrete-400">
-                            no image
-                          </span>
-                        )}
-                        {uploading === i && (
-                          <div className="absolute inset-0 flex items-center justify-center bg-white/60">
-                            <Spinner className="h-5 w-5" />
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="min-w-0 flex-1">
-                        <div className="font-display text-sm font-semibold text-ink">{s.title}</div>
-                        {s.desc ? (
-                          <div className="mt-0.5 text-sm text-concrete-500">{s.desc}</div>
-                        ) : (
-                          <div className="mt-0.5 text-sm text-amber-700">
-                            No description — add one after a “|” on this line.
-                          </div>
-                        )}
-                      </div>
-
-                      {!locked && (
-                        <div className="flex shrink-0 items-center gap-2">
-                          <PrimaryBtn
-                            onClick={() => {
-                              targetRow.current = i;
-                              fileRef.current?.click();
-                            }}
-                          >
-                            {s.image ? "Replace" : "Add image"}
-                          </PrimaryBtn>
-                          {s.image && (
-                            <button
-                              type="button"
-                              onClick={() => removeImage(i)}
-                              className="rounded-md border border-concrete-200 px-3 py-1.5 font-display text-xs font-semibold text-concrete-600 hover:bg-concrete-50"
-                            >
-                              Remove
-                            </button>
+                        <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md border border-concrete-200 bg-concrete-50">
+                          {s.image ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={getStorageUrl(s.image)} alt={s.title} className="h-full w-full object-cover" />
+                          ) : (
+                            <span className="flex h-full w-full items-center justify-center font-mono text-[10px] text-concrete-400">
+                              no image
+                            </span>
+                          )}
+                          {uploading === i && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-white/60">
+                              <Spinner className="h-5 w-5" />
+                            </div>
                           )}
                         </div>
-                      )}
+
+                        <div className="min-w-0 flex-1">
+                          <div className="font-display text-sm font-semibold text-ink">{s.title}</div>
+                          {s.desc ? (
+                            <div className="mt-0.5 text-sm text-concrete-500">{s.desc}</div>
+                          ) : (
+                            <div className="mt-0.5 text-sm text-amber-700">
+                              No description — add one after a “|” on this line.
+                            </div>
+                          )}
+                        </div>
+
+                        {!locked && (
+                          <div className="flex shrink-0 items-center gap-2">
+                            <PrimaryBtn
+                              onClick={() => {
+                                targetRow.current = i;
+                                fileRef.current?.click();
+                              }}
+                            >
+                              {s.image ? "Replace" : "Add image"}
+                            </PrimaryBtn>
+                            {s.image && (
+                              <button
+                                type="button"
+                                onClick={() => removeImage(i)}
+                                className="rounded-md border border-concrete-200 px-3 py-1.5 font-display text-xs font-semibold text-concrete-600 hover:bg-concrete-50"
+                              >
+                                Remove
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </DropTarget>
                     </li>
                   ))}
                 </ol>
               )}
               <p className="mt-2 text-xs text-concrete-400">
-                Square images look best — anything else is cropped to a square. A card with no image
-                shows its title on a striped placeholder instead. Uploads happen right away, but only
-                reach the site once you click <strong>Save changes</strong>.
+                Square images look best — anything else is cropped to a square. You can drag an image
+                straight onto a row instead of clicking. A card with no image shows its title on a
+                striped placeholder instead. Uploads happen right away, but only reach the site once
+                you click <strong>Save changes</strong>.
               </p>
             </div>
           </div>

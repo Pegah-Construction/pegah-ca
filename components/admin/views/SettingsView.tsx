@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/lib/auth";
 import { permsFor } from "@/lib/admin";
 import { Card, Spinner } from "../ui";
+import { DropOverlay, useImageDrop } from "../DropZone";
 import { Field, TextareaField, LockBanner, SaveBar } from "../SettingsFields";
 import { getStorageUrl } from "@/lib/storage-url";
 import { SETTINGS_DEFAULTS } from "@/lib/settings";
@@ -33,6 +34,28 @@ export default function SettingsView() {
       .catch(() => setHeroImages([]));
   }, []);
 
+  const uploadHeroImages = async (files: File[]) => {
+    if (!files.length || uploadingHero) return;
+    setUploadingHero(true);
+    let failed = 0;
+    for (const file of files) {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/hero-images", { method: "POST", body: fd });
+      if (res.ok) {
+        const img = await res.json();
+        setHeroImages((prev) => [...prev, img]);
+      } else {
+        failed += 1;
+      }
+    }
+    if (failed > 0) alert(`${failed} image${failed > 1 ? "s" : ""} failed to upload. Please try again.`);
+    setUploadingHero(false);
+    if (heroInputRef.current) heroInputRef.current.value = "";
+  };
+
+  const heroDrop = useImageDrop({ onFiles: uploadHeroImages, disabled: uploadingHero });
+
   if (!user) return null;
   const locked = !permsFor(user.role).editSettings;
 
@@ -54,23 +77,6 @@ export default function SettingsView() {
       setError("Failed to save settings.");
     }
     setSaving(false);
-  };
-
-  const handleHeroUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files ?? []);
-    if (!files.length) return;
-    setUploadingHero(true);
-    for (const file of files) {
-      const fd = new FormData();
-      fd.append("file", file);
-      const res = await fetch("/api/hero-images", { method: "POST", body: fd });
-      if (res.ok) {
-        const img = await res.json();
-        setHeroImages((prev) => [...prev, img]);
-      }
-    }
-    setUploadingHero(false);
-    if (heroInputRef.current) heroInputRef.current.value = "";
   };
 
   const handleHeroDelete = async (id: number) => {
@@ -120,7 +126,11 @@ export default function SettingsView() {
               These images appear as the full-bleed background on the home page.
               {heroImages.length > 1 && " Multiple images will cycle as a carousel."}
             </p>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+            <div
+              {...(locked ? {} : heroDrop.dropProps)}
+              className="relative grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4"
+            >
+              {!locked && <DropOverlay dragging={heroDrop.dragging} />}
               {heroImages.map((img) => (
                 <div key={img.id} className="group relative overflow-hidden rounded-lg bg-concrete-100">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -143,19 +153,30 @@ export default function SettingsView() {
                   type="button"
                   onClick={() => heroInputRef.current?.click()}
                   disabled={uploadingHero}
-                  className="flex aspect-video items-center justify-center rounded-lg border-2 border-dashed border-concrete-300 text-concrete-400 transition hover:border-brand-400 hover:text-brand-500 disabled:opacity-50"
+                  aria-label="Add hero images"
+                  className="flex aspect-video flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-concrete-300 px-2 text-center text-concrete-400 transition hover:border-brand-400 hover:text-brand-500 disabled:opacity-50"
                 >
                   {uploadingHero ? (
                     <Spinner className="h-5 w-5" />
                   ) : (
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-6 w-6">
-                      <path d="M12 5v14M5 12h14" />
-                    </svg>
+                    <>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-6 w-6">
+                        <path d="M12 5v14M5 12h14" />
+                      </svg>
+                      <span className="text-[11px] font-semibold leading-tight">Add or drop images</span>
+                    </>
                   )}
                 </button>
               )}
             </div>
-            <input ref={heroInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handleHeroUpload} />
+            <input
+              ref={heroInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={(e) => uploadHeroImages(Array.from(e.target.files ?? []).filter((f) => f.type.startsWith("image/")))}
+            />
           </div>
         </Card>
       </div>

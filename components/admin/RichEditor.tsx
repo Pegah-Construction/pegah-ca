@@ -7,6 +7,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Youtube from "@tiptap/extension-youtube";
 import { TextStyle, Color } from "@tiptap/extension-text-style";
+import { DropOverlay, useImageDrop } from "./DropZone";
 
 // ─── Progress Banner node view (rendered in editor) ─────────────────
 function ProgressBannerView({ node }: NodeViewProps) {
@@ -223,21 +224,26 @@ export default function RichEditor({ value, onChange, articleId }: { value: stri
 
   const togglePanel = (p: Panel) => setPanel((cur) => (cur === p ? null : p));
 
-  // Image upload
-  const handleImageFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    e.target.value = "";
-    if (!file || !articleId || !editor) return;
+  // Image upload — inserts each image at the cursor, in the order given.
+  const uploadImages = async (files: File[]) => {
+    if (!files.length || !articleId || !editor || uploading) return;
     setUploading(true);
-    const fd = new FormData();
-    fd.append("file", file);
-    const res = await fetch(`/api/news/${articleId}/media`, { method: "POST", body: fd });
-    if (res.ok) {
-      const { url } = await res.json();
-      editor.chain().focus().setImage({ src: url }).run();
+    for (const file of files) {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch(`/api/news/${articleId}/media`, { method: "POST", body: fd });
+      if (res.ok) {
+        const { url } = await res.json();
+        editor.chain().focus().setImage({ src: url }).run();
+      } else {
+        alert("Image upload failed. Please try again.");
+        break;
+      }
     }
     setUploading(false);
   };
+
+  const imageDrop = useImageDrop({ onFiles: uploadImages, disabled: !articleId || uploading });
 
   // Video embed
   const handleVideoEmbed = () => {
@@ -310,7 +316,18 @@ export default function RichEditor({ value, onChange, articleId }: { value: stri
             : <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="m21 15-5-5L5 21" /></svg>
           }
         </ToolBtn>
-        <input ref={fileInputRef} type="file" accept="image/*" className="sr-only" onChange={handleImageFile} />
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          className="sr-only"
+          onChange={(e) => {
+            const files = Array.from(e.target.files ?? []).filter((f) => f.type.startsWith("image/"));
+            e.target.value = "";
+            uploadImages(files);
+          }}
+        />
         {/* Video */}
         <ToolBtn title="Embed YouTube / Vimeo" onClick={() => togglePanel("video")} active={panel === "video"}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5">
@@ -423,13 +440,14 @@ export default function RichEditor({ value, onChange, articleId }: { value: stri
       )}
 
       {/* Editor area */}
-      <div className="px-3 py-2 text-sm text-ink [&_.prose-editor_.section-label]:font-mono [&_.prose-editor_.section-label]:text-[10px] [&_.prose-editor_.section-label]:font-bold [&_.prose-editor_.section-label]:uppercase [&_.prose-editor_.section-label]:tracking-widest [&_.prose-editor_.section-label]:text-brand-600 [&_.prose-editor_blockquote]:my-2 [&_.prose-editor_blockquote]:border-l-4 [&_.prose-editor_blockquote]:border-concrete-300 [&_.prose-editor_blockquote]:pl-3 [&_.prose-editor_blockquote]:text-concrete-500 [&_.prose-editor_code]:rounded [&_.prose-editor_code]:bg-concrete-100 [&_.prose-editor_code]:px-1 [&_.prose-editor_h2]:mt-3 [&_.prose-editor_h2]:font-display [&_.prose-editor_h2]:text-lg [&_.prose-editor_h2]:font-bold [&_.prose-editor_h3]:mt-2 [&_.prose-editor_h3]:font-display [&_.prose-editor_h3]:text-base [&_.prose-editor_h3]:font-semibold [&_.prose-editor_img]:my-3 [&_.prose-editor_img]:max-w-full [&_.prose-editor_img]:rounded-lg [&_.prose-editor_li]:ml-4 [&_.prose-editor_ol]:list-decimal [&_.prose-editor_p]:my-1 [&_.prose-editor_p]:leading-relaxed [&_.prose-editor_ul]:list-disc [&_.prose-editor_iframe]:my-3 [&_.prose-editor_iframe]:max-w-full [&_.prose-editor_iframe]:rounded-lg">
+      <div {...imageDrop.dropProps} className="relative px-3 py-2 text-sm text-ink [&_.prose-editor_.section-label]:font-mono [&_.prose-editor_.section-label]:text-[10px] [&_.prose-editor_.section-label]:font-bold [&_.prose-editor_.section-label]:uppercase [&_.prose-editor_.section-label]:tracking-widest [&_.prose-editor_.section-label]:text-brand-600 [&_.prose-editor_blockquote]:my-2 [&_.prose-editor_blockquote]:border-l-4 [&_.prose-editor_blockquote]:border-concrete-300 [&_.prose-editor_blockquote]:pl-3 [&_.prose-editor_blockquote]:text-concrete-500 [&_.prose-editor_code]:rounded [&_.prose-editor_code]:bg-concrete-100 [&_.prose-editor_code]:px-1 [&_.prose-editor_h2]:mt-3 [&_.prose-editor_h2]:font-display [&_.prose-editor_h2]:text-lg [&_.prose-editor_h2]:font-bold [&_.prose-editor_h3]:mt-2 [&_.prose-editor_h3]:font-display [&_.prose-editor_h3]:text-base [&_.prose-editor_h3]:font-semibold [&_.prose-editor_img]:my-3 [&_.prose-editor_img]:max-w-full [&_.prose-editor_img]:rounded-lg [&_.prose-editor_li]:ml-4 [&_.prose-editor_ol]:list-decimal [&_.prose-editor_p]:my-1 [&_.prose-editor_p]:leading-relaxed [&_.prose-editor_ul]:list-disc [&_.prose-editor_iframe]:my-3 [&_.prose-editor_iframe]:max-w-full [&_.prose-editor_iframe]:rounded-lg">
+        <DropOverlay dragging={imageDrop.dragging} text="Drop images into the article" />
         <EditorContent editor={editor} />
       </div>
 
       {!articleId && (
         <div className="border-t border-concrete-100 px-3 py-1.5 text-[11px] text-concrete-400">
-          Save the article first to enable image uploads.
+          Save the article first to enable image uploads (then you can drop images straight into the body).
         </div>
       )}
     </div>
