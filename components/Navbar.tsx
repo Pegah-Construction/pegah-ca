@@ -8,7 +8,7 @@ import { SiteLogo } from "./Brand";
 import ThemeToggle from "./ThemeToggle";
 import { useAuth } from "@/lib/auth";
 import { useSiteSettings } from "@/lib/use-settings";
-import { telHref } from "@/lib/settings";
+import { isOn, telHref } from "@/lib/settings";
 
 const PALETTE = ["bg-brand-700", "bg-brand-500", "bg-brand-800", "bg-concrete-500", "bg-brand-600"];
 
@@ -26,6 +26,11 @@ export default function Navbar() {
   const pathname = usePathname();
   const { user } = useAuth();
   const s = useSiteSettings();
+  // The services section can be hidden from the dashboard; drop its link rather
+  // than leaving one that jumps to an anchor that isn't on the page.
+  const navItems = isOn(s.servicesVisible)
+    ? nav
+    : nav.filter((item) => item.href !== "/#services");
   const [menuOpen, setMenuOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const [navH, setNavH] = useState(0);
@@ -98,7 +103,7 @@ export default function Navbar() {
           {/* Wraps rather than overflowing: nine uppercase links don't fit on one
               line between the logo and the right edge at ~lg widths. */}
           <ul className="flex flex-wrap items-center justify-end gap-x-7 gap-y-2">
-            {nav.map((item) => {
+            {navItems.map((item) => {
               const onSection = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
               const isActive =
                 onSection(item.href) ||
@@ -188,7 +193,7 @@ export default function Navbar() {
           className="max-h-[calc(100dvh-5.5rem)] overflow-y-auto overscroll-contain border-t border-concrete-200 bg-paper sm:max-h-[calc(100dvh-6.25rem)] lg:hidden"
         >
           <ul className="mx-auto max-w-8xl space-y-1 px-6 py-4">
-            {nav.map((item) => {
+            {navItems.map((item) => {
               const isActive = pathname === item.href || item.children?.some((c) => pathname === c.href);
               return (
                 <li key={item.href}>

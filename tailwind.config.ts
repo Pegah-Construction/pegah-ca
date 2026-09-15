@@ -5,6 +5,9 @@ const config: Config = {
   content: [
     "./app/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
+    // Class names chosen by stored settings live here (see SERVICE_COLUMN_CLASSES);
+    // without this glob Tailwind never sees them and the utility is never built.
+    "./lib/**/*.{ts,tsx}",
   ],
   theme: {
     extend: {

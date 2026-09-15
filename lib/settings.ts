@@ -33,6 +33,36 @@ export const SETTINGS_DEFAULTS: Record<string, string> = {
     "Design–Build | One accountable team from initial concept through detailed design and build.",
     "Care & Support | Long-term maintenance and specialist support once the asset is live.",
   ].join("\n"),
+  // How the services section is laid out. The copy and the number of services
+  // are both editable, so these stop the presentation from being pinned to
+  // choices that only ever suited exactly four cards.
+  servicesVisible: "1",
+  servicesColumns: "4",
+  servicesImageShape: "square",
+};
+
+// Settings are stored as strings; treat anything but an explicit "off" as on,
+// so a key that has never been saved still shows.
+export const isOn = (v: string | undefined) =>
+  v !== "0" && v !== "false" && v !== "";
+
+/**
+ * Tailwind only generates classes it can see written out, so a stored value
+ * like "3" can never be interpolated into a class name — it has to select a
+ * literal. Phones always get one card per row.
+ */
+export const SERVICE_COLUMN_CLASSES: Record<string, string> = {
+  "1": "",
+  "2": "sm:grid-cols-2",
+  "3": "sm:grid-cols-2 lg:grid-cols-3",
+  "4": "sm:grid-cols-2 lg:grid-cols-4",
+};
+
+export const SERVICE_SHAPE_CLASSES: Record<string, string> = {
+  square: "aspect-square",
+  landscape: "aspect-[4/3]",
+  wide: "aspect-[16/9]",
+  portrait: "aspect-[3/4]",
 };
 
 // Keys editable via /api/settings.

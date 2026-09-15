@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/auth";
 import { permsFor } from "@/lib/admin";
 import { Card, PrimaryBtn, Spinner } from "../ui";
 import { DropTarget } from "../DropZone";
-import { Field, TextareaField, LockBanner, SaveBar } from "../SettingsFields";
+import { Field, TextareaField, SelectField, ToggleField, LockBanner, SaveBar } from "../SettingsFields";
 import { SETTINGS_DEFAULTS, fillCount, parseServices, setServiceImage } from "@/lib/settings";
 import { getStorageUrl } from "@/lib/storage-url";
 
@@ -16,6 +16,9 @@ const KEYS = [
   "servicesHomeHeading",
   "servicesIntro",
   "servicesList",
+  "servicesVisible",
+  "servicesColumns",
+  "servicesImageShape",
 ] as const;
 
 // What {count} currently resolves to, so the hint shows the live value while the
@@ -138,6 +141,43 @@ export default function ServicesView() {
               onChange={set("servicesIntro")}
               rows={3}
               hint="The paragraph under the heading, above the cards — a short summary of what the company does."
+            />
+          </div>
+        </Card>
+
+        <Card title="Section display">
+          <div className="grid gap-5 p-5 sm:grid-cols-2">
+            <ToggleField
+              label="Show this section"
+              value={form.servicesVisible ?? "1"}
+              disabled={locked}
+              onChange={set("servicesVisible")}
+              hint="Turn off to take the whole services section off the home page without deleting anything. The Services link in the top menu disappears with it."
+            />
+            <SelectField
+              label="Cards per row"
+              value={form.servicesColumns ?? "4"}
+              disabled={locked}
+              onChange={set("servicesColumns")}
+              options={[
+                { value: "2", label: "2 across" },
+                { value: "3", label: "3 across" },
+                { value: "4", label: "4 across" },
+              ]}
+              hint={`On a wide screen. Tablets always show 2 and phones 1, whatever you pick. You have ${services.length} service${services.length === 1 ? "" : "s"} — pick a number that divides evenly to avoid a short last row.`}
+            />
+            <SelectField
+              label="Card image shape"
+              value={form.servicesImageShape ?? "square"}
+              disabled={locked}
+              onChange={set("servicesImageShape")}
+              options={[
+                { value: "square", label: "Square" },
+                { value: "landscape", label: "Landscape (4:3)" },
+                { value: "wide", label: "Wide (16:9)" },
+                { value: "portrait", label: "Portrait (3:4)" },
+              ]}
+              hint="Applies to every card. Images are cropped from the centre to fit, so check the cards after changing it."
             />
           </div>
         </Card>

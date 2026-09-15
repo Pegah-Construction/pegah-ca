@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { getStorageUrl } from "@/lib/storage-url";
+import { SERVICE_SHAPE_CLASSES } from "@/lib/settings";
 
 /**
  * Blueprint artwork shipped with the site, one per default service. Used when no
@@ -26,13 +27,16 @@ export default function ServiceImage({
   title,
   index,
   slug,
+  shape,
 }: {
   src: string;
   title: string;
   index: number;
   slug?: string;
+  shape?: string;
 }) {
   const [failed, setFailed] = useState(false);
+  const aspect = SERVICE_SHAPE_CLASSES[shape ?? ""] ?? SERVICE_SHAPE_CLASSES.square;
   // An uploaded photo always wins; the bundled art only fills the gap.
   const url = getStorageUrl(src) || (slug && BUNDLED_ART.has(slug) ? `/services/${slug}.png` : "");
 
@@ -42,7 +46,7 @@ export default function ServiceImage({
         // No photo yet: the card's number on the striped placeholder, rather
         // than repeating the title that already sits right below it.
         <div
-          className="image-slot flex aspect-square items-center justify-center"
+          className={`image-slot flex ${aspect} items-center justify-center`}
           role="img"
           aria-label={`${title} — photo to come`}
         >
@@ -56,7 +60,7 @@ export default function ServiceImage({
           src={url}
           alt={title}
           onError={() => setFailed(true)}
-          className="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+          className={`${aspect} w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]`}
         />
       )}
     </div>

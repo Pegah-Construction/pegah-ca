@@ -300,6 +300,18 @@ it. **edit the fields, then click _save changes_** at the bottom to publish.
 - **intro** — the paragraph between the heading and the cards. a short summary of what the company
   does, before the individual services.
 
+**section display**
+- **show this section** — the switch that takes the whole services section off the home page without
+  deleting a word of it. the **services** link in the top menu disappears at the same time, so the
+  menu never points at a section that isn't there. turn it back on and everything returns exactly as
+  it was.
+- **cards per row** — 2, 3 or 4 across on a wide screen. tablets always show 2 and phones 1, whatever
+  you choose. pick a number that divides into your number of services, or the last row ends up short
+  — with five services, "4 across" leaves one card stranded on its own line.
+- **card image shape** — square, landscape, wide or portrait, applied to every card at once. photos
+  are cropped from the middle to fit, so glance at the cards after changing it: a shape that suits one
+  photo can cut the top off another.
+
 **services list**
 one service per line, written as `Title | description`. below the box, **cards & images** shows how
 each line was read, numbered as it will appear on the site — if a line is missing its `|`, it flags
@@ -308,8 +320,11 @@ showing a heading with no cards.
 
 **card images**
 each card can carry its own photo, set from the **cards & images** list: **add image** (or
-**replace**) opens the file picker, **remove** clears it. square photos look best — anything else is
-cropped to a square — and a card with no photo shows its title on a striped placeholder instead.
+**replace**) opens the file picker, **remove** clears it. you can also drag an image straight onto a
+row instead of clicking. photos are cropped to whatever **card image shape** is set above, from the
+middle outwards, so pick photos whose subject sits near the centre. a card with no photo of its own
+falls back to the blueprint artwork that ships with the site, and anything unrecognised shows its
+number on a striped placeholder instead.
 uploading happens right away, but like every other field the change only reaches the site once you
 click **save changes**. the image path the upload adds to the end of the service's line is managed
 for you; leave it alone when editing the text.

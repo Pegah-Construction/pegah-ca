@@ -2,7 +2,7 @@ import { Eyebrow } from "./Brand";
 import Reveal from "./Reveal";
 import ServiceImage from "./ServiceImage";
 import { getSiteSettings } from "@/lib/settings-server";
-import { fillCount, parseServices } from "@/lib/settings";
+import { fillCount, isOn, parseServices, SERVICE_COLUMN_CLASSES } from "@/lib/settings";
 
 /**
  * The services section — the only place services are shown, so it carries the
@@ -13,6 +13,9 @@ export default async function ServicesList() {
   const settings = await getSiteSettings();
   const services = parseServices(settings.servicesList);
   if (services.length === 0) return null;
+  // Hidden from the dashboard without having to delete the content itself.
+  if (!isOn(settings.servicesVisible)) return null;
+  const columns = SERVICE_COLUMN_CLASSES[settings.servicesColumns] ?? SERVICE_COLUMN_CLASSES["4"];
   return (
     <section id="services" className="tint-grid-surface scroll-mt-24">
       <div className="mx-auto max-w-8xl px-5 py-16 sm:px-6 sm:py-24 lg:px-10 lg:py-28">
@@ -30,12 +33,13 @@ export default async function ServicesList() {
         </Reveal>
 
         {/* Image card per service: photo, then title, then the one-line
-            description — four across on desktop, two on tablet, one on a phone. */}
-        <div className="mt-12 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+            description. Cards per row is set in the dashboard; a phone always
+            gets one. */}
+        <div className={`mt-12 grid gap-x-6 gap-y-10 ${columns}`}>
           {services.map((s, i) => (
             <Reveal key={`${s.slug}-${i}`} delay={i * 80} direction="up">
               <article className="group h-full">
-                <ServiceImage src={s.image} title={s.title} index={i} slug={s.slug} />
+                <ServiceImage src={s.image} title={s.title} index={i} slug={s.slug} shape={settings.servicesImageShape} />
                 <h3 className="mt-5 font-display text-xl font-bold tracking-tight text-ink transition-colors group-hover:text-brand-700 lg:text-lg">
                   {s.title}
                 </h3>
