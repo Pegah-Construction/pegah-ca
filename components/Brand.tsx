@@ -5,16 +5,16 @@ export function SiteLogo() {
     <Link href="/" className="inline-flex shrink-0 items-center">
       {/* eslint-disable-next-line @next/next/no-img-element -- local image, no optimization needed */}
       <img
-        src="/logo.webp"
-        alt="Pegah Construction Ltd., 35+ years"
-        className="h-16 w-auto sm:h-[4.75rem] dark:hidden"
+        src="/pegah-logo.png"
+        alt="Pegah Construction — 35+ years Built on Trust"
+        className="h-12 w-auto max-w-full sm:h-16 dark:hidden"
       />
       {/* White version for dark mode */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/logo-dark.webp"
-        alt="Pegah Construction Ltd., 35+ years"
-        className="hidden h-16 w-auto sm:h-[4.75rem] dark:block"
+        src="/pegah-logo-white.png"
+        alt="Pegah Construction — 35+ years Built on Trust"
+        className="hidden h-12 w-auto max-w-full sm:h-16 dark:block"
       />
     </Link>
   );
@@ -34,9 +34,9 @@ export function LogoMark({ href = "/", heightClass = "h-9" }: { href?: string; h
     <Link href={href} className="inline-flex shrink-0 items-center">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/logo-dark.webp"
-        alt="Pegah Construction Ltd."
-        className={`${heightClass} w-auto`}
+        src="/pegah-logo-white.png"
+        alt="Pegah Construction"
+        className={`${heightClass} w-auto max-w-full`}
       />
     </Link>
   );

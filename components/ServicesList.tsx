@@ -35,7 +35,7 @@ export default async function ServicesList() {
           {services.map((s, i) => (
             <Reveal key={`${s.slug}-${i}`} delay={i * 80} direction="up">
               <article className="group h-full">
-                <ServiceImage src={s.image} title={s.title} index={i} />
+                <ServiceImage src={s.image} title={s.title} index={i} slug={s.slug} />
                 <h3 className="mt-5 font-display text-xl font-bold tracking-tight text-ink transition-colors group-hover:text-brand-700 lg:text-lg">
                   {s.title}
                 </h3>

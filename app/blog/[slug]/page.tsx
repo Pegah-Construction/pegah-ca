@@ -101,7 +101,7 @@ export default async function BlogPost({ params }: Props) {
     publisher: {
       "@type": "Organization",
       name: "Pegah Construction Ltd.",
-      logo: { "@type": "ImageObject", url: `${siteUrl}/logo.webp` },
+      logo: { "@type": "ImageObject", url: `${siteUrl}/pegah-logo.png` },
     },
     mainEntityOfPage: `${siteUrl}/blog/${article.slug}`,
   };

@@ -79,7 +79,7 @@ const orgJsonLd = {
   "@id": `${siteUrl}/#organization`,
   name: company.name,
   url: siteUrl,
-  logo: `${siteUrl}/logo.webp`,
+  logo: `${siteUrl}/pegah-logo.png`,
   image: `${siteUrl}/opengraph-image.png`,
   description: DESCRIPTION,
   foundingDate: company.established,

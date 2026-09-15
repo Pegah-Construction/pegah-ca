@@ -23,9 +23,9 @@ export default function Footer() {
         <div className="md:col-span-5">
           <Link href="/" className="inline-flex shrink-0 items-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.webp" alt="Pegah Construction Ltd." className="h-11 w-auto dark:hidden" />
+            <img src="/pegah-logo.png" alt="Pegah Construction — 35+ years Built on Trust" className="h-11 w-auto max-w-full dark:hidden" />
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo-dark.webp" alt="Pegah Construction Ltd." className="hidden h-11 w-auto dark:block" />
+            <img src="/pegah-logo-white.png" alt="Pegah Construction — 35+ years Built on Trust" className="hidden h-11 w-auto max-w-full dark:block" />
           </Link>
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-concrete-500">
             General contracting and project management for {company.region} since {company.established}.
