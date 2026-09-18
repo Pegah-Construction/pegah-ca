@@ -2,6 +2,8 @@ import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { siteUrl } from "@/lib/site";
 
+// x
+
 // Rebuilt per request so new projects / published posts appear promptly.
 export const dynamic = "force-dynamic";
 
