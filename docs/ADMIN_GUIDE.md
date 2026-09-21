@@ -301,16 +301,35 @@ it. **edit the fields, then click _save changes_** at the bottom to publish.
   does, before the individual services.
 
 **section display**
-- **show this section** — the switch that takes the whole services section off the home page without
-  deleting a word of it. the **services** link in the top menu disappears at the same time, so the
-  menu never points at a section that isn't there. turn it back on and everything returns exactly as
-  it was.
-- **cards per row** — 2, 3 or 4 across on a wide screen. tablets always show 2 and phones 1, whatever
-  you choose. pick a number that divides into your number of services, or the last row ends up short
-  — with five services, "4 across" leaves one card stranded on its own line.
+everything about how the section looks, not just what it says. nothing here can break the page — each
+setting picks from a fixed list of options the site already supports.
+
+- **show this section** — takes the whole services section off the home page without deleting a word
+  of it. the **services** link in the top menu disappears at the same time, so the menu never points
+  at a section that isn't there. turn it back on and everything returns exactly as it was.
+- **cards per row** — 2, 3 or 4 across on a wide screen; this is also what sets how big the cards are,
+  since fewer per row means each one is wider. on a typical laptop that is roughly 630px wide at "2
+  across" (the default), 400px at "3 across" and 285px at "4 across". tablets always show 2 and phones
+  1, whatever you choose. if your number of services doesn't divide evenly the last row comes up short, and those
+  leftover cards sit **centred** under the full rows rather than off to the left — so five services
+  at "4 across" reads as a row of four with the fifth centred beneath.
 - **card image shape** — square, landscape, wide or portrait, applied to every card at once. photos
-  are cropped from the middle to fit, so glance at the cards after changing it: a shape that suits one
-  photo can cut the top off another.
+  are cropped from the middle outwards to fit, so glance at the cards after changing it: a shape that
+  suits one photo can cut the top off another.
+- **section background** — the band behind the section: the default blueprint tint, plain white,
+  off-white, or a light blue tint. all four follow light and dark mode, so the text stays readable.
+- **section spacing** — how much empty space sits above and below the section: compact, normal or
+  roomy.
+- **heading size** — small, medium or large. affects the section heading only; the card titles stay
+  as they are.
+- **text alignment** — left or centred. moves the eyebrow, heading, intro **and** the card text
+  together, so the section can't end up half-centred.
+- **amber accent bar** — the short amber bar above the eyebrow. other sections of the site use the
+  same bar, so switching it off here makes this section the odd one out.
+- **fade-in animation** — cards fade and slide up as a visitor scrolls down to them. off means
+  everything is simply there.
+- **zoom image on hover** — a slight zoom when the mouse sits over a card image. no effect on phones
+  or tablets, which have no hover.
 
 **services list**
 one service per line, written as `Title | description`. below the box, **cards & images** shows how
@@ -318,13 +337,23 @@ each line was read, numbered as it will appear on the site — if a line is miss
 it. the card header shows the current count. with an empty list, the section hides itself rather than
 showing a heading with no cards.
 
+**removing a service**
+each row in **cards & images** has a red **remove** button that deletes the whole card — title,
+description and image reference together — after asking you to confirm. it is the same as deleting
+that line from the box above, so like every other edit here it only reaches the website when you
+click **save changes**; if you remove one by mistake, leave the page without saving and it comes
+back. the photo that was uploaded for it stays in storage rather than being deleted, precisely so
+that undo works.
+
 **card images**
 each card can carry its own photo, set from the **cards & images** list: **add image** (or
-**replace**) opens the file picker, **remove** clears it. you can also drag an image straight onto a
+**replace**) opens the file picker, and **clear image** removes just the picture and keeps the card. you can also drag an image straight onto a
 row instead of clicking. photos are cropped to whatever **card image shape** is set above, from the
 middle outwards, so pick photos whose subject sits near the centre. a card with no photo of its own
-falls back to the blueprint artwork that ships with the site, and anything unrecognised shows its
-number on a striped placeholder instead.
+falls back to the stock photo that ships with the site for that service, and anything unrecognised
+shows its number on a striped placeholder instead. those stock photos are stand-ins, not pegah
+projects — uploading a real photo of our own work is always better, and it replaces the stock one
+straight away.
 uploading happens right away, but like every other field the change only reaches the site once you
 click **save changes**. the image path the upload adds to the end of the service's line is managed
 for you; leave it alone when editing the text.

@@ -6,7 +6,7 @@ import { permsFor } from "@/lib/admin";
 import { Card, PrimaryBtn, Spinner } from "../ui";
 import { DropTarget } from "../DropZone";
 import { Field, TextareaField, SelectField, ToggleField, LockBanner, SaveBar } from "../SettingsFields";
-import { SETTINGS_DEFAULTS, fillCount, parseServices, setServiceImage } from "@/lib/settings";
+import { SETTINGS_DEFAULTS, fillCount, parseServices, removeServiceLine, setServiceImage } from "@/lib/settings";
 import { getStorageUrl } from "@/lib/storage-url";
 
 // The settings keys this page owns. Only these are sent on save, so it can never
@@ -19,6 +19,13 @@ const KEYS = [
   "servicesVisible",
   "servicesColumns",
   "servicesImageShape",
+  "servicesBackground",
+  "servicesSpacing",
+  "servicesHeadingSize",
+  "servicesAlign",
+  "servicesAccentBar",
+  "servicesAnimate",
+  "servicesImageZoom",
 ] as const;
 
 // What {count} currently resolves to, so the hint shows the live value while the
@@ -91,12 +98,31 @@ export default function ServicesView() {
     }
   };
 
-  const removeImage = async (row: number) => {
+  const clearImage = async (row: number) => {
     const path = services[row]?.image;
     setForm((f) => ({ ...f, servicesList: setServiceImage(f.servicesList ?? "", row, "") }));
     if (path) {
       await fetch(`/api/services/image?path=${encodeURIComponent(path)}`, { method: "DELETE" }).catch(() => {});
     }
+  };
+
+  /**
+   * Delete the whole service — its title, description and image reference — not
+   * just the picture. The uploaded file itself is deliberately left in storage:
+   * this only edits the form, so until Save is clicked the removal can still be
+   * abandoned by reloading, and deleting the photo now would make that
+   * unrecoverable.
+   */
+  const removeService = (row: number) => {
+    const s = services[row];
+    if (!s) return;
+    const label = s.title || `service ${row + 1}`;
+    const ok = confirm(
+      `Remove "${label}" from the services list?\n\nThe whole card goes — title, description and image. Nothing is published until you click Save changes.`
+    );
+    if (!ok) return;
+    setForm((f) => ({ ...f, servicesList: removeServiceLine(f.servicesList ?? "", row) }));
+    setError("");
   };
 
   return (
@@ -156,15 +182,15 @@ export default function ServicesView() {
             />
             <SelectField
               label="Cards per row"
-              value={form.servicesColumns ?? "4"}
+              value={form.servicesColumns ?? "2"}
               disabled={locked}
               onChange={set("servicesColumns")}
               options={[
-                { value: "2", label: "2 across" },
+                { value: "2", label: "2 across — largest cards (default)" },
                 { value: "3", label: "3 across" },
-                { value: "4", label: "4 across" },
+                { value: "4", label: "4 across (smallest cards)" },
               ]}
-              hint={`On a wide screen. Tablets always show 2 and phones 1, whatever you pick. You have ${services.length} service${services.length === 1 ? "" : "s"} — pick a number that divides evenly to avoid a short last row.`}
+              hint={`On a wide screen. Tablets always show 2 and phones 1, whatever you pick. You have ${services.length} service${services.length === 1 ? "" : "s"} — if the last row comes up short, its cards sit centred rather than off to the left.`}
             />
             <SelectField
               label="Card image shape"
@@ -178,6 +204,75 @@ export default function ServicesView() {
                 { value: "portrait", label: "Portrait (3:4)" },
               ]}
               hint="Applies to every card. Images are cropped from the centre to fit, so check the cards after changing it."
+            />
+            <SelectField
+              label="Section background"
+              value={form.servicesBackground ?? "tint"}
+              disabled={locked}
+              onChange={set("servicesBackground")}
+              options={[
+                { value: "tint", label: "Blueprint tint (default)" },
+                { value: "surface", label: "Plain white" },
+                { value: "paper", label: "Off-white" },
+                { value: "brand", label: "Light blue tint" },
+              ]}
+              hint="The band behind the whole section. All four follow light/dark mode, so text stays readable either way."
+            />
+            <SelectField
+              label="Section spacing"
+              value={form.servicesSpacing ?? "normal"}
+              disabled={locked}
+              onChange={set("servicesSpacing")}
+              options={[
+                { value: "compact", label: "Compact" },
+                { value: "normal", label: "Normal (default)" },
+                { value: "roomy", label: "Roomy" },
+              ]}
+              hint="How much empty space sits above and below the section."
+            />
+            <SelectField
+              label="Heading size"
+              value={form.servicesHeadingSize ?? "medium"}
+              disabled={locked}
+              onChange={set("servicesHeadingSize")}
+              options={[
+                { value: "small", label: "Small" },
+                { value: "medium", label: "Medium (default)" },
+                { value: "large", label: "Large" },
+              ]}
+              hint="The size of the section heading only — the card titles are unaffected."
+            />
+            <SelectField
+              label="Text alignment"
+              value={form.servicesAlign ?? "left"}
+              disabled={locked}
+              onChange={set("servicesAlign")}
+              options={[
+                { value: "left", label: "Left (default)" },
+                { value: "center", label: "Centred" },
+              ]}
+              hint="Moves the eyebrow, heading, intro and the card text together, so the section stays consistent."
+            />
+            <ToggleField
+              label="Amber accent bar"
+              value={form.servicesAccentBar ?? "1"}
+              disabled={locked}
+              onChange={set("servicesAccentBar")}
+              hint="The short amber bar above the eyebrow. Other sections of the site use it too, so turning it off here makes this section the odd one out."
+            />
+            <ToggleField
+              label="Fade-in animation"
+              value={form.servicesAnimate ?? "1"}
+              disabled={locked}
+              onChange={set("servicesAnimate")}
+              hint="Cards fade and slide up as the visitor scrolls to them. Turn off to have everything simply appear."
+            />
+            <ToggleField
+              label="Zoom image on hover"
+              value={form.servicesImageZoom ?? "1"}
+              disabled={locked}
+              onChange={set("servicesImageZoom")}
+              hint="A slight zoom when the mouse is over a card image. Has no effect on phones and tablets."
             />
           </div>
         </Card>
@@ -256,12 +351,20 @@ export default function ServicesView() {
                             {s.image && (
                               <button
                                 type="button"
-                                onClick={() => removeImage(i)}
+                                onClick={() => clearImage(i)}
                                 className="rounded-md border border-concrete-200 px-3 py-1.5 font-display text-xs font-semibold text-concrete-600 hover:bg-concrete-50"
                               >
-                                Remove
+                                Clear image
                               </button>
                             )}
+                            <button
+                              type="button"
+                              onClick={() => removeService(i)}
+                              title="Delete this service entirely"
+                              className="rounded-md border border-red-200 px-3 py-1.5 font-display text-xs font-semibold text-red-700 hover:bg-red-50"
+                            >
+                              Remove
+                            </button>
                           </div>
                         )}
                       </DropTarget>

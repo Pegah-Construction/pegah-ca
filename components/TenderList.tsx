@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { tenderGroupOf } from "@/lib/tender-group";
 
 export type PublicTender = {
   id: string;
@@ -87,9 +88,9 @@ function TenderCard({ t }: { t: PublicTender }) {
 const STATUSES = ["Active", "Open", "Closing soon", "Closed", "All"] as const;
 
 // Two portfolio groups. "ICI" (Institutional, Commercial & Industrial) is
-// everything that isn't residential.
+// everything that isn't residential. The feed's project type is free text, so
+// the split is keyword-based — see lib/tender-group.
 const GROUPS = ["All", "ICI", "Residential"] as const;
-const groupOf = (t: PublicTender) => (t.category === "Residential" ? "Residential" : "ICI");
 
 function TenderGroup({ title, items }: { title: string; items: PublicTender[] }) {
   if (items.length === 0) return null;
@@ -120,7 +121,7 @@ export default function TenderList({ tenders }: { tenders: PublicTender[] }) {
       if (status === "All") return true;
       return t.status === status;
     })
-    .filter((t) => group === "All" || groupOf(t) === group)
+    .filter((t) => group === "All" || tenderGroupOf(t) === group)
     .filter(
       (t) =>
         !needle ||
@@ -229,8 +230,8 @@ export default function TenderList({ tenders }: { tenders: PublicTender[] }) {
         </div>
       ) : (
         <div className="space-y-10">
-          <TenderGroup title="ICI Projects" items={visible.filter((t) => groupOf(t) === "ICI")} />
-          <TenderGroup title="Residential Projects" items={visible.filter((t) => groupOf(t) === "Residential")} />
+          <TenderGroup title="ICI Projects" items={visible.filter((t) => tenderGroupOf(t) === "ICI")} />
+          <TenderGroup title="Residential Projects" items={visible.filter((t) => tenderGroupOf(t) === "Residential")} />
         </div>
       )}
 

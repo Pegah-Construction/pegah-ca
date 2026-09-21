@@ -37,8 +37,15 @@ export const SETTINGS_DEFAULTS: Record<string, string> = {
   // are both editable, so these stop the presentation from being pinned to
   // choices that only ever suited exactly four cards.
   servicesVisible: "1",
-  servicesColumns: "4",
+  servicesColumns: "2",
   servicesImageShape: "square",
+  servicesBackground: "tint",
+  servicesSpacing: "normal",
+  servicesHeadingSize: "medium",
+  servicesAlign: "left",
+  servicesAccentBar: "1",
+  servicesAnimate: "1",
+  servicesImageZoom: "1",
 };
 
 // Settings are stored as strings; treat anything but an explicit "off" as on,
@@ -47,15 +54,30 @@ export const isOn = (v: string | undefined) =>
   v !== "0" && v !== "false" && v !== "";
 
 /**
+ * Per-card width, as a flex basis rather than grid columns.
+ *
+ * A grid of `1fr` tracks cannot centre an incomplete last row — five cards in
+ * fours leaves the fifth hugging the left edge. Wrapping flex with an exact
+ * basis lays complete rows out identically to the old grid while letting
+ * `justify-center` centre whatever is left over.
+ *
+ * The bases subtract their share of the gutters, which widen from 4rem
+ * (gap-x-16) to 6rem (lg:gap-x-24) on a large screen. Two across on a tablet is
+ * 50% minus one 4rem gutter split over two cards (2rem each); at lg the same
+ * gutter is 6rem, so two across is 50% minus 3rem, three across is 33.333%
+ * minus two gutters over three cards (4rem) and four across is 25% minus three
+ * over four (4.5rem). Change either gap in ServicesList and these have to
+ * change with it, or a row overflows and wraps a card early.
+ *
  * Tailwind only generates classes it can see written out, so a stored value
- * like "3" can never be interpolated into a class name — it has to select a
- * literal. Phones always get one card per row.
+ * like "3" can never be interpolated — it has to select a literal. Phones
+ * always get one card per row.
  */
-export const SERVICE_COLUMN_CLASSES: Record<string, string> = {
-  "1": "",
-  "2": "sm:grid-cols-2",
-  "3": "sm:grid-cols-2 lg:grid-cols-3",
-  "4": "sm:grid-cols-2 lg:grid-cols-4",
+export const SERVICE_CARD_WIDTH_CLASSES: Record<string, string> = {
+  "1": "basis-full",
+  "2": "basis-full sm:basis-[calc(50%_-_2rem)] lg:basis-[calc(50%_-_3rem)]",
+  "3": "basis-full sm:basis-[calc(50%_-_2rem)] lg:basis-[calc(33.333%_-_4rem)]",
+  "4": "basis-full sm:basis-[calc(50%_-_2rem)] lg:basis-[calc(25%_-_4.5rem)]",
 };
 
 export const SERVICE_SHAPE_CLASSES: Record<string, string> = {
@@ -63,6 +85,31 @@ export const SERVICE_SHAPE_CLASSES: Record<string, string> = {
   landscape: "aspect-[4/3]",
   wide: "aspect-[16/9]",
   portrait: "aspect-[3/4]",
+};
+
+export const SERVICE_BACKGROUND_CLASSES: Record<string, string> = {
+  tint: "tint-grid-surface",
+  surface: "bg-surface",
+  paper: "bg-paper",
+  brand: "bg-brand-50",
+};
+
+export const SERVICE_SPACING_CLASSES: Record<string, string> = {
+  compact: "py-10 sm:py-14 lg:py-16",
+  normal: "py-16 sm:py-24 lg:py-28",
+  roomy: "py-24 sm:py-32 lg:py-40",
+};
+
+export const SERVICE_HEADING_CLASSES: Record<string, string> = {
+  small: "text-2xl lg:text-3xl",
+  medium: "text-3xl lg:text-4xl",
+  large: "text-4xl lg:text-5xl",
+};
+
+/** Left or centred header block. Each piece needs its own literal classes. */
+export const SERVICE_ALIGN_CLASSES: Record<string, { text: string; block: string; bar: string }> = {
+  left: { text: "", block: "max-w-3xl", bar: "" },
+  center: { text: "text-center", block: "mx-auto max-w-3xl", bar: "mx-auto" },
 };
 
 // Keys editable via /api/settings.
@@ -138,6 +185,22 @@ export function parseServices(raw: string): ParsedService[] {
 // so hand-typed "Title | description" lines stay as the editor wrote them.
 export function serviceLine({ title, desc, image }: { title: string; desc: string; image: string }): string {
   return [title, desc, image].filter((p, i) => i === 0 || p !== "").join(" | ");
+}
+
+/**
+ * Drop the nth service from a raw list entirely — the whole line, not just its
+ * image. Blank lines and every other line are left exactly as typed, and
+ * `index` counts only the non-blank lines, matching what parseServices returns.
+ */
+export function removeServiceLine(raw: string, index: number): string {
+  let seen = -1;
+  const lines = raw.split("\n").filter((line) => {
+    if (!line.trim()) return true;
+    seen += 1;
+    return seen !== index;
+  });
+  // A list that is now entirely blank should be empty, not a pile of newlines.
+  return lines.some((l) => l.trim()) ? lines.join("\n") : "";
 }
 
 /**

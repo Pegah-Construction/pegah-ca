@@ -22,6 +22,16 @@ function UserAvatar({ name, id }: { name: string; id: string }) {
   );
 }
 
+/** Padlock, so the admin entry point reads as staff-only at a glance. */
+function LockIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <rect x="4" y="10" width="16" height="11" rx="2" />
+      <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+    </svg>
+  );
+}
+
 export default function Navbar() {
   const pathname = usePathname();
   const { user } = useAuth();
@@ -92,9 +102,24 @@ export default function Navbar() {
             >
               Email Estimating
             </a>
-            {user && (
+            {/* Signed in: the avatar is the way back to the dashboard. Signed
+                out: the sign-in button, which lands on /admin — the login
+                screen lives there rather than on a route of its own. The button
+                is what renders on the server too: almost everyone is signed
+                out, so this keeps the nav from shifting on load, at the cost of
+                the few signed-in admins seeing it swap to their avatar once the
+                stored session is read. */}
+            {user ? (
               <Link href="/admin" title="Go to dashboard">
                 <UserAvatar name={user.name} id={user.id} />
+              </Link>
+            ) : (
+              <Link
+                href="/admin"
+                className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-concrete-200 px-3 py-2 font-display text-sm font-bold uppercase tracking-wide text-ink transition-colors hover:border-brand-500 hover:text-brand-700"
+              >
+                <LockIcon className="h-3.5 w-3.5" />
+                Sign In
               </Link>
             )}
             <ThemeToggle />
@@ -240,6 +265,17 @@ export default function Navbar() {
                 </svg>
                 TEL: {s.phone}
               </a>
+              {/* The avatar is desktop-only, so on a phone this one link covers
+                  both directions: in for staff who aren't signed in, and back
+                  to the dashboard for those who are. */}
+              <Link
+                href="/admin"
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center justify-center gap-2 rounded-md border border-concrete-200 px-4 py-2 font-display text-sm font-bold uppercase tracking-wide text-ink transition-colors hover:border-brand-500 hover:text-brand-700"
+              >
+                <LockIcon className="h-3.5 w-3.5" />
+                {user ? "Dashboard" : "Sign In"}
+              </Link>
             </li>
           </ul>
         </div>
