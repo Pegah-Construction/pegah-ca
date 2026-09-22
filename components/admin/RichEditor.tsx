@@ -296,9 +296,14 @@ export default function RichEditor({ value, onChange, articleId }: { value: stri
   if (!editor) return null;
 
   return (
-    <div className="overflow-hidden rounded-md border border-concrete-200 focus-within:border-brand-500 focus-within:ring-1 focus-within:ring-brand-500">
-      {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-0.5 border-b border-concrete-200 bg-concrete-50 px-2 py-1.5">
+    // No `overflow-hidden` here: it would make this a scroll container of its
+    // own and stop the toolbar below from sticking to the top of the dialog
+    // that this editor sits in. The children round their own outer corners
+    // instead.
+    <div className="rounded-md border border-concrete-200 focus-within:border-brand-500 focus-within:ring-1 focus-within:ring-brand-500">
+      {/* Toolbar — stays put while the body is scrolled, so the formatting
+          buttons are always within reach of a long article. */}
+      <div className="sticky top-0 z-10 flex flex-wrap items-center gap-0.5 rounded-t-md border-b border-concrete-200 bg-concrete-50 px-2 py-1.5">
         <ToolBtn title="Bold" onClick={() => editor.chain().focus().toggleBold().run()} active={editor.isActive("bold")}><strong>B</strong></ToolBtn>
         <ToolBtn title="Italic" onClick={() => editor.chain().focus().toggleItalic().run()} active={editor.isActive("italic")}><em>I</em></ToolBtn>
         <Divider />
@@ -444,8 +449,17 @@ export default function RichEditor({ value, onChange, articleId }: { value: stri
         </div>
       )}
 
-      {/* Editor area */}
-      <div {...imageDrop.dropProps} className={`${dropRing(imageDrop.dragging)} px-3 py-2 text-sm text-ink [&_.prose-editor_.section-label]:font-mono [&_.prose-editor_.section-label]:text-[10px] [&_.prose-editor_.section-label]:font-bold [&_.prose-editor_.section-label]:uppercase [&_.prose-editor_.section-label]:tracking-widest [&_.prose-editor_.section-label]:text-brand-600 [&_.prose-editor_blockquote]:my-2 [&_.prose-editor_blockquote]:border-l-4 [&_.prose-editor_blockquote]:border-concrete-300 [&_.prose-editor_blockquote]:pl-3 [&_.prose-editor_blockquote]:text-concrete-500 [&_.prose-editor_code]:rounded [&_.prose-editor_code]:bg-concrete-100 [&_.prose-editor_code]:px-1 [&_.prose-editor_h2]:mt-3 [&_.prose-editor_h2]:font-display [&_.prose-editor_h2]:text-lg [&_.prose-editor_h2]:font-bold [&_.prose-editor_h3]:mt-2 [&_.prose-editor_h3]:font-display [&_.prose-editor_h3]:text-base [&_.prose-editor_h3]:font-semibold [&_.prose-editor_img]:my-3 [&_.prose-editor_img]:max-w-full [&_.prose-editor_img]:rounded-lg [&_.prose-editor_li]:ml-4 [&_.prose-editor_ol]:list-decimal [&_.prose-editor_p]:my-1 [&_.prose-editor_p]:leading-relaxed [&_.prose-editor_ul]:list-disc [&_.prose-editor_iframe]:my-3 [&_.prose-editor_iframe]:max-w-full [&_.prose-editor_iframe]:rounded-lg`}>
+      {/* Editor area. Capped and scrolled in place rather than growing without
+          limit: a long article used to push the toolbar (and the dialog's save
+          buttons) off the screen. `overscroll-contain` keeps a scroll that
+          reaches the end of the body from carrying on into the dialog.
+
+          Images are capped at max-h-72 here for the same reason — a photo
+          straight off a phone is several thousand pixels tall and filled the
+          whole editor. Full width with a height cap, the same shape the
+          published article gives them (.article-body img in globals.css), so
+          what's written is what's read. */}
+      <div {...imageDrop.dropProps} className={`${dropRing(imageDrop.dragging)} max-h-[50vh] overflow-y-auto overscroll-contain rounded-b-md px-3 py-2 text-sm text-ink [&_.prose-editor_.section-label]:font-mono [&_.prose-editor_.section-label]:text-[10px] [&_.prose-editor_.section-label]:font-bold [&_.prose-editor_.section-label]:uppercase [&_.prose-editor_.section-label]:tracking-widest [&_.prose-editor_.section-label]:text-brand-600 [&_.prose-editor_blockquote]:my-2 [&_.prose-editor_blockquote]:border-l-4 [&_.prose-editor_blockquote]:border-concrete-300 [&_.prose-editor_blockquote]:pl-3 [&_.prose-editor_blockquote]:text-concrete-500 [&_.prose-editor_code]:rounded [&_.prose-editor_code]:bg-concrete-100 [&_.prose-editor_code]:px-1 [&_.prose-editor_h2]:mt-3 [&_.prose-editor_h2]:font-display [&_.prose-editor_h2]:text-lg [&_.prose-editor_h2]:font-bold [&_.prose-editor_h3]:mt-2 [&_.prose-editor_h3]:font-display [&_.prose-editor_h3]:text-base [&_.prose-editor_h3]:font-semibold [&_.prose-editor_h3:not(:first-child)]:mt-5 [&_.prose-editor_h3:not(:first-child)]:border-t-2 [&_.prose-editor_h3:not(:first-child)]:border-concrete-300 [&_.prose-editor_h3:not(:first-child)]:pt-5 [&_.prose-editor_.section-label:not(:first-child)]:mt-5 [&_.prose-editor_.section-label:not(:first-child)]:border-t-2 [&_.prose-editor_.section-label:not(:first-child)]:border-concrete-300 [&_.prose-editor_.section-label:not(:first-child)]:pt-5 [&_.prose-editor_img]:my-3 [&_.prose-editor_img]:max-h-72 [&_.prose-editor_img]:w-full [&_.prose-editor_img]:rounded-lg [&_.prose-editor_img]:object-cover [&_.prose-editor_li]:ml-4 [&_.prose-editor_ol]:list-decimal [&_.prose-editor_p]:my-1 [&_.prose-editor_p]:leading-relaxed [&_.prose-editor_ul]:list-disc [&_.prose-editor_iframe]:my-3 [&_.prose-editor_iframe]:max-w-full [&_.prose-editor_iframe]:rounded-lg`}>
         <EditorContent editor={editor} />
       </div>
 

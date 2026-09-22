@@ -199,8 +199,11 @@ export default async function BlogPost({ params }: Props) {
                 {article.excerpt}
               </p>
 
-              {/* Divider */}
-              <div className="my-16 h-px bg-concrete-200" />
+              {/* Divider between the lead paragraph and the body. The gradient
+                  accent bar rather than a rule, so the opening of the article
+                  is distinct from the plain grey rules that separate the
+                  sections within it. */}
+              <div className="accent-bar my-12" />
 
               {/* Rich text body */}
               {article.body ? (
@@ -215,7 +218,7 @@ export default async function BlogPost({ params }: Props) {
                 pills up in the hero. */}
             {tags.length > 0 && (
               <Reveal delay={40}>
-                <p className="mt-12 border-t border-concrete-200 pt-8 leading-relaxed text-concrete-500">
+                <p className="mt-12 border-t-2 border-concrete-300 pt-8 leading-relaxed text-concrete-500">
                   <span className="font-display font-semibold text-ink">Keywords: </span>
                   {tags.join(", ")}
                 </p>
@@ -237,7 +240,7 @@ export default async function BlogPost({ params }: Props) {
 
             {/* Author footer */}
             <Reveal delay={100}>
-              <div className="mt-8 flex items-center gap-4 border-t border-concrete-200 pt-8">
+              <div className="mt-8 flex items-center gap-4 border-t-2 border-concrete-300 pt-8">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand-800 font-display text-base font-bold text-white">
                   {initials}
                 </div>

@@ -377,6 +377,16 @@
   .article-body p:has(> strong:only-child) strong {
     color: inherit;
   }
+  /* A rule between sections. A section opens with its eyebrow — the "Label"
+     paragraph, a bold-only paragraph, or (as the first published post writes
+     them) a short dark-red h3 — so the divider hangs above that. `:not(:first
+     -child)` keeps it off the top of the article, where there's nothing to
+     divide from. */
+  .article-body p.section-label:not(:first-child),
+  .article-body p:has(> strong:only-child):not(:first-child),
+  .article-body h3:not(:first-child) {
+    @apply mt-10 border-t-2 border-concrete-300 pt-10;
+  }
   .article-body p {
     @apply my-4 text-ink;
   }
@@ -490,8 +500,13 @@
     font-weight: 500;
     letter-spacing: 0.04em;
   }
+  /* Body images fill the text column and are capped in height: `w-full` alone
+     let a photo straight off a phone run a screen and a half deep, and holding
+     the proportions instead shrank every image well inside the column. The
+     height cap plus object-cover keeps one consistent band of image, trimming
+     the top and bottom of anything taller than the cap. */
   .article-body img {
-    @apply my-6 w-full rounded-xl object-cover;
+    @apply my-6 block max-h-[28rem] w-full rounded-xl object-cover;
   }
   /* YouTube / Vimeo iframes inserted by TipTap */
   .article-body iframe,
