@@ -7,6 +7,16 @@
 //   → { "publicProject": [ { link, title, address, city, state, zip,
 //                            bidDueDate, projectType, bidManager, … } ] }
 //
+// The feed publishes exactly these fields, all of which we carry through except
+// internalOfficeKey (SmartBid's own office id — meaningless to a subcontractor):
+//
+//   link, title, address, city, state, zip, bidDueDate, squareFootage,
+//   projectType, bidManager, email, phone, fax, internalOfficeKey, officeName,
+//   code
+//
+// There is no description, value, published date or status in it, which is why
+// those fields end up empty or derived below.
+//
 // Required:
 //   SMARTBID_API_BASE          Base URL of the API (host from the API explorer)
 //   SMARTBID_CLIENT_KEY        The "ClientKey" (key for the user client URL)
@@ -225,15 +235,30 @@ export function mapProjectToTender(p: SmartBidProject) {
   };
 }
 
+// Detail the feed publishes that the Tender table has no column for. It's real
+// information a bidder wants, so the live read-through carries it; keeping it
+// out of mapProjectToTender is what lets the sync go on passing that object
+// straight to Prisma, which rejects any key that isn't a column.
+export function mapProjectExtras(p: SmartBidProject) {
+  return {
+    // Floor area in square feet — the only size the feed gives.
+    squareFootage: Number(p.squareFootage ?? p.sqft ?? p.area ?? 0) || 0,
+  };
+}
+
+export type LiveTender = ReturnType<typeof mapProjectToTender> & ReturnType<typeof mapProjectExtras>;
+
 // ── Live read-through ──────────────────────────────────────────────────────
 // Fetch + map SmartBid opportunities on demand. Read-only: does NOT write to the
 // database. Returns [] (never throws) so the page degrades gracefully if SmartBid
 // is unreachable or not configured.
-export async function fetchLiveTenders(): Promise<ReturnType<typeof mapProjectToTender>[]> {
+export async function fetchLiveTenders(): Promise<LiveTender[]> {
   if (!isSmartBidConfigured()) return [];
   try {
     const projects = await fetchSmartBidProjects();
-    return projects.map(mapProjectToTender).filter((t) => t.id !== "sb_");
+    return projects
+      .map((p) => ({ ...mapProjectToTender(p), ...mapProjectExtras(p) }))
+      .filter((t) => t.id !== "sb_");
   } catch (err) {
     console.error("SmartBid live fetch failed:", err);
     return [];

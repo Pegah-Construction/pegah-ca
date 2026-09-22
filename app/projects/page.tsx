@@ -15,6 +15,11 @@ export const metadata: Metadata = {
 
 export default async function ProjectsPage() {
   const rows = await db.project.findMany({
+    // The portfolio is a visual page — a project with no photo renders as an
+    // empty grey box — so only projects carrying at least one photo are listed.
+    // The row filter skips the obvious cases; the check after mapping catches a
+    // photo row whose stored path is blank and so resolves to no URL.
+    where: { photos: { some: {} } },
     select: {
       id: true,
       name: true,
@@ -31,16 +36,18 @@ export default async function ProjectsPage() {
     orderBy: { name: "asc" },
   });
 
-  const projects: PublicProject[] = rows.map((p) => ({
-    id: p.id,
-    name: p.name,
-    location: p.location,
-    category: p.category,
-    type: p.type,
-    dateCompleted: p.dateCompleted,
-    value: p.value,
-    photos: p.photos.map((ph) => getStorageUrl(ph.path)),
-  }));
+  const projects: PublicProject[] = rows
+    .map((p) => ({
+      id: p.id,
+      name: p.name,
+      location: p.location,
+      category: p.category,
+      type: p.type,
+      dateCompleted: p.dateCompleted,
+      value: p.value,
+      photos: p.photos.map((ph) => getStorageUrl(ph.path)).filter(Boolean),
+    }))
+    .filter((p) => p.photos.length > 0);
 
   return (
     <>

@@ -20,6 +20,9 @@ export const metadata: Metadata = {
 export default async function TendersPage() {
   const rows = await fetchLiveTenders();
 
+  // Everything SmartBid publishes about a bid goes to the list — a subcontractor
+  // deciding whether to quote wants the trade divisions, the size, the site and
+  // the bid manager, not just a title and a date.
   const tenders: PublicTender[] = rows.map((t) => {
     let codes: string[] = [];
     try { codes = JSON.parse(t.codes || "[]"); } catch { codes = []; }
@@ -27,7 +30,9 @@ export default async function TendersPage() {
       id: t.id, ref: t.ref, title: t.title, org: t.org, type: t.type, category: t.category,
       province: t.province, city: t.city, closing: t.closing, status: t.status,
       address: t.address, postalCode: t.postalCode, bidUrl: t.bidUrl,
-      contactName: t.contactName, contactPhone: t.contactPhone, contactFax: t.contactFax,
+      squareFootage: t.squareFootage,
+      contactName: t.contactName, contactEmail: t.contactEmail,
+      contactPhone: t.contactPhone, contactFax: t.contactFax,
       codes,
     };
   });
