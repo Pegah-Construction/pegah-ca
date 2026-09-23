@@ -386,9 +386,30 @@ the settings are grouped:
   address lines 1 & 2. these feed the **navbar**, the **footer**, and the **contact** page.
 - **home page** — the hero **eyebrow**, **title**, and **subtitle**, plus the **intro heading** and
   **intro text** below the hero.
+- **testimonials** — the client quotes near the bottom of the home page. see below.
 - **home page hero images** — upload or remove the full-bleed background image(s). if you add more
   than one, they cycle as a carousel. the ✕ on an image removes it.
 - **contact page** — the contact **title** and **intro** shown above the form.
+
+**testimonials**
+
+one quote per line, written as **quote | name | organisation**, separated by the upright bar
+character. the line
+
+```
+Pegah's commitment to complete projects in a timely and professional manner is commendable. | Davinder Chadha | City of Brampton
+```
+
+becomes one card. they appear on the home page in the order you list them, and the hint under the
+box counts how many lines are being read as a testimonial, so you can check your bars landed in the
+right places. a line with no name or organisation still shows its quote.
+
+the **show testimonials on the home page** switch hides the whole section without deleting anything,
+which is the safe way to take it down for a while. an empty box hides it too.
+
+these are quotations from real reference letters. reorder them, retire one, add a new one — but only
+change the wording of a quote against the letter it came from, or we are putting words in a client's
+mouth.
 
 services copy is **not** here — it has its own screen, **sidebar → services**. see
 [§12](#12-services).

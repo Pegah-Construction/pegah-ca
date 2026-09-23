@@ -11,6 +11,7 @@ type Member = { id: string; order: number; name: string; title: string; bio: str
 const TITLES = [
   "President",
   "Vice President",
+  "Partner",
   "Chief Executive Officer",
   "Chief Operating Officer",
   "Chief Financial Officer",

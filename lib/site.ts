@@ -81,32 +81,8 @@ export const stats: Stat[] = [
   { value: "7", label: "Sectors served", href: "/#services" },
 ];
 
-// Client references shown on the home page, as published on pegah.ca. These are
-// other people's words, so edit them only against the reference letter they came
-// from — tightening a quote to fit the layout would misquote the person who
-// gave it.
-export type Testimonial = { quote: string; name: string; org: string };
-
-export const testimonials: Testimonial[] = [
-  {
-    quote:
-      "We have no hesitation in recommending Pegah Construction Ltd. as a professional and reliable contractor.",
-    name: "Chris Kubbinga",
-    org: "Thomas Brown Architects",
-  },
-  {
-    quote:
-      "Pegah's commitment to complete projects in a timely and professional manner is commendable.",
-    name: "Davinder Chadha",
-    org: "City of Brampton",
-  },
-  {
-    quote:
-      "Throughout the construction, Ali Mohtashami and Brian Soltan were always available to answer any questions, always explaining in “layman's terms”.",
-    name: "Patti Riddell",
-    org: "Yonge Hearts Child Care Centre",
-  },
-];
+// Home page testimonials are editable from the dashboard, so they live with the
+// rest of the site settings (testimonialsList in lib/settings) rather than here.
 
 export type Leader = { name: string; title: string; bio: string };
 

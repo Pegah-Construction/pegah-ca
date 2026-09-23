@@ -5,12 +5,19 @@ import { useAuth } from "@/lib/auth";
 import { permsFor } from "@/lib/admin";
 import { Card, Spinner } from "../ui";
 import { dropRing, notifyDropIssue, useImageDrop } from "../DropZone";
-import { Field, TextareaField, LockBanner, SaveBar } from "../SettingsFields";
+import { Field, TextareaField, ToggleField, LockBanner, SaveBar } from "../SettingsFields";
 import { getStorageUrl } from "@/lib/storage-url";
-import { SETTINGS_DEFAULTS } from "@/lib/settings";
+import { SETTINGS_DEFAULTS, parseTestimonials } from "@/lib/settings";
 
 type Settings = Record<string, string>;
 type HeroImage = { id: number; path: string; order: number };
+
+// Live count for the hint, so the editor can see at a glance how many of the
+// lines they've typed actually parse as a testimonial.
+const testimonialCount = (raw: string) => {
+  const n = parseTestimonials(raw ?? "").length;
+  return `${n} testimonial${n === 1 ? "" : "s"}`;
+};
 
 export default function SettingsView() {
   const { user } = useAuth();
@@ -110,6 +117,30 @@ export default function SettingsView() {
             <TextareaField label="Hero subtitle" value={form.heroSubtitle} disabled={locked} onChange={set("heroSubtitle")} rows={2} />
             <TextareaField label="Intro heading" value={form.introHeading} disabled={locked} onChange={set("introHeading")} rows={2} />
             <TextareaField label="Intro text" value={form.introText} disabled={locked} onChange={set("introText")} rows={3} />
+          </div>
+        </Card>
+
+        <Card title="Testimonials">
+          <div className="grid gap-5 p-5">
+            <ToggleField
+              label="Show testimonials on the home page"
+              value={form.testimonialsVisible}
+              disabled={locked}
+              onChange={set("testimonialsVisible")}
+              hint="Turn off to hide the whole section without losing the quotes below."
+            />
+            <div className="grid gap-5 sm:grid-cols-2">
+              <Field label="Eyebrow" value={form.testimonialsEyebrow} disabled={locked} onChange={set("testimonialsEyebrow")} />
+              <Field label="Heading" value={form.testimonialsHeading} disabled={locked} onChange={set("testimonialsHeading")} />
+            </div>
+            <TextareaField
+              label="Testimonials"
+              value={form.testimonialsList}
+              disabled={locked}
+              onChange={set("testimonialsList")}
+              rows={7}
+              hint={`One per line: Quote | Name | Organisation. ${testimonialCount(form.testimonialsList)} shown on the home page, in this order. These are quotations from real reference letters — reorder or remove them freely, but only change the wording against the letter it came from.`}
+            />
           </div>
         </Card>
 

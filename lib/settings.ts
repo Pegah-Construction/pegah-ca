@@ -46,6 +46,18 @@ export const SETTINGS_DEFAULTS: Record<string, string> = {
   servicesAccentBar: "1",
   servicesAnimate: "1",
   servicesImageZoom: "1",
+  // Client references on the home page, one per line as
+  // "Quote | Name | Organisation". These are quotations from real reference
+  // letters, so the dashboard can reorder or retire them, but the wording
+  // should only ever be changed against the letter it came from.
+  testimonialsVisible: "1",
+  testimonialsEyebrow: "Testimonials",
+  testimonialsHeading: "What our clients say.",
+  testimonialsList: [
+    "We have no hesitation in recommending Pegah Construction Ltd. as a professional and reliable contractor. | Chris Kubbinga | Thomas Brown Architects",
+    "Pegah's commitment to complete projects in a timely and professional manner is commendable. | Davinder Chadha | City of Brampton",
+    "Throughout the construction, Ali Mohtashami and Brian Soltan were always available to answer any questions, always explaining in “layman's terms”. | Patti Riddell | Yonge Hearts Child Care Centre",
+  ].join("\n"),
 };
 
 // Settings are stored as strings; treat anything but an explicit "off" as on,
@@ -179,6 +191,29 @@ export function parseServices(raw: string): ParsedService[] {
     .map((l) => l.trim())
     .filter(Boolean)
     .map(parseServiceLine);
+}
+
+export type ParsedTestimonial = { quote: string; name: string; org: string };
+
+/**
+ * Parse the "Quote | Name | Organisation" testimonials list.
+ *
+ * A quote can itself contain a "|", so the name and organisation are read from
+ * the end of the line and everything before them stays with the quote. A line
+ * with no attribution at all still yields its quote rather than vanishing.
+ */
+export function parseTestimonials(raw: string): ParsedTestimonial[] {
+  return raw
+    .split("\n")
+    .map((l) => l.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const parts = line.split("|").map((p) => p.trim());
+      const org = parts.length > 2 ? parts.pop()! : "";
+      const name = parts.length > 1 ? parts.pop()! : "";
+      return { quote: parts.join(" | "), name, org };
+    })
+    .filter((t) => t.quote !== "");
 }
 
 // Serialise one item back to its line form, dropping the image field when empty
