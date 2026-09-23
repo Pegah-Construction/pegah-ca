@@ -6,6 +6,7 @@ import Intro from "@/components/Intro";
 import FeaturedProjects from "@/components/FeaturedProjects";
 import ServicesList from "@/components/ServicesList";
 import SafetyBand from "@/components/SafetyBand";
+import Testimonials from "@/components/Testimonials";
 import Footer from "@/components/Footer";
 import type { Metadata } from "next";
 
@@ -27,6 +28,9 @@ export default function Home() {
         <FeaturedProjects />
         <ServicesList />
         <SafetyBand />
+        {/* Last band before the footer, as on pegah.ca — the references read
+            better after the work they're about. */}
+        <Testimonials />
       </main>
       <Footer />
     </>
