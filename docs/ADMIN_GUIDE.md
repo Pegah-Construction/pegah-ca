@@ -254,7 +254,7 @@ said and leaving their name on it is worse than hiding it.
 because comments publish instantly, make a habit of glancing at this panel on recently published
 articles.
 
-> 📸 _add screenshot: comments panel in news & blog_
+![description](images/comment-section.png)
 
 ---
 
@@ -363,7 +363,7 @@ you can update the **commitment statement** and its **image**, the **policy stat
 duties**, the **program / certification** details, and the **resource links**. edit the fields and
 save to publish.
 
-> 📸 _add screenshot: health & safety editor_
+![description](images/health-safety-editor.png)
 
 ---
 
@@ -440,7 +440,7 @@ uploading happens right away, but like every other field the change only reaches
 click **save changes**. the image path the upload adds to the end of the service's line is managed
 for you; leave it alone when editing the text.
 
-> 📸 _add screenshot: services editor_
+![description](images/services-editor.PNG)
 
 ---
 
@@ -496,7 +496,8 @@ mouth.
 services copy is **not** here — it has its own screen, **sidebar → services**. see
 [§12](#12-services).
 
-> 📸 _add screenshot: settings page_
+![description](images/settings-page.PNG)
+
 
 ---
 
