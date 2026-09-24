@@ -9,12 +9,17 @@ type Ctx = { params: Promise<{ id: string }> };
 
 // Public list. Email is deliberately absent from the selection — it's collected
 // for follow-up, never shown on the site.
-export async function GET(_req: Request, { params }: Ctx) {
+//
+// Hidden comments are left out, so a comment taken down stops appearing on the
+// article. `?all=1` is what the dashboard's moderation panel asks for: it wants
+// the hidden ones too, to show them struck through with a way to put them back.
+export async function GET(req: Request, { params }: Ctx) {
   const { id } = await params;
+  const all = new URL(req.url).searchParams.get("all") === "1";
   const comments = await db.articleComment.findMany({
-    where: { articleId: id },
+    where: { articleId: id, ...(all ? {} : { hidden: false }) },
     orderBy: { createdAt: "desc" },
-    select: { id: true, name: true, body: true, createdAt: true },
+    select: { id: true, name: true, body: true, createdAt: true, ...(all ? { hidden: true } : {}) },
   });
   return Response.json(comments);
 }
@@ -32,10 +37,19 @@ export async function POST(req: Request, { params }: Ctx) {
   const result = validateComment(payload);
   if (!result.ok) return Response.json({ error: result.error }, { status: 400 });
 
-  const article = await db.article.findUnique({ where: { id }, select: { status: true } });
+  const article = await db.article.findUnique({
+    where: { id },
+    select: { status: true, commentsEnabled: true },
+  });
   // Drafts aren't public, so they can't collect comments either.
   if (!article || article.status !== "Published") {
     return Response.json({ error: "Article not found" }, { status: 404 });
+  }
+  // Closed from the dashboard. Checked here as well as hidden in the form, so
+  // turning comments off actually stops new ones rather than just removing the
+  // box from the page.
+  if (!article.commentsEnabled) {
+    return Response.json({ error: "Comments are closed on this article." }, { status: 403 });
   }
 
   const visitorId = typeof payload.visitorId === "string" ? payload.visitorId.slice(0, 64) : "";

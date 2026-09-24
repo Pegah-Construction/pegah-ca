@@ -32,6 +32,20 @@ export async function GET() {
     // than fetching the rows themselves just to length them.
     include: { _count: { select: { comments: true, likes: true } } },
   });
+
+  // Hidden comments, counted per article in one pass. A filtered relation count
+  // would say this in the query above, but that's still behind a preview flag,
+  // and the dashboard needs the split: the button should show what a reader can
+  // actually see, with the hidden ones noted separately.
+  const hiddenByArticle = new Map(
+    (
+      await db.articleComment.groupBy({
+        by: ["articleId"],
+        where: { hidden: true },
+        _count: { _all: true },
+      })
+    ).map((row) => [row.articleId, row._count._all])
+  );
   return Response.json(
     articles.map((a) => ({
       id: a.id, title: a.title, slug: a.slug, project: a.projectId,
@@ -39,7 +53,10 @@ export async function GET() {
       featured: a.featured, excerpt: a.excerpt, body: a.body ?? "",
       coverImage: a.coverImage ?? "", linkedinPost: a.linkedinPost ?? "",
       instagramPost: a.instagramPost ?? "", words: a.words,
-      commentCount: a._count.comments, likeCount: a._count.likes,
+      commentsEnabled: a.commentsEnabled,
+      commentCount: a._count.comments - (hiddenByArticle.get(a.id) ?? 0),
+      hiddenCommentCount: hiddenByArticle.get(a.id) ?? 0,
+      likeCount: a._count.likes,
     }))
   );
 }

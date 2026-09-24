@@ -28,7 +28,14 @@ function getVisitorId(): string {
 const initialsOf = (name: string) =>
   name.split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 
-export default function Comments({ articleId }: { articleId: string }) {
+export default function Comments({
+  articleId,
+  enabled = true,
+}: {
+  articleId: string;
+  /** False when the thread has been closed from the dashboard. */
+  enabled?: boolean;
+}) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState("");
@@ -103,8 +110,18 @@ export default function Comments({ articleId }: { articleId: string }) {
         {comments.length > 0 && <span className="ml-1.5 text-concrete-300">{comments.length}</span>}
       </h2>
 
+      {/* Closed from the dashboard: say so plainly and leave the thread up.
+          Quietly dropping the box would read as something being broken. */}
+      {!enabled && (
+        <p className="mt-5 rounded-lg border border-concrete-200/60 bg-surface/40 px-4 py-3 text-sm text-concrete-500">
+          Comments are closed on this article.
+          {comments.length === 0 && " Get in touch through the contact page if you'd like to reach us."}
+        </p>
+      )}
+
       {/* Compose. Collapsed to a single line until you click into it — the rest
           of the fields would be clutter for the majority who only read. */}
+      {enabled && (
       <form
         onSubmit={submit}
         className={`mt-5 rounded-lg border px-4 py-3.5 backdrop-blur-sm transition-colors ${
@@ -195,6 +212,7 @@ export default function Comments({ articleId }: { articleId: string }) {
           />
         </div>
       </form>
+      )}
 
       {justPosted && (
         <p className="mt-3 font-mono text-[11px] text-brand-700">Comment posted.</p>
@@ -204,7 +222,7 @@ export default function Comments({ articleId }: { articleId: string }) {
       {loading ? (
         <p className="mt-8 font-mono text-[11px] text-concrete-400">Loading comments…</p>
       ) : comments.length === 0 ? (
-        <p className="mt-8 font-mono text-[11px] text-concrete-400">No comments yet.</p>
+        enabled ? <p className="mt-8 font-mono text-[11px] text-concrete-400">No comments yet.</p> : null
       ) : (
         <ul className="mt-10 space-y-8">
           {comments.map((c) => (

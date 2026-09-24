@@ -20,6 +20,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   if ("linkedinPost" in body) data.linkedinPost = body.linkedinPost;
   if ("instagramPost" in body) data.instagramPost = body.instagramPost;
   if ("tags" in body) data.tags = JSON.stringify(body.tags);
+  if ("commentsEnabled" in body) data.commentsEnabled = !!body.commentsEnabled;
   const updated = await db.article.update({ where: { id }, data });
   if ("status" in body && body.userId) {
     const verb = body.status === "Published" ? "published" : "unpublished";
@@ -31,5 +32,6 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     featured: updated.featured, excerpt: updated.excerpt, body: updated.body,
     coverImage: updated.coverImage ?? "", linkedinPost: updated.linkedinPost ?? "",
     instagramPost: updated.instagramPost ?? "", words: updated.words,
+    commentsEnabled: updated.commentsEnabled,
   });
 }

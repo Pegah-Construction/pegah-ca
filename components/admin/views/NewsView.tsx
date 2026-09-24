@@ -15,12 +15,15 @@ type ArticleWithBody = Article & {
   body?: string;
   coverImage?: string;
   commentCount?: number;
+  hiddenCommentCount?: number;
+  commentsEnabled?: boolean;
   likeCount?: number;
 };
-// Same shape the public list returns. Commenter emails are stored but not
-// exposed by any endpoint — these routes are unauthenticated, so returning them
-// would put reader addresses one guessed URL away from a harvester.
-type AdminComment = { id: string; name: string; body: string; createdAt: string };
+// Same shape the public list returns, plus `hidden` — the moderation panel asks
+// for the hidden ones too. Commenter emails are stored but not exposed by any
+// endpoint — these routes are unauthenticated, so returning them would put
+// reader addresses one guessed URL away from a harvester.
+type AdminComment = { id: string; name: string; body: string; createdAt: string; hidden?: boolean };
 
 const empty = () => ({ title:"", tags:"", excerpt:"", body:"" });
 
@@ -49,7 +52,9 @@ export default function NewsView() {
   const [commentsFor, setCommentsFor] = useState<ArticleWithBody | null>(null);
   const [comments, setComments] = useState<AdminComment[]>([]);
   const [commentsLoading, setCommentsLoading] = useState(false);
-  const [deletingComment, setDeletingComment] = useState<string | null>(null);
+  // One comment at a time is acted on, so hide, restore and delete share a lock.
+  const [busyComment, setBusyComment] = useState<string | null>(null);
+  const [togglingComments, setTogglingComments] = useState<string | null>(null);
 
   // Instagram caption viewer/editor
   const [instagramFor, setInstagramFor] = useState<ArticleWithBody | null>(null);
@@ -91,7 +96,9 @@ export default function NewsView() {
     setComments([]);
     setCommentsLoading(true);
     try {
-      const res = await fetch(`/api/news/${n.id}/comments`);
+      // `all=1`: the panel shows hidden comments too, struck through, so a
+      // moderator can see what was taken down and put it back.
+      const res = await fetch(`/api/news/${n.id}/comments?all=1`);
       const data = await res.json();
       setComments(Array.isArray(data) ? data : []);
     } catch {
@@ -101,21 +108,70 @@ export default function NewsView() {
     }
   };
 
+  // Hiding is the reversible half of moderation: off the article at once, still
+  // on record here. Both counts on the row move together so the badge keeps
+  // matching what a reader sees.
+  const setCommentHidden = async (commentId: string, hidden: boolean) => {
+    if (!commentsFor || busyComment) return;
+    setBusyComment(commentId);
+    const res = await fetch(`/api/news/${commentsFor.id}/comments/${commentId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ hidden }),
+    });
+    if (res.ok) {
+      setComments((cs) => cs.map((c) => (c.id === commentId ? { ...c, hidden } : c)));
+      setNews((ns) => ns.map((a) => a.id === commentsFor.id
+        ? {
+            ...a,
+            commentCount: Math.max(0, (a.commentCount ?? 0) + (hidden ? -1 : 1)),
+            hiddenCommentCount: Math.max(0, (a.hiddenCommentCount ?? 0) + (hidden ? 1 : -1)),
+          }
+        : a));
+    } else {
+      alert(hidden ? "Couldn't hide that comment." : "Couldn't restore that comment.");
+    }
+    setBusyComment(null);
+  };
+
   const deleteComment = async (commentId: string) => {
-    if (!commentsFor || deletingComment) return;
-    if (!confirm("Delete this comment? It disappears from the article immediately.")) return;
-    setDeletingComment(commentId);
+    if (!commentsFor || busyComment) return;
+    if (!confirm("Delete this comment for good? Hiding it takes it off the article but keeps the record; deleting cannot be undone.")) return;
+    setBusyComment(commentId);
+    const wasHidden = comments.find((c) => c.id === commentId)?.hidden ?? false;
     const res = await fetch(`/api/news/${commentsFor.id}/comments/${commentId}`, { method: "DELETE" });
     if (res.ok) {
       setComments((cs) => cs.filter((c) => c.id !== commentId));
       // Keep the row's badge in step without refetching the whole list.
       setNews((ns) => ns.map((a) => a.id === commentsFor.id
-        ? { ...a, commentCount: Math.max(0, (a.commentCount ?? 1) - 1) }
+        ? wasHidden
+          ? { ...a, hiddenCommentCount: Math.max(0, (a.hiddenCommentCount ?? 1) - 1) }
+          : { ...a, commentCount: Math.max(0, (a.commentCount ?? 1) - 1) }
         : a));
     } else {
       alert("Couldn't delete that comment.");
     }
-    setDeletingComment(null);
+    setBusyComment(null);
+  };
+
+  // The per-article switch, saved on its own rather than with the editor form —
+  // closing a thread is usually a reaction to what's being posted, not part of
+  // rewriting the article.
+  const toggleComments = async (n: ArticleWithBody) => {
+    const next = !(n.commentsEnabled ?? true);
+    setTogglingComments(n.id);
+    const res = await fetch(`/api/news/${n.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ commentsEnabled: next }),
+    });
+    if (res.ok) {
+      setNews((ns) => ns.map((a) => (a.id === n.id ? { ...a, commentsEnabled: next } : a)));
+      setCommentsFor((cur) => (cur && cur.id === n.id ? { ...cur, commentsEnabled: next } : cur));
+    } else {
+      alert("Couldn't change the comment setting.");
+    }
+    setTogglingComments(null);
   };
 
   const openCreate = () => { setForm(empty()); setEditingId(null); setFormCoverImage(""); setOpen(true); };
@@ -341,7 +397,7 @@ export default function NewsView() {
                         </button>
                       )}
                       {perms.manageNews && (
-                        <button onClick={() => openComments(n)} title="Read and remove reader comments"
+                        <button onClick={() => openComments(n)} title="Read, hide or remove reader comments"
                           className="flex items-center gap-1 font-display text-xs font-semibold text-concrete-500 hover:text-ink">
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5">
                             <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.9 8.9 0 0 1-3.8-.9L3 21l1.9-5.1A8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5z" />
@@ -349,6 +405,17 @@ export default function NewsView() {
                           Comments
                           {(n.commentCount ?? 0) > 0 && (
                             <span className="rounded-full bg-brand-50 px-1.5 font-mono text-[10px] text-brand-700">{n.commentCount}</span>
+                          )}
+                          {/* The hidden tally is worth surfacing on the row: it's
+                              the difference between the badge and what a reader
+                              would count on the article. */}
+                          {(n.hiddenCommentCount ?? 0) > 0 && (
+                            <span className="rounded-full bg-concrete-100 px-1.5 font-mono text-[10px] text-concrete-500" title={`${n.hiddenCommentCount} hidden`}>
+                              {n.hiddenCommentCount} hidden
+                            </span>
+                          )}
+                          {n.commentsEnabled === false && (
+                            <span className="rounded-full bg-amber-50 px-1.5 font-mono text-[10px] text-amber-700">closed</span>
                           )}
                         </button>
                       )}
@@ -469,8 +536,19 @@ export default function NewsView() {
           <div className="flex max-h-[90vh] w-full max-w-2xl flex-col rounded-xl bg-surface shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between border-b border-concrete-200 px-6 py-4">
               <div className="min-w-0">
-                <h2 className="font-display text-sm font-bold text-ink">
-                  Comments{comments.length > 0 && <span className="ml-1.5 font-mono text-xs font-normal text-concrete-400">{comments.length}</span>}
+                <h2 className="flex flex-wrap items-center gap-2 font-display text-sm font-bold text-ink">
+                  Comments
+                  {comments.length > 0 && (
+                    <span className="font-mono text-xs font-normal text-concrete-400">
+                      {comments.filter((c) => !c.hidden).length} shown
+                      {comments.some((c) => c.hidden) && ` · ${comments.filter((c) => c.hidden).length} hidden`}
+                    </span>
+                  )}
+                  {commentsFor.commentsEnabled === false && (
+                    <span className="rounded-full bg-amber-50 px-2 py-0.5 font-mono text-[10px] uppercase tracking-label text-amber-700">
+                      Closed
+                    </span>
+                  )}
                 </h2>
                 <p className="mt-0.5 min-w-0 truncate font-mono text-[11px] text-concrete-500">On: {commentsFor.title}</p>
               </div>
@@ -486,32 +564,66 @@ export default function NewsView() {
               ) : (
                 <ul className="divide-y divide-concrete-100">
                   {comments.map((c) => (
-                    <li key={c.id} className="flex gap-4 py-4 first:pt-0 last:pb-0">
+                    <li key={c.id} className={`flex gap-4 py-4 first:pt-0 last:pb-0 ${c.hidden ? "opacity-60" : ""}`}>
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-baseline gap-x-3">
                           <span className="font-display text-sm font-semibold text-ink">{c.name}</span>
                           <span className="font-mono text-[11px] text-concrete-400">
                             {new Date(c.createdAt).toLocaleString("en-CA", { dateStyle: "medium", timeStyle: "short" })}
                           </span>
+                          {c.hidden && (
+                            <span className="rounded-full bg-concrete-100 px-2 py-0.5 font-mono text-[10px] uppercase tracking-label text-concrete-500">
+                              Hidden
+                            </span>
+                          )}
                         </div>
                         <p className="mt-1 whitespace-pre-line break-words text-sm leading-relaxed text-concrete-600">{c.body}</p>
                       </div>
-                      <button
-                        onClick={() => deleteComment(c.id)}
-                        disabled={!!deletingComment}
-                        className="h-fit shrink-0 font-display text-xs font-semibold text-red-600 transition-opacity hover:text-red-700 disabled:opacity-50"
-                      >
-                        {deletingComment === c.id ? "…" : "Delete"}
-                      </button>
+                      <div className="flex h-fit shrink-0 items-center gap-3">
+                        <button
+                          onClick={() => setCommentHidden(c.id, !c.hidden)}
+                          disabled={!!busyComment}
+                          title={c.hidden ? "Put this comment back on the article" : "Take this comment off the article, keeping the record"}
+                          className="font-display text-xs font-semibold text-brand-700 transition-opacity hover:text-brand-800 disabled:opacity-50"
+                        >
+                          {busyComment === c.id ? "…" : c.hidden ? "Restore" : "Hide"}
+                        </button>
+                        <button
+                          onClick={() => deleteComment(c.id)}
+                          disabled={!!busyComment}
+                          className="font-display text-xs font-semibold text-red-600 transition-opacity hover:text-red-700 disabled:opacity-50"
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </li>
                   ))}
                 </ul>
               )}
             </div>
-            <div className="border-t border-concrete-200 px-6 py-3">
-              <p className="text-xs text-concrete-400">
-                Comments appear on the article as soon as they're posted. Deleting one removes it immediately.
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-concrete-200 px-6 py-3">
+              <p className="max-w-md text-xs text-concrete-400">
+                Comments appear on the article as soon as they&rsquo;re posted. <strong className="font-semibold text-concrete-500">Hide</strong> takes one
+                off the article but keeps it here; <strong className="font-semibold text-concrete-500">Delete</strong> is permanent.
               </p>
+              {/* Closing the thread lives here, next to the comments that
+                  usually prompt the decision. */}
+              <button
+                type="button"
+                onClick={() => toggleComments(commentsFor)}
+                disabled={togglingComments === commentsFor.id}
+                className={`shrink-0 rounded-md border px-3 py-1.5 font-display text-xs font-semibold transition-colors disabled:opacity-50 ${
+                  commentsFor.commentsEnabled ?? true
+                    ? "border-concrete-300 text-concrete-600 hover:border-red-300 hover:text-red-600"
+                    : "border-brand-300 bg-brand-50 text-brand-700 hover:bg-brand-100"
+                }`}
+              >
+                {togglingComments === commentsFor.id
+                  ? "…"
+                  : (commentsFor.commentsEnabled ?? true)
+                    ? "Close comments on this article"
+                    : "Reopen comments"}
+              </button>
             </div>
           </div>
         </div>

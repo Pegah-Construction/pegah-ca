@@ -215,7 +215,10 @@ readers post with a **name**, an **email**, and their **comment**.
 - the **email is required but never published.** it's collected so you can follow up privately. only
   the name, the comment, and a relative time ("3 days ago") appear on the site.
 - **comments go live the moment they're posted.** there is no approval queue holding them back — which
-  is convenient, but it means nobody is stopping a bad comment except you. see moderation below.
+  is convenient, but it means nobody is stopping a bad comment except you. see moderation below,
+  where **hide** takes one down in a couple of clicks.
+- **a thread can be closed.** an article whose comments have been closed keeps the comments it has
+  and stops taking new ones.
 - **drafts don't take comments.** only published articles do.
 - two quiet anti-spam measures run in the background: a hidden field that only bots fill in, and a
   **30-second wait** between comments from the same browser. a real reader never notices either.
@@ -227,12 +230,29 @@ readers post with a **name**, an **email**, and their **comment**.
 **where:** news & blog → the **comments** button on the article's row. the button shows a small count
 when that article has any.
 
-the panel lists every comment on that article, newest first. **delete** removes one — you're asked to
-confirm, and it disappears from the public article immediately.
+the panel lists every comment on that article, newest first, and gives you three things to do with
+them.
 
-deleting is the **only** moderation action. there is no way to edit a comment, hide one temporarily,
-or turn comments off for an article. because comments publish instantly, make a habit of glancing at
-this panel on recently published articles.
+- **hide** takes a comment off the public article straight away but keeps it here, greyed out and
+  marked **hidden**, with **restore** to put it back. this is the one to reach for first: it stops
+  anyone reading the comment within seconds, and nothing is lost if you change your mind or want to
+  show a colleague what was posted.
+- **delete** removes it for good — you're asked to confirm, and it cannot be undone. keep this for
+  comments that shouldn't exist at all.
+- **close comments on this article** (bottom right of the panel) stops new comments on that article
+  while leaving the ones already posted readable. visitors see "comments are closed on this article"
+  in place of the box. **reopen comments** puts it back. this is per-article, so closing a heated
+  thread doesn't affect anything else on the blog.
+
+the **comments** button on the article's row shows the count a reader would see, plus **"n hidden"**
+and a **closed** flag when either applies — so the list tells you at a glance where moderation has
+happened without opening anything.
+
+you cannot edit the wording of someone's comment; that is deliberate, since editing what a reader
+said and leaving their name on it is worse than hiding it.
+
+because comments publish instantly, make a habit of glancing at this panel on recently published
+articles.
 
 > 📸 _add screenshot: comments panel in news & blog_
 
@@ -593,7 +613,9 @@ buttons show a "not configured" message instead of failing. ask your developer t
 | get a linkedin caption for a post | **news & blog → edit → generate linkedin post** |
 | get an instagram caption for a post | **news & blog → edit → generate instagram post** |
 | read the comments readers left on an article | **news & blog → comments** |
-| remove an offensive or spam comment | **news & blog → comments → delete** |
+| take a comment off the article but keep it | **news & blog → comments → hide** |
+| remove an offensive or spam comment for good | **news & blog → comments → delete** |
+| stop new comments on one article | **news & blog → comments → close comments on this article** |
 | see how many likes an article has | the **public article page** — not shown in the dashboard |
 | fix how an article looks when shared or in google | **news & blog → edit → excerpt + cover image** |
 | refresh the tenders list | **tenders → sync from smartbid** |

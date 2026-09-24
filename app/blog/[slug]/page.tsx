@@ -235,8 +235,9 @@ export default async function BlogPost({ params }: Props) {
               </div>
             </Reveal>
 
-            {/* Comments */}
-            <Comments articleId={article.id} />
+            {/* Comments. Closing the thread from the dashboard leaves what's
+                already there readable and takes away the compose box. */}
+            <Comments articleId={article.id} enabled={article.commentsEnabled} />
 
             {/* Author footer */}
             <Reveal delay={100}>
