@@ -17,9 +17,9 @@ use this to learn the system yourself and to show others how to keep the site up
 | **admin dashboard** | the private control panel where staff edit content. | logged-in staff only |
 
 most day-to-day content (projects, blog posts, job postings, team members) is edited in the
-**admin dashboard**. the site-wide marketing copy — the **home** page (hero, intro and the
-**services** section), plus the **about**, **health & safety** and **contact** pages and the
-**navbar** and **footer** details — is now editable too, through the **about / team**,
+**admin dashboard**. the site-wide marketing copy — the **home** page (hero, intro, the **services**
+section and the client **testimonials**), plus the **about**, **health & safety** and **contact**
+pages and the **navbar** and **footer** details — is now editable too, through the **about / team**,
 **health & safety**, **services**, and **settings** screens. only the page layouts, styling and
 navigation structure remain in code — see [§18](#18-what-lives-in-code).
 
@@ -27,8 +27,12 @@ navigation structure remain in code — see [§18](#18-what-lives-in-code).
 
 ## 2. signing in
 
-1. go to **`/admin`** (e.g. `https://pegah.ca/admin`).
+1. go to **`/admin`** (e.g. `https://pegah.ca/admin`), or click **sign in** in the top right of the
+   public site — on a phone it's at the bottom of the ☰ menu.
 2. enter your email and password.
+
+once you're signed in that button becomes your **initials** (on a phone, a **dashboard** link), which
+takes you back to the dashboard from wherever you are on the public site.
 
 ![description](images/login.PNG)
 
@@ -68,6 +72,11 @@ the landing page after login. it shows a quick overview: your **six most recent 
 (creating a project, uploading photos, publishing an article). the feed is a summary, not a full
 audit log — open the module itself to see everything.
 
+across the top are four counts: **active projects**, **published articles**, **spent to date**, and
+**unread inquiries** — contact-form messages nobody has opened yet, which is the one number here
+that somebody outside the company is waiting on. opening a message in **inquiries** clears it from
+that count.
+
 use the **left sidebar** to move between modules: dashboard, projects, tenders, news & blog, careers,
 inquiries, about / team, health & safety, services, users & roles, settings.
 
@@ -97,6 +106,21 @@ transportation, other), which is what shows on the little badge on each project 
 ### edit a project
 click **edit** on any row. you can change any field, and **add or remove photos** — photo changes
 save immediately (the ✕ on a photo deletes it).
+
+### a project needs a photo to appear publicly
+
+**the public projects page only lists projects that have at least one photo.** the portfolio is a
+visual page, and a card with no picture on it is an empty grey box, so those are held back.
+
+everything else about the project is unaffected: it stays in this dashboard, it keeps its own page
+at its own address, and **the moment you add a photo it appears on the projects page** — nothing
+else to switch on. if you're wondering why a project you can see here isn't on the site, this is
+almost always the reason, and adding one photo fixes it.
+
+it's worth knowing how many that currently affects: **64 of the 114 projects have no photos**, so
+the public page shows 50. most of the schools, libraries, fire halls and community centres are in
+the held-back group. adding photos to them is the single biggest improvement available to the
+portfolio.
 
 ### find and organise projects
 above the table you have:
@@ -134,6 +158,22 @@ click **delete** on a row and confirm. this also removes its photos and related 
 the **excerpt** is a short summary. it does more work than it looks like it does: it's the blurb on
 the blog listing, the description google shows in search results, and the text in the preview card
 when someone shares the link. so is the **cover image** — see [§17](#17-how-the-site-appears-in-google-and-when-shared).
+
+### working in the article editor
+
+- **the formatting buttons stay put.** the row of buttons sits at the top of the editor and stays
+  there while you scroll a long article, so bold, headings and the image button are always in reach.
+  the writing area scrolls inside its own box rather than stretching the dialog off the screen.
+- **images are shown at a sensible size.** a photo straight off a phone is thousands of pixels tall;
+  both the editor and the published article show it as a band of image across the column instead of
+  a screenful. the top and bottom of a very tall photo are trimmed to fit, so a **landscape photo
+  suits the body of an article better than a portrait one**.
+- **dividers appear between sections automatically.** start a section with the **label** button (or
+  a heading) and a horizontal rule is drawn above it on the published article. you don't insert
+  them yourself — the **—** button is for a deliberate extra break.
+- **the body is saved with the article**, so a change to the text only goes live when you save. an
+  **image upload happens immediately**, though: the file is stored as soon as you pick it, even if
+  you then abandon the edit.
 
 ![description](images/article-editor.PNG)
 
@@ -208,7 +248,22 @@ tenders are **synced from smartbid** — smartbid is the source of truth, so thi
 - click **sync from smartbid** to pull the latest opportunities. the screen reports how many were
   added / updated.
 - use the **search** and **status** filter to find a tender.
-- a tender's **title links out to its smartbid bid room**, where invitations and bids are managed.
+
+**what a subcontractor sees on the public tenders page.** every detail smartbid publishes about a
+bid is shown on its card: the project type and floor area, the full site address, the closing date,
+**every csi trade division on the bid** (long lists open at six with a "+more" link), and the **bid
+manager's name, email, phone and fax**. the search box on that page covers the trade divisions too,
+so a trade can find work by typing "concrete" or a division number rather than guessing at the
+project title.
+
+smartbid publishes **no description, no contract value and no status** for these bids, which is why
+those don't appear. the **open / closing soon / closed** label on each card is worked out from the
+closing date — inside a fortnight counts as closing soon — and a bid with no deadline set reads "no
+due date".
+
+**the cards don't currently link out to the bid room.** smartbid's feed gives us only a project
+number, and turning that into a web address needs one setting a developer adds once (see
+[§18](#18-what-lives-in-code)). until that's done the titles are plain text.
 
 on the public tenders page, subcontractors register through the embedded **smartbid subcontractor
 registration form** — those registrations go straight to smartbid, not to this dashboard.
@@ -255,8 +310,15 @@ edit the story copy shown on the about page — **who we are**, **where we are**
 beside the text. after editing, use the screen's **save** to publish.
 
 ### leadership & team
-manage the **leadership** (president, vice president) and **team members** shown lower on the page —
-names, **titles**, bios, and photos. titles show in the amber accent colour on the public page.
+manage the **leadership** and **team members** shown lower on the page — names, **titles**, bios,
+and photos. titles show in the amber accent colour on the public page.
+
+**the two sections take titles differently.** a **leadership** entry picks from a fixed list —
+president, vice president, partner, chief executive officer, chief operating officer, chief financial
+officer, director of operations, project director — so the executive titles stay consistent. a **team
+member** takes any title you type ("site foreman", "estimator", "project coordinator"). switching
+someone between the two sections keeps their title when the list allows it, and otherwise falls back
+to president rather than leaving a title the section wouldn't offer.
 
 **each person has their own photo.** add or replace one from that person's row, or in the add / edit
 dialog; the ✕ removes it. someone with no photo shows their initials instead, so a missing photo
@@ -490,6 +552,10 @@ website's code and needs a **developer** to change:
   [§7](#7-tenders).
 - the **careers email** (`hr@pegah.ca`) that the "apply" and "send your resume" links on the careers
   page open. it is not a settings field — changing it needs a developer.
+- the **link from a tender card to its smartbid bid room**. smartbid gives us a project number and
+  the address is built from it, which needs a one-off setting (`smartbid_project_url_template`). ask
+  your developer for it, with the web address of any one bid as an example, and every tender becomes
+  clickable. see [§7](#7-tenders).
 - the **business details google reads** (company name, address, phone, area served), which are
   separate from the contact details in **settings**. if you change the phone or address in settings,
   ask your developer to update these to match.
@@ -521,6 +587,7 @@ buttons show a "not configured" message instead of failing. ask your developer t
 |---|---|
 | add a completed project to the portfolio | **projects → + new project** |
 | swap a project's photos | **projects → edit → photos** |
+| work out why a project isn't on the public site | it has **no photo** — **projects → edit → photos** |
 | publish a blog post | **news & blog → new/edit → set status to published** |
 | turn a project into a blog draft | **projects → open project → generate blog post** |
 | get a linkedin caption for a post | **news & blog → edit → generate linkedin post** |
@@ -542,6 +609,9 @@ buttons show a "not configured" message instead of failing. ask your developer t
 | change the home page hero wording | **settings → home page** |
 | swap the home hero background images | **settings → home page hero images** |
 | edit the services list, a services heading, or a service's card image | **services** |
+| add or reorder a client quote on the home page | **settings → testimonials** |
+| take the testimonials off the home page for a while | **settings → testimonials → show testimonials** |
+| add a partner or executive to the about page | **about / team → add member → section: leadership** |
 | change the contact page intro | **settings → contact page** |
 | change company phone/address (navbar, footer, contact) | **settings → organization & contact details** |
 | add a staff login | **users & roles → add user** |

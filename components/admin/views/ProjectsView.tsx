@@ -231,7 +231,7 @@ export default function ProjectsView() {
   const handleDelete = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     if (deletingId) return;
-    if (!confirm("Delete this project? All related data (photos, tasks, incidents) will be deleted too.")) return;
+    if (!confirm("Delete this project? All related data (photos, tasks, milestones) will be deleted too.")) return;
     setDeletingId(id);
     await fetch(`/api/projects/${id}`, { method: "DELETE" });
     setProjects((prev) => prev.filter((p) => p.id !== id));

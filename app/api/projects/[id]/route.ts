@@ -33,7 +33,6 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
     db.card.deleteMany({ where: { projectId: id } }),
     db.milestone.deleteMany({ where: { projectId: id } }),
     db.task.deleteMany({ where: { projectId: id } }),
-    db.incident.deleteMany({ where: { projectId: id } }),
     db.projectTeam.deleteMany({ where: { projectId: id } }),
     db.activity.deleteMany({ where: { projectId: id } }),
     db.doc.updateMany({ where: { projectId: id }, data: { projectId: null } }),

@@ -3,14 +3,16 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth";
-import { permsFor, money, type Project, type Task, type Incident, type Activity, type Article } from "@/lib/admin";
+import { permsFor, money, type Project, type Task, type Activity, type Article } from "@/lib/admin";
 import { StatCard, Card, THead, Table, Avatar } from "../ui";
+
+type Inquiry = { id: string; read: boolean };
 
 export default function DashboardView() {
   const { user } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [incidents, setIncidents] = useState<Incident[]>([]);
+  const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [feed, setFeed] = useState<Activity[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
 
@@ -18,7 +20,7 @@ export default function DashboardView() {
     if (!user) return;
     fetch(`/api/projects?userId=${user.id}`).then((r) => r.json()).then(setProjects);
     fetch(`/api/tasks?userId=${user.id}`).then((r) => r.json()).then(setTasks);
-    fetch(`/api/incidents?userId=${user.id}`).then((r) => r.json()).then(setIncidents);
+    fetch("/api/contact").then((r) => r.json()).then((d) => setInquiries(Array.isArray(d) ? d : []));
     fetch(`/api/activity?userId=${user.id}`).then((r) => r.json()).then(setFeed);
     fetch("/api/news").then((r) => r.json()).then(setArticles);
   }, [user]);
@@ -27,7 +29,9 @@ export default function DashboardView() {
   const perms = permsFor(user.role);
   const active = projects.filter((x) => x.status !== "Complete");
   const spent = projects.reduce((a, x) => a + x.spent, 0);
-  const openInc = incidents.filter((i) => i.status !== "Closed");
+  // Contact-form messages nobody has opened yet — the one number on this page
+  // that somebody outside the company is waiting on.
+  const unread = inquiries.filter((i) => !i.read);
   const myTasks = tasks.filter((t) => t.assignee === user.id && t.status !== "Done");
   const published = articles.filter((a) => a.status === "Published");
 
@@ -39,7 +43,11 @@ export default function DashboardView() {
         {perms.viewBudget
           ? <StatCard label="Spent to date" value={money(spent)} hint="in your project scope" />
           : <StatCard label="My open tasks" value={myTasks.length} hint="assigned to you" />}
-        <StatCard label="Open safety items" value={openInc.length} hint={openInc.length ? "need attention" : "all clear"} />
+        <StatCard
+          label="Unread inquiries"
+          value={unread.length}
+          hint={unread.length ? "waiting for a reply" : `${inquiries.length} total, all read`}
+        />
       </div>
 
       <div className="mt-6 grid gap-6 xl:grid-cols-3">

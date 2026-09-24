@@ -22,7 +22,6 @@ export type Perms = {
   editProjects: boolean;
   manageUsers: boolean;
   manageClients: boolean;
-  resolveIncidents: boolean;
   editSettings: boolean;
   manageTenders: boolean;
   manageNews: boolean;
@@ -37,7 +36,7 @@ export const PERMS: Record<RoleKey, Perms> = {
   admin: {
     nav: ["dashboard","projects","board","schedule","tenders","news","careers","inquiries","team","safety","services","clients","users","documents","settings"],
     projectScope: "all",
-    viewBudget: true, editProjects: true, manageUsers: true, manageClients: true, resolveIncidents: true, editSettings: true,
+    viewBudget: true, editProjects: true, manageUsers: true, manageClients: true, editSettings: true,
     manageTenders: true, manageNews: true, manageCareers: true, manageInquiries: true, manageTeam: true, useAI: true, configureAI: true,
   },
 };
@@ -49,7 +48,7 @@ export const PERMS: Record<RoleKey, Perms> = {
 const NO_PERMS: Perms = {
   nav: [],
   projectScope: "assigned",
-  viewBudget: false, editProjects: false, manageUsers: false, manageClients: false, resolveIncidents: false, editSettings: false,
+  viewBudget: false, editProjects: false, manageUsers: false, manageClients: false, editSettings: false,
   manageTenders: false, manageNews: false, manageCareers: false, manageInquiries: false, manageTeam: false, useAI: false, configureAI: false,
 };
 
@@ -97,7 +96,7 @@ export type Project = {
   category: string; type: string; constructionType: string; dateCompleted: string; owner: string; architect: string;
   contractType: string; value: number; grossFloorArea: string; description: string;
   photos: ProjectPhoto[];
-  // kept for board/tasks/incidents compatibility
+  // kept for board/tasks compatibility
   client: string; sector: string; status: string;
   progress: number; budget: number; spent: number; start: string; end: string;
   pm: string; foreman: string; team: string[]; milestones: Milestone[];
@@ -142,23 +141,7 @@ export const TASKS: Task[] = [
   { id:"t10", title:"Site safety walk — week 3",             project:"p5", assignee:"u6", due:"2025-01-16", status:"Done",        priority:"High" },
 ];
 
-export type Incident = {
-  id: string; project: string; date: string;
-  type: "Hazard" | "Near miss" | "First aid" | "Lost time";
-  severity: "High" | "Medium" | "Low";
-  status: "Open" | "Under review" | "Closed"; reportedBy: string; note: string;
-};
-
-export const INCIDENTS: Incident[] = [
-  { id:"s1", project:"p1", date:"2025-01-09", type:"Near miss", severity:"Medium", status:"Under review", reportedBy:"u3", note:"Unsecured load near loading bay." },
-  { id:"s2", project:"p2", date:"2025-01-07", type:"Hazard",    severity:"Low",    status:"Open",         reportedBy:"u5", note:"Trip hazard from trailing cables." },
-  { id:"s3", project:"p4", date:"2024-12-20", type:"First aid", severity:"Low",    status:"Closed",       reportedBy:"u7", note:"Minor hand laceration, treated on site." },
-  { id:"s4", project:"p5", date:"2025-01-11", type:"Hazard",    severity:"Medium", status:"Open",         reportedBy:"u6", note:"Guardrail missing on level 2 edge." },
-  { id:"s5", project:"p8", date:"2025-01-05", type:"Lost time", severity:"High",   status:"Under review", reportedBy:"u5", note:"Slip on wet slab; 2 days lost." },
-  { id:"s6", project:"p7", date:"2024-12-15", type:"Near miss", severity:"Low",    status:"Closed",       reportedBy:"u3", note:"Falling debris during demolition." },
-];
-
-export type Doc = { id: string; name: string; type: string; project: string | null; size: string; updated: string; owner: string; path?: string };
+export type Doc ={ id: string; name: string; type: string; project: string | null; size: string; updated: string; owner: string; path?: string };
 
 export const DOCUMENTS: Doc[] = [
   { id:"d1", name:"Harbourside — Tender Drawings Rev C", type:"DWG",  project:"p1", size:"42.1 MB", updated:"2025-01-08", owner:"u2" },
@@ -273,7 +256,7 @@ export const AI_PROMPTS = [
   "Show me all open tenders closing this month in Ontario",
   "Which projects are over 70% complete?",
   "Draft a prequalification response using our past institutional experience",
-  "Summarize open safety incidents across active sites",
+  "Which contact inquiries are still unread?",
   "Write a blog post about the Riverbend Recreation Complex",
 ];
 

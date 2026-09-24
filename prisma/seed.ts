@@ -11,7 +11,6 @@ async function main() {
   await db.activity.deleteMany();
   await db.article.deleteMany();
   await db.doc.deleteMany();
-  await db.incident.deleteMany();
   await db.task.deleteMany();
   await db.milestone.deleteMany();
   await db.projectTeam.deleteMany();

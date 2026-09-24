@@ -3,8 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
 import {
-  AI_PROVIDERS, AI_TOOLS, AI_PROMPTS, TENDERS, INCIDENTS, USERS, ROLES,
-  getProject, visibleProjects, visibleIds, money, type User,
+  AI_PROVIDERS, AI_TOOLS, AI_PROMPTS, TENDERS, USERS, ROLES,
+  visibleProjects, money, type User,
 } from "@/lib/admin";
 import { Card, Pill } from "../ui";
 
@@ -28,14 +28,6 @@ function aiRespond(u: User, q: string): Msg {
       node: (<div>Here are your active projects by completion:<ul className="mt-1">{top.map((p) => (<li key={p.id} className="mt-1">• <a className="font-semibold text-brand-700 hover:underline" href={`/admin/projects/${p.id}`}>{p.name}</a> · {p.progress}% complete, {p.status}</li>))}</ul></div>),
     };
   }
-  if (/safety|incident|hazard|near miss/.test(ql)) {
-    const ids = visibleIds(u);
-    const inc = INCIDENTS.filter((s) => ids.includes(s.project) && s.status !== "Closed");
-    return {
-      role: "assistant", tool: "getProjectDetails",
-      node: inc.length ? (<div>There are {inc.length} open safety items:<ul className="mt-1">{inc.map((s) => (<li key={s.id} className="mt-1">• <span className="font-semibold">{s.type}</span> · {s.note} ({getProject(s.project)?.name}, {s.status})</li>))}</ul></div>) : <span>No open safety incidents in your scope. All clear.</span>,
-    };
-  }
   if (/blog|article|news|write|post|case study/.test(ql)) {
     return {
       role: "assistant", tool: "getNews",
@@ -50,7 +42,7 @@ function aiRespond(u: User, q: string): Msg {
       node: (<div>Your team:<ul className="mt-1">{USERS.slice(0, 5).map((m) => (<li key={m.id} className="mt-1">• {m.name} · {ROLES[m.role].label}</li>))}</ul></div>),
     };
   }
-  return { role: "assistant", node: <span>I can search across your projects, tenders, tasks, news, docs and company info. Try asking about open tenders, project progress, safety incidents, or ask me to draft a blog post.</span> };
+  return { role: "assistant", node: <span>I can search across your projects, tenders, tasks, news, docs and company info. Try asking about open tenders, project progress, who&rsquo;s on a team, or ask me to draft a blog post.</span> };
 }
 
 export default function AIView() {

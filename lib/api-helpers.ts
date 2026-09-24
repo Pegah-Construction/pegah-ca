@@ -65,7 +65,7 @@ export function mapProject(p: {
     grossFloorArea: p.grossFloorArea ?? "",
     description: p.description ?? "",
     photos: p.photos ?? [],
-    // kept for board/tasks/incidents
+    // kept for board/tasks
     client: p.clientId ?? "",
     sector: p.sector ?? "",
     status: p.status ?? "Active",

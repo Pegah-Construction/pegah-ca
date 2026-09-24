@@ -23,7 +23,6 @@ model User {
   foremanProjects   Project[]     @relation("ProjectForeman")
   teamMemberships   ProjectTeam[]
   assignedTasks     Task[]
-  reportedIncidents Incident[]
   ownedDocuments    Doc[]
   assignedCards     Card[]
   cardComments      CardComment[]
@@ -71,7 +70,7 @@ model Project {
   grossFloorArea String @default("")
   description    String @default("")
 
-  // Kept for internal features (board, tasks, incidents) — not shown in form
+  // Kept for internal features (board, tasks) — not shown in form
   clientId  String?
   sector    String  @default("")
   status    String  @default("Active")
@@ -89,7 +88,6 @@ model Project {
   team       ProjectTeam[]
   milestones Milestone[]
   tasks      Task[]
-  incidents  Incident[]
   docs       Doc[]
   cards      Card[]
   activities Activity[]
@@ -133,19 +131,6 @@ model Task {
   priority   String
   project    Project @relation(fields: [projectId], references: [id])
   assignee   User    @relation(fields: [assigneeId], references: [id])
-}
-
-model Incident {
-  id           String  @id
-  projectId    String
-  date         String
-  type         String
-  severity     String
-  status       String
-  reportedById String
-  note         String
-  project      Project @relation(fields: [projectId], references: [id])
-  reportedBy   User    @relation(fields: [reportedById], references: [id])
 }
 
 model Doc {
