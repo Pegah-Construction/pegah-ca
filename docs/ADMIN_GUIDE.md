@@ -440,7 +440,7 @@ uploading happens right away, but like every other field the change only reaches
 click **save changes**. the image path the upload adds to the end of the service's line is managed
 for you; leave it alone when editing the text.
 
-![description](images/services-editor.PNG)
+![description](images/services-editor.png)
 
 ---
 
@@ -496,7 +496,7 @@ mouth.
 services copy is **not** here — it has its own screen, **sidebar → services**. see
 [§12](#12-services).
 
-![description](images/settings-page.PNG)
+![description](images/settings-page.png)
 
 
 ---
