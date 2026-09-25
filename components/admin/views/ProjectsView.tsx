@@ -5,7 +5,9 @@ import { useAuth } from "@/lib/auth";
 import { permsFor, money, type Project, type ProjectPhoto } from "@/lib/admin";
 import { Card, THead, Table, Pill, PrimaryBtn, Modal, Field, inputCls, SearchInput, Spinner } from "../ui";
 import { dropRing, notifyDropIssue, useImageDrop } from "../DropZone";
+import PhotoTileControls from "../PhotoTileControls";
 import { getStorageUrl } from "@/lib/storage-url";
+import { movePhoto, savePhotoOrder } from "@/lib/photo-order";
 
 const CATEGORIES = ["", "ICI", "Residential"];
 const PURPOSE_TYPES = ["", "Education", "Emergency Services", "Retail", "Recreation", "Transportation", "Other"];
@@ -80,6 +82,7 @@ export default function ProjectsView() {
   // Live photos for edit flow
   const [editPhotos, setEditPhotos] = useState<ProjectPhoto[]>([]);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [reorderingPhotos, setReorderingPhotos] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -161,6 +164,24 @@ export default function ProjectsView() {
       return;
     }
     setEditPhotos((prev) => prev.filter((p) => p.id !== photoId));
+  };
+
+  // Saved as soon as it's moved, like the uploads and deletions beside it —
+  // the photo section of this dialog has always worked on the live project
+  // rather than waiting for Save.
+  const handleMoveEditPhoto = async (from: number, to: number) => {
+    if (!editingId || reorderingPhotos) return;
+    const previous = editPhotos;
+    const next = movePhoto(editPhotos, from, to);
+    if (next === previous) return;
+    setEditPhotos(next);
+    setReorderingPhotos(true);
+    const ok = await savePhotoOrder(editingId, next.map((p) => p.id));
+    if (!ok) {
+      setEditPhotos(previous);
+      alert("Could not save the new photo order. Please try again.");
+    }
+    setReorderingPhotos(false);
   };
 
   const addFiles = (files: File[]) => {
@@ -513,23 +534,30 @@ export default function ProjectsView() {
               <Field label="Photos">
                 <div {...editPhotoDrop.dropProps} className={`rounded-md ${dropRing(editPhotoDrop.dragging)}`}>
                 {editPhotos.length > 0 && (
-                  <div className="mb-3 grid grid-cols-4 gap-2">
-                    {editPhotos.map((ph) => (
-                      <div key={ph.id} className="group relative aspect-square overflow-hidden rounded-lg bg-concrete-100">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={getStorageUrl(ph.path)} alt="" className="h-full w-full object-cover" />
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteEditPhoto(ph.id)}
-                          className="absolute right-1 top-1 hidden rounded-full bg-black/60 p-1 text-white group-hover:flex hover:bg-black/80"
-                        >
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-3 w-3">
-                            <path d="M18 6 6 18M6 6l12 12" />
-                          </svg>
-                        </button>
-                      </div>
-                    ))}
-                  </div>
+                  <>
+                    <div className="mb-3 grid grid-cols-4 gap-2">
+                      {editPhotos.map((ph, i) => (
+                        <div key={ph.id} className="group relative aspect-square overflow-hidden rounded-lg bg-concrete-100">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={getStorageUrl(ph.path)} alt="" className="h-full w-full object-cover" />
+                          <PhotoTileControls
+                            index={i}
+                            total={editPhotos.length}
+                            busy={reorderingPhotos}
+                            compact
+                            onMove={handleMoveEditPhoto}
+                            onDelete={() => handleDeleteEditPhoto(ph.id)}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    {editPhotos.length > 1 && (
+                      <p className="mb-3 text-[11px] text-concrete-400">
+                        The first photo is the one the projects page shows on the card. Use the
+                        arrows on a photo to move it; the order saves as you go.
+                      </p>
+                    )}
+                  </>
                 )}
                 <label className={`flex cursor-pointer items-center gap-2 rounded-md border border-dashed border-concrete-300 px-4 py-3 text-sm text-concrete-500 hover:border-brand-400 hover:text-brand-700 ${uploadingPhoto ? "pointer-events-none opacity-60" : ""}`}>
                   {uploadingPhoto

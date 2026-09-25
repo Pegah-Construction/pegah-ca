@@ -107,6 +107,24 @@ transportation, other), which is what shows on the little badge on each project 
 click **edit** on any row. you can change any field, and **add or remove photos** — photo changes
 save immediately (the ✕ on a photo deletes it).
 
+### putting the photos in the right order
+
+hover over any photo and a small bar appears along the bottom: **‹** moves it earlier, **›** moves it
+later, and the number between them is its position. the first photo is marked **cover**.
+
+that first photo does more than lead the gallery — it's the picture on the project's card on the
+**projects** page, and the one that shows when someone shares a link to the project. so "make this
+the cover" is usually what you're doing: move the best photo to position 1.
+
+the order saves as soon as you move a photo, the same way uploading and deleting do; there's no
+separate save to click, and it applies wherever the project appears on the public site. if a move
+can't be saved you'll get a message and the photos snap back to the order the website is really
+showing, so what you see here is never out of step with the site.
+
+you can do this in two places — the **photos** panel on a project's own page, and the photo grid in
+the **edit** dialog. previously the only way to change the order was to delete photos and upload
+them again in the order you wanted.
+
 ### a project needs a photo to appear publicly
 
 **the public projects page only lists projects that have at least one photo.** the portfolio is a
@@ -608,6 +626,7 @@ buttons show a "not configured" message instead of failing. ask your developer t
 |---|---|
 | add a completed project to the portfolio | **projects → + new project** |
 | swap a project's photos | **projects → edit → photos** |
+| change which photo leads a project (its cover) | **projects → open project → photos → ‹ › arrows** |
 | work out why a project isn't on the public site | it has **no photo** — **projects → edit → photos** |
 | publish a blog post | **news & blog → new/edit → set status to published** |
 | turn a project into a blog draft | **projects → open project → generate blog post** |

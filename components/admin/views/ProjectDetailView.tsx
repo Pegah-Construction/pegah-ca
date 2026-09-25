@@ -6,7 +6,9 @@ import { useAuth } from "@/lib/auth";
 import { permsFor, type Project, type ProjectPhoto } from "@/lib/admin";
 import { Card, Pill, Modal, Field, inputCls, Spinner } from "../ui";
 import { dropRing, notifyDropIssue, useImageDrop } from "../DropZone";
+import PhotoTileControls from "../PhotoTileControls";
 import { getStorageUrl } from "@/lib/storage-url";
+import { movePhoto, savePhotoOrder } from "@/lib/photo-order";
 
 const PROJECT_TYPES = ["", "New Construction", "Renovation", "Retrofit", "Restoration", "Interior Fit-out", "Addition", "Demolition"];
 const CONTRACT_TYPES = ["", "General Contracting", "Construction Management", "Prime Contractor", "Design-Build", "Cost-Plus", "Project Management", "Private"];
@@ -33,6 +35,7 @@ export default function ProjectDetailView({ id }: { id: string }) {
   const [saving, setSaving] = useState(false);
 
   const [photos, setPhotos] = useState<ProjectPhoto[]>([]);
+  const [reordering, setReordering] = useState(false);
   const [uploading, setUploading] = useState(false);
 
   const [generating, setGenerating] = useState(false);
@@ -107,6 +110,24 @@ export default function ProjectDetailView({ id }: { id: string }) {
     if (!confirm("Delete this photo?")) return;
     await fetch(`/api/projects/${id}/photos/${photoId}`, { method: "DELETE" });
     setPhotos((prev) => prev.filter((p) => p.id !== photoId));
+  };
+
+  // Reordering shows immediately and is saved in the background; if the save
+  // fails the grid goes back to the order the website is actually serving,
+  // rather than leaving the editor believing a change that didn't land.
+  const handleMovePhoto = async (from: number, to: number) => {
+    if (reordering) return;
+    const previous = photos;
+    const next = movePhoto(photos, from, to);
+    if (next === previous) return;
+    setPhotos(next);
+    setReordering(true);
+    const ok = await savePhotoOrder(id, next.map((p) => p.id));
+    if (!ok) {
+      setPhotos(previous);
+      notifyDropIssue("Couldn't save the new photo order. Please try again.");
+    }
+    setReordering(false);
   };
 
   const handleGenerateArticle = async () => {
@@ -262,20 +283,18 @@ export default function ProjectDetailView({ id }: { id: string }) {
               </p>
             ) : (
               <div className="grid grid-cols-2 gap-3 p-5 sm:grid-cols-3">
-                {photos.map((ph) => (
+                {photos.map((ph, i) => (
                   <div key={ph.id} className="group relative aspect-[4/3] overflow-hidden rounded-lg bg-concrete-100">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={getStorageUrl(ph.path)} alt="" className="h-full w-full object-cover" />
                     {perms.editProjects && (
-                      <button
-                        onClick={() => handleDeletePhoto(ph.id)}
-                        className="absolute right-2 top-2 hidden rounded-full bg-black/60 p-1.5 text-white group-hover:block hover:bg-black/80"
-                        title="Delete photo"
-                      >
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-3.5 w-3.5">
-                          <path d="M18 6 6 18M6 6l12 12" />
-                        </svg>
-                      </button>
+                      <PhotoTileControls
+                        index={i}
+                        total={photos.length}
+                        busy={reordering}
+                        onMove={handleMovePhoto}
+                        onDelete={() => handleDeletePhoto(ph.id)}
+                      />
                     )}
                   </div>
                 ))}
