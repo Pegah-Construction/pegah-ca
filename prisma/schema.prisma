@@ -244,6 +244,9 @@ model TeamMember {
   name  String
   title String
   bio   String @default("")
+  // Full biography for the person's own page (/about/<id>); paragraphs are
+  // separated by blank lines. `bio` stays the short summary on their card.
+  profile String @default("")
   photo String @default("")
   // Which section of the about page this person appears in: leadership
   // (president, CEO, vice president) or the wider team. Defaults to true so

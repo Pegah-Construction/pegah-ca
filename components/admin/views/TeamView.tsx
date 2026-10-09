@@ -4,9 +4,9 @@ import { useState, useEffect, useRef } from "react";
 import { getStorageUrl } from "@/lib/storage-url";
 import { StatCard, Card, PrimaryBtn, Modal, Field, inputCls, Spinner, SearchInput } from "../ui";
 import { DropTarget, dropRing, notifyDropIssue, useImageDrop } from "../DropZone";
-import { TEAM_BIO_MAX, type AboutContent } from "@/lib/about-content";
+import { TEAM_BIO_MAX, TEAM_PROFILE_MAX, type AboutContent } from "@/lib/about-content";
 
-type Member = { id: string; order: number; name: string; title: string; bio: string; photo: string; leadership: boolean };
+type Member = { id: string; order: number; name: string; title: string; bio: string; profile: string; photo: string; leadership: boolean };
 
 const TITLES = [
   "President",
@@ -19,7 +19,7 @@ const TITLES = [
   "Project Director",
 ] as const;
 
-const BLANK = { name: "", title: TITLES[0] as string, bio: "", leadership: true };
+const BLANK = { name: "", title: TITLES[0] as string, bio: "", profile: "", leadership: true };
 
 export default function TeamView() {
   const [members, setMembers] = useState<Member[]>([]);
@@ -103,7 +103,7 @@ export default function TeamView() {
 
   // Each section's "add" button preselects that section in the modal.
   const openCreate = (leadership: boolean) => { setForm({ ...BLANK, leadership }); setModalPhoto(null); setEditingId(null); setSaving(false); setOpen(true); };
-  const openEdit = (m: Member) => { setForm({ name: m.name, title: m.title, bio: m.bio, leadership: m.leadership }); setModalPhoto(null); setEditingId(m.id); setSaving(false); setOpen(true); };
+  const openEdit = (m: Member) => { setForm({ name: m.name, title: m.title, bio: m.bio, profile: m.profile ?? "", leadership: m.leadership }); setModalPhoto(null); setEditingId(m.id); setSaving(false); setOpen(true); };
   const closeModal = () => { setOpen(false); setEditingId(null); setForm(BLANK); setModalPhoto(null); setSaving(false); };
 
   const pickModalPhoto = (file: File) => {
@@ -556,6 +556,16 @@ export default function TeamView() {
                   {form.bio.length >= TEAM_BIO_MAX ? " — limit reached" : ""}
                 </span>
               </div>
+            </Field>
+            <Field label="Full bio (leave a blank line between paragraphs)">
+              <textarea
+                rows={8}
+                maxLength={TEAM_PROFILE_MAX}
+                className={inputCls}
+                value={form.profile}
+                onChange={(e) => set("profile", e.target.value.slice(0, TEAM_PROFILE_MAX))}
+                placeholder="Shown on this person's own page, opened by clicking their card on the About page. Leave empty to show the short bio there instead."
+              />
             </Field>
             <div className="flex items-center justify-between gap-2 pt-2">
               {editingId ? (

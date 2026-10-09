@@ -22,10 +22,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   let projects: { id: string }[] = [];
   let articles: { slug: string; date: string }[] = [];
+  let people: { id: string }[] = [];
   try {
-    [projects, articles] = await Promise.all([
+    [projects, articles, people] = await Promise.all([
       db.project.findMany({ select: { id: true } }),
       db.article.findMany({ where: { status: "Published" }, select: { slug: true, date: true } }),
+      db.teamMember.findMany({ select: { id: true } }),
     ]);
   } catch {
     // Database unavailable — still emit the static routes so the sitemap is valid.
@@ -49,6 +51,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.6,
     });
+  }
+
+  for (const m of people) {
+    entries.push({ url: `${siteUrl}/about/${m.id}`, lastModified: now, changeFrequency: "monthly", priority: 0.4 });
   }
 
   return entries;

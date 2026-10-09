@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import PageShell from "@/components/PageShell";
 import { Eyebrow } from "@/components/Brand";
 import Reveal from "@/components/Reveal";
@@ -18,28 +19,32 @@ export const metadata: Metadata = {
 type Person = { id: string; name: string; title: string; bio: string; photo: string };
 
 // One person, shown the same way in both the leadership and team sections.
+// The whole card links to their own page with the full bio.
 function PersonCard({ person, delay }: { person: Person; delay: number }) {
   return (
     <Reveal delay={delay} direction="up">
-      <div className="w-40 sm:w-48">
+      <Link href={`/about/${person.id}`} className="group block w-40 sm:w-48">
         {person.photo ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={getStorageUrl(person.photo)}
             alt={person.name}
-            className="aspect-[4/5] w-full rounded-xl object-cover"
+            className="aspect-[4/5] w-full rounded-xl object-cover transition duration-300 group-hover:shadow-xl group-hover:brightness-105"
           />
         ) : (
-          <div className="flex aspect-[4/5] w-full items-center justify-center rounded-xl bg-concrete-100 text-concrete-300">
+          <div className="flex aspect-[4/5] w-full items-center justify-center rounded-xl bg-concrete-100 text-concrete-300 transition-colors group-hover:bg-concrete-200">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="h-10 w-10">
               <circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
             </svg>
           </div>
         )}
-        <h3 className="mt-3 font-display text-lg font-bold tracking-tight text-ink">{person.name}</h3>
+        <h3 className="mt-3 font-display text-lg font-bold tracking-tight text-ink transition-colors group-hover:text-brand-700">{person.name}</h3>
         <p className="font-mono text-[11px] font-bold uppercase tracking-label text-accent-700">{person.title}</p>
         {person.bio && <p className="mt-2 text-sm leading-relaxed text-concrete-500">{person.bio}</p>}
-      </div>
+        <span className="mt-2 inline-block font-mono text-[11px] uppercase tracking-label text-brand-700 opacity-70 transition-opacity group-hover:opacity-100">
+          Read bio →
+        </span>
+      </Link>
     </Reveal>
   );
 }
