@@ -8,10 +8,6 @@
 // counter) and again in the API, so it holds however the record is saved.
 export const TEAM_BIO_MAX = 200;
 
-// The full biography on a person's own page has room to run, but still gets a
-// ceiling so a stray paste can't bloat the record.
-export const TEAM_PROFILE_MAX = 10000;
-
 export type AboutContent = {
   whoWeAre: string;
   whereWeAre: string;

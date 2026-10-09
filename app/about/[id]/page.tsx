@@ -5,7 +5,6 @@ import PageShell from "@/components/PageShell";
 import Reveal from "@/components/Reveal";
 import { db } from "@/lib/db";
 import { getStorageUrl } from "@/lib/storage-url";
-import { toParagraphs } from "@/lib/about-content";
 import { siteUrl } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
@@ -33,10 +32,6 @@ export default async function PersonPage({ params }: Props) {
   const person = await db.teamMember.findUnique({ where: { id } });
   if (!person) notFound();
 
-  // The full bio when one has been written; otherwise the short card bio, so
-  // the page is never empty for someone added before full bios existed.
-  const paragraphs = toParagraphs(person.profile || person.bio);
-
   const personJsonLd = {
     "@context": "https://schema.org",
     "@type": "Person",
@@ -49,19 +44,21 @@ export default async function PersonPage({ params }: Props) {
 
   return (
     <PageShell eyebrow={person.leadership ? "Leadership" : "Our team"} title={person.name} intro={person.title}>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }} />
+      {/* "<" escaped so a name or title containing "</script>" can't close the tag early. */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd).replace(/</g, "\\u003c") }} />
       <div className="mx-auto max-w-5xl">
         <Reveal>
-          <div className="flex flex-col gap-10 md:flex-row md:items-start">
+          {/* Photo on the left, bio on the right; stacked on phones. */}
+          <div className="flex flex-col gap-10 sm:flex-row sm:items-start">
             {person.photo ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={getStorageUrl(person.photo)}
                 alt={person.name}
-                className="aspect-[4/5] w-full max-w-xs shrink-0 rounded-2xl object-cover shadow-xl"
+                className="aspect-[4/5] w-full max-w-xs shrink-0 rounded-2xl object-cover shadow-xl sm:w-64 lg:w-80"
               />
             ) : (
-              <div className="flex aspect-[4/5] w-full max-w-xs shrink-0 items-center justify-center rounded-2xl bg-concrete-100 text-concrete-300">
+              <div className="flex aspect-[4/5] w-full max-w-xs shrink-0 sm:w-64 lg:w-80 items-center justify-center rounded-2xl bg-concrete-100 text-concrete-300">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="h-16 w-16">
                   <circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
                 </svg>
@@ -70,10 +67,8 @@ export default async function PersonPage({ params }: Props) {
             <section className="min-w-0 flex-1">
               <div className="accent-bar mb-3" />
               <h2 className="font-display text-2xl font-bold tracking-tight text-ink">Biography</h2>
-              {paragraphs.length > 0 ? (
-                <div className="mt-4 space-y-4 text-lg leading-relaxed text-concrete-600">
-                  {paragraphs.map((para, i) => <p key={i}>{para}</p>)}
-                </div>
+              {person.bio ? (
+                <p className="mt-4 whitespace-pre-line text-lg leading-relaxed text-concrete-600">{person.bio}</p>
               ) : (
                 <p className="mt-4 text-concrete-400">A biography for {person.name} is coming soon.</p>
               )}

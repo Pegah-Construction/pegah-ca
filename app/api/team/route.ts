@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { TEAM_BIO_MAX, TEAM_PROFILE_MAX } from "@/lib/about-content";
+import { TEAM_BIO_MAX } from "@/lib/about-content";
 
 const TITLE_ORDER = [
   "President",
@@ -22,7 +22,7 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const { name, title, bio, profile, leadership } = await req.json();
+  const { name, title, bio, leadership } = await req.json();
   if (!name || !title) return Response.json({ error: "name and title required" }, { status: 400 });
 
   // New people join the wider team unless explicitly marked as leadership.
@@ -54,7 +54,6 @@ export async function POST(req: Request) {
       // Clamped server-side too — the dashboard limits the input, but the API
       // shouldn't rely on the client to have done it.
       bio: (bio ?? "").slice(0, TEAM_BIO_MAX),
-      profile: String(profile ?? "").slice(0, TEAM_PROFILE_MAX),
       leadership: isLeader,
     },
   });

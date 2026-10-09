@@ -358,12 +358,6 @@ member** takes any title you type ("site foreman", "estimator", "project coordin
 someone between the two sections keeps their title when the list allows it, and otherwise falls back
 to president rather than leaving a title the section wouldn't offer.
 
-**each person has their own page.** clicking someone's card on the public about page opens a page
-with their photo, title and **full bio**. the add / edit dialog has two bio fields: the short **bio**
-(a sentence or two, up to 200 characters) shown on their card, and the **full bio** shown on their
-own page — leave a blank line between paragraphs. if the full bio is left empty, their page shows the
-short bio instead.
-
 **each person has their own photo.** add or replace one from that person's row, or in the add / edit
 dialog; the ✕ removes it. someone with no photo shows their initials instead, so a missing photo
 never looks broken — you can add people first and collect headshots later.
