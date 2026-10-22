@@ -1,6 +1,5 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { TEAM_BIO_MAX } from "@/lib/about-content";
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -8,7 +7,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const data: Record<string, unknown> = {};
   if (body.name !== undefined) data.name = body.name;
   if (body.title !== undefined) data.title = body.title;
-  if (body.bio !== undefined) data.bio = String(body.bio).slice(0, TEAM_BIO_MAX);
+  if (body.bio !== undefined) data.bio = String(body.bio);
   if (body.order !== undefined) data.order = body.order;
   if (body.leadership !== undefined) data.leadership = body.leadership === true;
   const member = await db.teamMember.update({ where: { id }, data });

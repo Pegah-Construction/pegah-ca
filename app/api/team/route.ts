@@ -1,6 +1,5 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { TEAM_BIO_MAX } from "@/lib/about-content";
 
 const TITLE_ORDER = [
   "President",
@@ -53,7 +52,7 @@ export async function POST(req: Request) {
       title,
       // Clamped server-side too — the dashboard limits the input, but the API
       // shouldn't rely on the client to have done it.
-      bio: (bio ?? "").slice(0, TEAM_BIO_MAX),
+      bio: bio ?? "",
       leadership: isLeader,
     },
   });

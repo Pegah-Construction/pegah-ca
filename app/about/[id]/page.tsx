@@ -17,7 +17,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!person) {
     return { title: "Our team", robots: { index: false, follow: true } };
   }
-  const description = person.bio || `${person.name}, ${person.title} at Pegah Construction Ltd.`;
+  // Bios have no length limit, so trim to a search-snippet length.
+  const description = person.bio
+    ? person.bio.length > 160 ? `${person.bio.slice(0, 157).trimEnd()}…` : person.bio
+    : `${person.name}, ${person.title} at Pegah Construction Ltd.`;
   const images = person.photo ? [getStorageUrl(person.photo)] : undefined;
   return {
     title: `${person.name} — ${person.title}`, // template appends " | Pegah Construction Ltd."

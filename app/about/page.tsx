@@ -40,7 +40,8 @@ function PersonCard({ person, delay }: { person: Person; delay: number }) {
         )}
         <h3 className="mt-3 font-display text-lg font-bold tracking-tight text-ink transition-colors group-hover:text-brand-700">{person.name}</h3>
         <p className="font-mono text-[11px] font-bold uppercase tracking-label text-accent-700">{person.title}</p>
-        {person.bio && <p className="mt-2 text-sm leading-relaxed text-concrete-500">{person.bio}</p>}
+        {/* Clamped so a long bio doesn't make one card tower over the row — the full text is on their page. */}
+        {person.bio && <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-concrete-500">{person.bio}</p>}
         <span className="mt-2 inline-block font-mono text-[11px] uppercase tracking-label text-brand-700 opacity-70 transition-opacity group-hover:opacity-100">
           Read bio →
         </span>

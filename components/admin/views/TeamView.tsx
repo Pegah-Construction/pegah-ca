@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { getStorageUrl } from "@/lib/storage-url";
 import { StatCard, Card, PrimaryBtn, Modal, Field, inputCls, Spinner, SearchInput } from "../ui";
 import { DropTarget, dropRing, notifyDropIssue, useImageDrop } from "../DropZone";
-import { TEAM_BIO_MAX, type AboutContent } from "@/lib/about-content";
+import { type AboutContent } from "@/lib/about-content";
 
 type Member = { id: string; order: number; name: string; title: string; bio: string; photo: string; leadership: boolean };
 
@@ -541,21 +541,12 @@ export default function TeamView() {
             </Field>
             <Field label="Bio">
               <textarea
-                rows={3}
-                maxLength={TEAM_BIO_MAX}
+                rows={8}
                 className={inputCls}
                 value={form.bio}
-                onChange={(e) => set("bio", e.target.value.slice(0, TEAM_BIO_MAX))}
-                placeholder="Short biography shown on the About page — a sentence or two."
+                onChange={(e) => set("bio", e.target.value)}
+                placeholder="Biography — the About page card shows the first few lines; the full text is on their own page."
               />
-              <div className="mt-1.5 flex justify-end">
-                <span className={`font-mono text-[11px] ${
-                  form.bio.length >= TEAM_BIO_MAX ? "text-amber-700" : "text-concrete-400"
-                }`}>
-                  {form.bio.length} / {TEAM_BIO_MAX}
-                  {form.bio.length >= TEAM_BIO_MAX ? " — limit reached" : ""}
-                </span>
-              </div>
             </Field>
             <div className="flex items-center justify-between gap-2 pt-2">
               {editingId ? (
