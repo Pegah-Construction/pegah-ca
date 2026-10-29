@@ -1,20 +1,22 @@
 import type { Metadata } from "next";
-import { Montserrat, Roboto } from "next/font/google";
+import localFont from "next/font/local";
 import { AuthProvider } from "@/lib/auth";
 import { company, siteUrl } from "@/lib/site";
 import "./globals.css";
 
-const display = Montserrat({
-  subsets: ["latin"],
+// Fonts are stored in app/fonts so the build doesn't download them from Google.
+// Both are variable fonts (latin subset) covering all the weights we use.
+const display = localFont({
+  src: "./fonts/montserrat-latin.woff2",
   variable: "--font-display",
-  weight: ["400", "500", "600", "700", "800"],
+  weight: "400 800",
   display: "swap",
 });
 
-const body = Roboto({
-  subsets: ["latin"],
+const body = localFont({
+  src: "./fonts/roboto-latin.woff2",
   variable: "--font-body",
-  weight: ["400", "500", "700"],
+  weight: "400 700",
   display: "swap",
 });
 
